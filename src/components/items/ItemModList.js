@@ -1,17 +1,17 @@
 import React, { Component, PropTypes } from 'react';
-import SubmodificadorItem from './SubmodificadorItem';
+import ModificadorItem from './ModificadorItem';
 import _ from 'lodash';
 
 import { ItemTypes } from './Constants';
 import { DropTarget } from 'react-dnd';
 
-const submodTarget = {
+const modTarget = {
   drop(props, monitor) {
-    let submodificador = monitor.getItem();
-    console.error('Dragged', submodificador.id);
-    props.createModSubmod({
-      id_modificador: props.modificador.id,
-      id_submodificador: submodificador.id
+    let modificador = monitor.getItem();
+    console.error('Dragged', modificador.id);
+    props.createItemMod({
+      id_item_menu: props.item.id,
+      id_modificador: modificador.id
     })
   }
 };
@@ -22,13 +22,10 @@ function collect(connect, monitor) {
   };
 }
 
-class ModSubmodList extends Component {
+class ItemModList extends Component {
   constructor(props) {
     super(props);
-    this.state = {submodFiltered: []};
   }
-
-
 
   render = () => {
     let selectRowProp = {
@@ -39,7 +36,7 @@ class ModSubmodList extends Component {
     return connectDropTarget(
       <div style={{height: 400}}>
         <BootstrapTable
-          data={this.props.submodFiltered}
+          data={this.props.modFiltered}
           striped
           hover
           pagination
@@ -51,18 +48,18 @@ class ModSubmodList extends Component {
             sizePerPage: 5,
             sizePerPageList: [5, 10, 20, 50],
             deleteText: 'Eliminar',
-            afterDeleteRow: this.props.handleDestroyModSubmods
+            afterDeleteRow: this.props.handleDestroyItemMods
           }}
           deleteRow={true}
           selectRow={selectRowProp}
         >
           <TableHeaderColumn
-            dataField="id_modSubmod"
+            dataField="id_itemMod"
             isKey
             dataAlign="center"
             hidden
           >
-            id_modSubmod
+            id_itemMod
           </TableHeaderColumn>
           <TableHeaderColumn
             dataField="codigo"
@@ -73,7 +70,7 @@ class ModSubmodList extends Component {
           <TableHeaderColumn
             dataField="nombre"
             dataAlign="center"
-            dataFormat={(cell, row) => (<SubmodificadorItem value={cell} data={row}/>)}
+            dataFormat={(cell, row) => (<ModificadorItem value={cell} data={row}/>)}
           >
             Nombre
           </TableHeaderColumn>
@@ -96,6 +93,6 @@ class ModSubmodList extends Component {
 
 }
 
-ModSubmodList.PropTypes = {};
+ItemModList.PropTypes = {};
 
-export default DropTarget(ItemTypes.SUBMOD, submodTarget, collect)(ModSubmodList);
+export default DropTarget(ItemTypes.MOD, modTarget, collect)(ItemModList);

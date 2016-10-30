@@ -1,22 +1,13 @@
 import React, {Component, PropTypes} from 'react';
-import SubmodificadorItem from './SubmodificadorItem';
+import ModificadorItem from './ModificadorItem';
 
 
-const SubmodificadoresList = props => {
-  let submodificadores = props.children;
-  let selectRowProp = {
-    mode: "radio", // or checkbox
-    clickToSelect: true
-  };
-  let handleInsertRow=(submodificador)=>{
-    delete submodificador.maximo;
-    delete submodificador.minimo;
-    props.createSubmodificador(submodificador);
-  }
+const ModificadoresList = props => {
+  let modificadores = props.children;
   return (
     <div style={{height: 400}}>
       <BootstrapTable
-        data={submodificadores}
+        data={modificadores}
         striped
         hover
         pagination
@@ -27,15 +18,7 @@ const SubmodificadoresList = props => {
           defaultSortOrder: "asc",
           sizePerPage: 5,
           sizePerPageList: [5, 10, 20, 50],
-          onRowClick: props.submodificadorSelect,
-          insertText: 'Nuevo',
-          afterInsertRow: handleInsertRow,
-          deleteText: 'Eliminar',
-          afterDeleteRow: props.destroySubmodificador
         }}
-        insertRow={true}
-        deleteRow={true}
-        selectRow={selectRowProp}
       >
         <TableHeaderColumn
           dataField="id"
@@ -56,7 +39,7 @@ const SubmodificadoresList = props => {
         <TableHeaderColumn
           dataField="nombre"
           dataAlign="center"
-          dataFormat={(cell, row)=>(<SubmodificadorItem value={cell} data={row}/>)}
+          dataFormat={(cell, row)=>(<ModificadorItem value={cell} data={row}/>)}
         >
           Nombre
         </TableHeaderColumn>
@@ -79,6 +62,6 @@ const SubmodificadoresList = props => {
   );
 };
 
-SubmodificadoresList.propTypes = {};
+ModificadoresList.propTypes = {};
 
-export default SubmodificadoresList;
+export default ModificadoresList;

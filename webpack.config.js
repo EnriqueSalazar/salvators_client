@@ -10,7 +10,9 @@ console.info('Server environment', process.env.NODE_ENV);
 module.exports = {
   devtool: 'eval-source-map',
   entry: [
+    'babel-polyfill',
     'webpack-hot-middleware/client?reload=true',
+    'react-hot-loader/patch',
     path.join(__dirname, 'index.js')
   ],
   output: {
@@ -34,11 +36,6 @@ module.exports = {
       }
     }),
   ],
-  resolve:{
-    alias: {
-      "ag-grid-root" : __dirname + "/node_modules/ag-grid"
-    },
-  },
   module: {
     loaders: [
       {
@@ -46,9 +43,19 @@ module.exports = {
         exclude: /node_modules/,
         loader: 'babel',
         query: {
-          "presets": ["react", "es2015", "stage-0", "react-hmre"]
+          plugins: ["react-hot-loader/babel"],
+          presets: [["es2015", { "loose" : true }], "stage-0", "react"]
         }
       },
+      //   {
+      //      test: /\.jsx?$/,
+      //      exclude: /node_modules/,
+      //      loader: 'babel',
+      //      query: {
+      //        plugins: ['transform-runtime'],
+      //        presets: [ "es2015", "stage-0","react", "react-hmre"]
+      //      }
+      //    },
       // {test: /\.js$/, exclude: /node_modules/, loader: "babel-loader"}, //<--working!!!
       // {test: /\.js$/, exclude: /node_modules/, loader: "babel-loader", query: babelSettings},
       {test: /bootstrap.+\.(jsx|js)$/, loader: 'imports?jQuery=jquery,$=jquery,this=>window'}, /**/

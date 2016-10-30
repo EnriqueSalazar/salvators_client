@@ -1,4 +1,3 @@
-
 import {
   LOAD_MODSUBMODS_SUCCESS,
   LOAD_ONE_MODSUBMOD_SUCCESS,
@@ -10,23 +9,19 @@ import {
 export default function modSubmodReducer(state = {
   modSubmods: [],
   shouldUpdateModSubmods: false,
-  modSubmod:{}
 }, action) {
   switch (action.type) {
     case CREATE_MODSUBMOD_SUCCESS:
     case DESTROY_MODSUBMOD_SUCCESS:
     case UPDATE_MODSUBMOD_SUCCESS:
       return Object.assign({}, state,
-        {modSubmod:action.modSubmod,
-          shouldUpdateModSubmods: true});
-    case LOAD_ONE_MODSUBMOD_SUCCESS:
-      return Object.assign({}, state,
-        {modSubmod: action.modSubmod,
-          shouldUpdateModSubmods: false});
+        {shouldUpdateModSubmods: true});
     case LOAD_MODSUBMODS_SUCCESS:
       return Object.assign({}, state,
-        {modSubmods: action.modSubmods,
-          shouldUpdateModSubmods: false});
+        {
+          modSubmods: action.modSubmods,
+          shouldUpdateModSubmods: false
+        });
     default:
       return state;
   }

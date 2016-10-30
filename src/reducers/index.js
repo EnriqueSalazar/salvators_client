@@ -16,6 +16,9 @@ import {reducer as formReducer} from 'redux-form';
 import modificadorReducer from './modificadorReducer';
 import submodificadorReducer from './submodificadorReducer';
 import modSubmodReducer from './modSubmodReducer';
+import grupoReducer from './grupoReducer';
+import itemReducer from './itemReducer';
+import itemModReducer from './itemModReducer';
 // import usuariosReducer from './usuariosReducer';
 // import permisosReducer from './permisosReducer';
 
@@ -24,6 +27,9 @@ const appReducers = combineReducers({
   modificadorReducer,
   modSubmodReducer,
   submodificadorReducer,
+  grupoReducer,
+  itemReducer,
+  itemModReducer,
   // usuariosReducer,
   // permisosReducer,
   routing: routerReducer,

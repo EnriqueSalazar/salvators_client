@@ -1,6 +1,6 @@
-import React, {Component, PropTypes} from 'react';
-import {connect} from 'react-redux';
-import {DragDropContext} from 'react-dnd';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import {
   loadModificadores,
@@ -23,28 +23,30 @@ import {
 
 import RightPanel from '../components/modificadores/RightPanel'
 import LeftPanel from '../components/modificadores/LeftPanel'
+import SubmodModal from '../components/modificadores/SubmodModal'
 
-
-import {Grid, Col, Row} from 'react-bootstrap';
-
+import { Grid, Col, Row } from 'react-bootstrap';
 
 class EditMods extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {modificador: {}};
+    this.state = {
+      modificador: {},
+      submodificador: {},
+      addingSubmod: false,
+      submodFiltered: [],
+      shouldUpdate: true
+    };
   }
 
   componentDidMount() {
-    console.error('componentDidMount');
     this.props.loadModificadores();
     this.props.loadSubmodificadores();
     this.props.loadModSubmods();
   }
 
   componentWillReceiveProps(nextProps) {
-    console.error('componentWillReceiveProps');
-
     if (nextProps.shouldUpdateSubmodificadores) {
       this.props.loadSubmodificadores();
     }
@@ -54,14 +56,42 @@ class EditMods extends Component {
     if (nextProps.shouldUpdateModSubmods) {
       this.props.loadModSubmods();
     }
+    if (this.state.addingSubmod) {
+      this.setState({
+        submodificador: nextProps.submodificador,
+        addingSubmod: false
+      })
+    }
+    if (!_.isEmpty(this.state.modificador)) {
+      let submodFiltered =
+        nextProps.submodificadores.filter((submodificador) => {
+          return (nextProps.modSubmods.find((modSubmod) => {
+            submodificador.id_modSubmod = modSubmod.id;
+            return (
+              (modSubmod.id_submodificador == submodificador.id)
+              && (modSubmod.id_modificador == this.state.modificador.id)
+            );
+          }));
+        });
+      this.setState({submodFiltered})
+    }
   }
 
-  modificadorClick = (modificador)=> {
+  shouldComponentUpdate() {
+    return this.state.shouldUpdate;
+  }
+
+  modificadorSelect = (modificador) => {
     this.setState({modificador});
-    console.error('selected modificador', this.state.modificador.nombre)
+    this.props.loadModSubmods();
+
   };
 
-  handleUpdateModificador = (modificador)=> {
+  submodificadorSelect = (submodificador) => {
+    this.setState({submodificador});
+  };
+
+  handleUpdateModificador = (modificador) => {
     if (modificador.id) {
       this.props.updateModificador(modificador.id, modificador);
     } else {
@@ -69,53 +99,97 @@ class EditMods extends Component {
     }
   };
 
-  handleDestroyModSubmods = (ids)=>{
-    for (id of ids){
-      this.props.destroyModSubmod(id);
+  handleUpdateSubmodificador = (submodificador) => {
+    if (submodificador.id) {
+      this.props.updateSubmodificador(submodificador.id, submodificador);
     }
-  }
+    this.submodificadorSelect({});
+  };
+  handleCreateSubmodificador = (submodificador) => {
+    this.props.createSubmodificador(submodificador);
+    this.setState({addingSubmod: true})
+  };
 
-  render() {
-    return (
-      <Grid>
-        <Row>
-
-          <Col md={6}>
-            <LeftPanel
-              modificador={this.state.modificador}
-              modificadorSubmit={this.handleUpdateModificador}
-              modSubmods={this.props.modSubmods}
-              createModSubmod={this.props.createModSubmod}
-              handleDestroyModSubmods={this.handleDestroyModSubmods}
-              submodificadores={this.props.submodificadores}
-              modificadorClick={this.modificadorClick}
-            />
-          </Col>
-          <Col md={6}>
-            <RightPanel
-              modificadores={this.props.modificadores}
-              modificadorClick={this.modificadorClick}
-              submodificadores={this.props.submodificadores}
-              destroyModificador={this.props.destroyModificador}
-              createSubmodificador={this.props.createSubmodificador}
-              destroySubmodificador={this.props.destroySubmodificador}
-            />
-          </Col>
-        </Row>
-        <Row>
-          <Col md={6}>
-
-          </Col>
-        </Row>
-      </Grid>
-
+  handleDestroyModSubmods = (ids) => {
+    this.setState({shouldUpdate: false}, () => {
+        let toErase = [];
+        ids.map((id) => {
+          toErase.push(this.props.destroyModSubmod(id));
+        });
+        Promise.all(toErase).then(() => {
+          this.setState({shouldUpdate: true});
+          this.props.loadModSubmods();
+        })
+      }
     );
-  }
+  };
+
+  render = () => {
+    return (
+      <div>
+        <Grid>
+          <Row>
+            <Col md={6}>
+              <LeftPanel
+                modificador={this.state.modificador}
+                submodFiltered={this.state.submodFiltered}
+                modificadorSubmit={this.handleUpdateModificador}
+                modSubmods={this.props.modSubmods}
+                createModSubmod={this.props.createModSubmod}
+                handleDestroyModSubmods={this.handleDestroyModSubmods}
+                submodificadores={this.props.submodificadores}
+                modificadorSelect={this.modificadorSelect}
+              />
+            </Col>
+            <Col md={6}>
+              <RightPanel
+                modificadores={this.props.modificadores}
+                modificadorSelect={this.modificadorSelect}
+                submodificadorSelect={this.submodificadorSelect}
+                submodificadores={this.props.submodificadores}
+                destroyModificador={this.props.destroyModificador}
+                createSubmodificador={this.handleCreateSubmodificador}
+                destroySubmodificador={this.props.destroySubmodificador}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col md={6}>
+
+            </Col>
+          </Row>
+        </Grid>
+        <SubmodModal
+          submodificadorSelect={this.submodificadorSelect}
+          submodificadorSubmit={this.handleUpdateSubmodificador}
+          initialValues={this.state.submodificador}
+        />
+      </div>
+    );
+  };
 
 }
 
 EditMods.propTypes = {
-  shouldUpdateModificador: PropTypes.bool.isRequired,
+  loadModificadores: PropTypes.func.isRequired,
+  destroyModificador: PropTypes.func.isRequired,
+  createModificador: PropTypes.func.isRequired,
+  updateModificador: PropTypes.func.isRequired,
+  loadSubmodificadores: PropTypes.func.isRequired,
+  destroySubmodificador: PropTypes.func.isRequired,
+  createSubmodificador: PropTypes.func.isRequired,
+  updateSubmodificador: PropTypes.func.isRequired,
+  loadModSubmods: PropTypes.func.isRequired,
+  destroyModSubmod: PropTypes.func.isRequired,
+  createModSubmod: PropTypes.func.isRequired,
+  updateModSubmod: PropTypes.func.isRequired,
+  modificadores: PropTypes.array.isRequired,
+  shouldUpdateModificadores: PropTypes.bool.isRequired,
+  submodificadores: PropTypes.array.isRequired,
+  submodificador: PropTypes.object.isRequired,
+  shouldUpdateSubmodificadores: PropTypes.bool.isRequired,
+  modSubmods: PropTypes.array.isRequired,
+  shouldUpdateModSubmods: PropTypes.bool.isRequired,
 };
 
 function mapStateToProps(state) {
@@ -125,12 +199,13 @@ function mapStateToProps(state) {
     modSubmodReducer
   } = state;
   const {modificadores, shouldUpdateModificadores} = modificadorReducer;
-  const {submodificadores, shouldUpdateSubmodificadores} = submodificadorReducer;
+  const {submodificadores, shouldUpdateSubmodificadores, submodificador} = submodificadorReducer;
   const {modSubmods, shouldUpdateModSubmods} = modSubmodReducer;
   return {
     modificadores,
     shouldUpdateModificadores,
     submodificadores,
+    submodificador,
     shouldUpdateSubmodificadores,
     modSubmods,
     shouldUpdateModSubmods

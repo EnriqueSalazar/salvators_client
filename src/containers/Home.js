@@ -1,8 +1,7 @@
 /**
  * Created by enriq on 23/09/16.
  */
-import React, {Component, PropTypes} from 'react';
-import {connect} from 'react-redux';
+import React, {Component} from 'react';
 import {Grid, Col, Row, Jumbotron} from 'react-bootstrap';
 
 
@@ -10,12 +9,6 @@ class Home extends Component {
 
   constructor(props) {
     super(props);
-  }
-
-  componentDidMount() {
-  }
-
-  componentWillReceiveProps(nextProps) {
   }
 
   render() {
@@ -43,13 +36,5 @@ class Home extends Component {
       </Grid>
     );
   }
-
 }
-
-Home.propTypes = {};
-
-function mapStateToProps(state) {
-  return {};
-}
-
-export default connect(mapStateToProps, {})(Home);
+export default Home;

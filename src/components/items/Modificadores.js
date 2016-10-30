@@ -1,6 +1,5 @@
 import React, {Component, PropTypes} from 'react';
 import ModificadoresList from './ModificadoresList'
-import SubmodificadoresList from './SubmodificadoresList'
 import {Nav, NavItem} from 'react-bootstrap';
 
 class RightPanel extends Component {
@@ -19,22 +18,9 @@ class RightPanel extends Component {
       case 'mod':
         return (
           <ModificadoresList
-            modificadorSelect={this.props.modificadorSelect}
-            destroyModificador={this.props.destroyModificador}
           >
             {this.props.modificadores}
           </ModificadoresList>
-        );
-        break;
-    case 'submod':
-        return (
-          <SubmodificadoresList
-          createSubmodificador={this.props.createSubmodificador}
-          destroySubmodificador={this.props.destroySubmodificador}
-          submodificadorSelect={this.props.submodificadorSelect}
-          >
-            {this.props.submodificadores}
-          </SubmodificadoresList>
         );
         break;
       default:
@@ -45,10 +31,7 @@ class RightPanel extends Component {
   render = ()=> {
     return (
       <div>
-        <Nav bsStyle="tabs" activeKey={this.state.selectedTab} onSelect={this.handleSelect}>
-          <NavItem eventKey="mod">Modificadores</NavItem>
-          <NavItem eventKey="submod">Submodificadores</NavItem>
-        </Nav>
+        <h3>Modificadores</h3>
         {this.renderBody()}
       </div>
     )

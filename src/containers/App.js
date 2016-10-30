@@ -3,7 +3,7 @@ import React, {Component, PropTypes} from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import TopBar from './TopBar'
 
-class App extends React.Component {// eslint-disable-line
+class App extends Component {
   constructor(props) {
     super(props);
   }

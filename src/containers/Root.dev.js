@@ -15,7 +15,9 @@ export default class Root extends Component {
     return (
       <Provider store={store}>
         <div>
-          <Router history={history} routes={routes}/>
+          <Router history={history}>
+            {routes}
+          </Router>
           <DevTools />
           <ReduxToastr
             timeOut={3000}

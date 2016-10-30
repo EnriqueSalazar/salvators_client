@@ -20,7 +20,7 @@ const ModificadoresList = props => {
           sortOrder: "desc",
           sizePerPage: 5,
           sizePerPageList: [5, 10, 20, 50],
-          onRowClick: props.modificadorClick,
+          onRowClick: props.modificadorSelect,
           deleteText: 'Eliminar',
           afterDeleteRow : props.destroyModificador
         }}

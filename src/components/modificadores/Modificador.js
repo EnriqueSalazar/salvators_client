@@ -24,19 +24,17 @@ let Modificador = props => {
     initialValues,
     modificadorSubmit,
     handleSubmit,
-    modificadorClick
+    modificadorSelect
   }= props;
   // if (_.isEmpty(initialValues)) {
   //   return (<div></div>);
   // }
-
-
   return (
     <Well>
       <form onSubmit={handleSubmit(modificadorSubmit)}>
         <FormGroup>
           <Row className="show-grid">
-            <Col md={9}>
+            <Col md={3}>
               <Field
                 name="nombre"
                 label="Nombre"
@@ -92,13 +90,15 @@ let Modificador = props => {
             <Col md={9}>
               <Button
                 type="submit"
-                bsStyle="primary">
+                bsStyle={_.isEmpty(initialValues) ? "primary" : "info"}
+              >
                 {_.isEmpty(initialValues) ? "Crear " : "Guardar "}
                 <Glyphicon glyph="floppy-save"/>
               </Button>
+              {" "}
               <Button
-                onClick={()=>modificadorClick({})}
-                bsStyle="primary">
+                onClick={()=>modificadorSelect({})}
+                bsStyle="warning">
                 {"Reset "}
                 <Glyphicon glyph="floppy-save"/>
               </Button>

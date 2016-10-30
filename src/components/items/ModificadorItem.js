@@ -1,0 +1,32 @@
+import React, {Component, PropTypes} from 'react';
+import {ItemTypes} from './Constants';
+import {DragSource} from 'react-dnd';
+import {Label} from 'react-bootstrap';
+
+const modSource = {
+  beginDrag(props){
+    return {id: props.data.id};
+  }
+};
+
+function collect(connect, monitor) {
+  return {
+    connectDragSource: connect.dragSource()
+  };
+}
+class ModificadorItem extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+
+  render = ()=> {
+    const {connectDragSource} = this.props;
+    return connectDragSource(
+      <div><h43><Label>{this.props.value}</Label></h43></div>
+    );
+  }
+}
+
+ModificadorItem.propTypes = {};
+export default DragSource(ItemTypes.MOD, modSource, collect)(ModificadorItem);

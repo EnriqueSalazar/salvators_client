@@ -14,14 +14,16 @@ class LeftPanel extends Component {
     return (
       <div>
         <Row>
+          <h3>Modificador</h3>
           <Modificador
             initialValues={this.props.modificador}
             modificadorSubmit={this.props.modificadorSubmit}
-            modificadorClick={this.props.modificadorClick}
+            modificadorSelect={this.props.modificadorSelect}
           />
         </Row>
         <Row>
           <ModSubmodList
+            submodFiltered={this.props.submodFiltered}
             modificador={this.props.modificador}
             modSubmods={this.props.modSubmods}
             createModSubmod={this.props.createModSubmod}
