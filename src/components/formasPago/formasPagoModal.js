@@ -15,21 +15,14 @@ import {
 } from 'react-bootstrap';
 import _ from 'lodash';
 import InputField from '../InputField';
-import check from '../check';
 
-const validate = values => {
-  const errors = {};
-  errors.orden = check.isNumber(values.orden);
-  return errors
-};
-
-let GrupoModal = props => {
+let FormaPagoModal = props => {
   const {
     initialValues,
-    grupoSubmit,
+    formasPagoubmit,
     handleSubmit,
     isModalActive,
-    grupoModalOff
+    formaPagoModalOff
   }= props;
 
   let DeleteButton = () => {
@@ -37,7 +30,7 @@ let GrupoModal = props => {
       <Button
         type="button"
         bsStyle="danger"
-        onClick={() => props.destroyGrupo(initialValues.id)}
+        onClick={() => props.destroyFormaPago(initialValues.id)}
       >
         <Glyphicon glyph="erase"/>
       </Button>
@@ -49,13 +42,13 @@ let GrupoModal = props => {
       <Modal
         bsSize="large"
         show={isModalActive}
-        onHide={() => grupoModalOff()}
+        onHide={() => formaPagoModalOff()}
       >
         <Modal.Header closeButton>
-          <Modal.Title>Grupo</Modal.Title>
+          <Modal.Title>FormaPago</Modal.Title>
         </Modal.Header>
         <Modal.Body style={{textAlign: "center"}}>
-          <form onSubmit={handleSubmit(grupoSubmit)}>
+          <form onSubmit={handleSubmit(formasPagoubmit)}>
             <FormGroup>
               <Grid>
                 <Row className="show-grid">
@@ -64,28 +57,6 @@ let GrupoModal = props => {
                       name="nombre"
                       label="Nombre"
                       type="text"
-                      component={InputField}
-                    />
-                  </Col>
-                </Row>
-                <br/>
-                <Row className="show-grid">
-                  <Col md={9}>
-                    <Field
-                      name="orden"
-                      label="Orden"
-                      type="text"
-                      component={InputField}
-                    />
-                  </Col>
-                </Row>
-                <br/>
-                <Row className="show-grid">
-                  <Col md={9}>
-                    <Field
-                      name="is_pizza"
-                      label="Pizza"
-                      type="checkbox"
                       component={InputField}
                     />
                   </Col>
@@ -125,16 +96,15 @@ let GrupoModal = props => {
   );
 };
 
-GrupoModal = reduxForm({
-  form: 'grupoModalForm',
+FormaPagoModal = reduxForm({
+  form: 'formaPagoModalForm',
   enableReinitialize: true,
-  validate
-})(GrupoModal);
+})(FormaPagoModal);
 
-GrupoModal.propTypes = {
+FormaPagoModal.propTypes = {
   initialValues: PropTypes.object.isRequired,
-  grupoSubmit: PropTypes.func.isRequired,
+  formasPagoubmit: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func,
 };
 
-export default GrupoModal;
+export default FormaPagoModal;

@@ -119,7 +119,7 @@ class EditItems extends Component {
   handleDestroyItem = (id) => {
     this.props.destroyItem(id);
     browserHistory.push('/editgrupos/');
-  }
+  };
 
   render = () => {
     return (
