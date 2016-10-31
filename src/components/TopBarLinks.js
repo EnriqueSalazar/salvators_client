@@ -22,7 +22,6 @@ class TopBarLinks extends Component {
   }
 
   handleSelect(selectedKey) {
-    console.error("selectedKey",selectedKey)
     this.setState({activeKey: selectedKey});
   }
   NavLink(to,key,text) {
@@ -37,7 +36,7 @@ class TopBarLinks extends Component {
           {this.NavLink("/",0,"Inicio")}
           {this.NavLink("/editgrupos",1,"Items")}
           {this.NavLink("/editdomiciliarios",2,"Domiciliarios")}
-          {this.NavLink("/d",4,"Categorias")}
+          {this.NavLink("/editcategorias",4,"Categorias")}
           {this.NavLink("/editdescuentos",5,"Descuentos")}
           {this.NavLink("/editformaspago",6,"Formas de Pago")}
           {this.NavLink("/h",8,"Usuarios")}

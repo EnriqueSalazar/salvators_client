@@ -11,6 +11,7 @@ import {
 import App from '../containers/App';
 import EditMods from '../containers/EditMods';
 import EditGrupos from '../containers/EditGrupos';
+import EditCategorias from '../containers/EditCategorias';
 import EditItems from '../containers/EditItems';
 import EditFormasPago from '../containers/EditFormasPago';
 import EditDescuentos from '../containers/EditDescuentos';
@@ -26,6 +27,7 @@ const routes = (
     <IndexRoute component={Home}/>
     <Route path="/editmods" component={EditMods}/>
     <Route path="/editgrupos" component={EditGrupos}/>
+    <Route path="/editcategorias" component={EditCategorias}/>
     <Route path="/edititems/:id" component={EditItems}/>
     <Route path="/editformaspago" component={EditFormasPago}/>
     <Route path="/editdescuentos" component={EditDescuentos}/>

@@ -22,6 +22,7 @@ let apiUrl = (model) => {
 
 export let model = {
   grupomenu: apiUrl('grupomenu'),
+  categoriamenu: apiUrl('categoriamenu'),
   itemmenu: apiUrl('itemmenu'),
   itemmod: apiUrl('itemmod'),
   modificador: apiUrl('modificador'),

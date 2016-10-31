@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react';
 const FormasPagoList = props => {
   let formasPago = props.children;
   return (
-    <div style={{height: 400}}>
+    <div >
       <BootstrapTable
         data={formasPago}
         striped

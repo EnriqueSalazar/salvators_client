@@ -17,6 +17,7 @@ import modificadorReducer from './modificadorReducer';
 import submodificadorReducer from './submodificadorReducer';
 import modSubmodReducer from './modSubmodReducer';
 import grupoReducer from './grupoReducer';
+import categoriaReducer from './categoriaReducer';
 import formaPagoReducer from './formaPagoReducer';
 import descuentoReducer from './descuentoReducer';
 import domiciliarioReducer from './domiciliarioReducer';
@@ -36,6 +37,7 @@ const appReducers = combineReducers({
   formaPagoReducer,
   descuentoReducer,
   domiciliarioReducer,
+  categoriaReducer,
   // usuariosReducer,
   // permisosReducer,
   routing: routerReducer,
