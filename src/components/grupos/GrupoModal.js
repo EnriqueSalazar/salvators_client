@@ -59,7 +59,7 @@ let GrupoModal = props => {
             <FormGroup>
               <Grid>
                 <Row className="show-grid">
-                  <Col md={9}>
+                  <Col md={6}>
                     <Field
                       name="nombre"
                       label="Nombre"
@@ -67,24 +67,10 @@ let GrupoModal = props => {
                       component={InputField}
                     />
                   </Col>
-                </Row>
-                <br/>
-                <Row className="show-grid">
-                  <Col md={9}>
+                  <Col md={3}>
                     <Field
-                      name="orden"
-                      label="Orden"
-                      type="text"
-                      component={InputField}
-                    />
-                  </Col>
-                </Row>
-                <br/>
-                <Row className="show-grid">
-                  <Col md={9}>
-                    <Field
-                      name="is_pizza"
-                      label="Pizza"
+                      name="is_inactivo"
+                      label="Inactivo"
                       type="checkbox"
                       component={InputField}
                     />
@@ -92,10 +78,18 @@ let GrupoModal = props => {
                 </Row>
                 <br/>
                 <Row className="show-grid">
-                  <Col md={9}>
+                  <Col md={6}>
                     <Field
-                      name="is_inactivo"
-                      label="Inactivo"
+                      name="orden"
+                      label="Orden"
+                      type="text"
+                      component={InputField}
+                    />
+                  </Col>
+                  <Col md={3}>
+                    <Field
+                      name="is_pizza"
+                      label="Pizza"
                       type="checkbox"
                       component={InputField}
                     />

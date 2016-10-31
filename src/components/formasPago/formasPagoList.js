@@ -4,6 +4,7 @@ const FormasPagoList = props => {
   let formasPago = props.children;
   return (
     <div >
+      <h3>Formas de Pago</h3>
       <BootstrapTable
         data={formasPago}
         striped

@@ -52,7 +52,7 @@ let FormaPagoModal = props => {
             <FormGroup>
               <Grid>
                 <Row className="show-grid">
-                  <Col md={9}>
+                  <Col md={6}>
                     <Field
                       name="nombre"
                       label="Nombre"
@@ -60,10 +60,7 @@ let FormaPagoModal = props => {
                       component={InputField}
                     />
                   </Col>
-                </Row>
-                <br/>
-                <Row className="show-grid">
-                  <Col md={9}>
+                  <Col md={3}>
                     <Field
                       name="is_inactivo"
                       label="Inactivo"

@@ -4,6 +4,8 @@ const DomiciliariosList = props => {
   let domiciliarios = props.children;
   return (
     <div >
+      <h3>Domiciliarios</h3>
+
       <BootstrapTable
         data={domiciliarios}
         striped

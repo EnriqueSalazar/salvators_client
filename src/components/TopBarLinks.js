@@ -1,10 +1,10 @@
 /**
  * Created by enriq on 23/09/16.
  */
-import React, {Component, PropTypes} from 'react';
-import {connect} from 'react-redux';
-import {Nav, NavItem, Navbar, NavDropdown, MenuItem} from 'react-bootstrap';
-import {LinkContainer, IndexLinkContainer} from 'react-router-bootstrap';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { Nav, NavItem, Navbar, NavDropdown, MenuItem } from 'react-bootstrap';
+import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap';
 
 class TopBarLinks extends Component {
 
@@ -24,24 +24,35 @@ class TopBarLinks extends Component {
   handleSelect(selectedKey) {
     this.setState({activeKey: selectedKey});
   }
-  NavLink(to,key,text) {
+
+  NavLink(to, key, text) {
     return (<IndexLinkContainer to={to}>
       <NavItem eventKey={key}>{text}</NavItem>
     </IndexLinkContainer>)
   }
+
+  MenuLink(to, key, text) {
+    return (<IndexLinkContainer to={to}>
+      <MenuItem eventKey={key}>{text}</MenuItem>
+    </IndexLinkContainer>)
+  }
+
   render() {
     return (
       <div>
         <Nav bsStyle="tabs" activeKey={this.state.activeKey} onSelect={this.handleSelect}>
-          {this.NavLink("/",0,"Inicio")}
-          {this.NavLink("/editgrupos",1,"Items")}
-          {this.NavLink("/editdomiciliarios",2,"Domiciliarios")}
-          {this.NavLink("/editcategorias",4,"Categorias")}
-          {this.NavLink("/editdescuentos",5,"Descuentos")}
-          {this.NavLink("/editformaspago",6,"Formas de Pago")}
-          {this.NavLink("/h",8,"Usuarios")}
-          {this.NavLink("/editmods",9,"Configurador")}
-          {this.NavLink("/i",666,"Salir")}
+          {this.NavLink("/", 0, "Inicio")}
+          <NavDropdown eventKey={33} title={'Items'} id="basic-nav-dropdown">
+            {this.NavLink("/editgrupos", 1, "Grupos")}
+            {this.NavLink("/editcategorias", 4, "Categorias")}
+          </NavDropdown> {this.NavLink("/editformaspago", 6, "Formas de Pago")}
+          {this.NavLink("/editdomiciliarios", 2, "Domiciliarios")}
+          {this.NavLink("/editdescuentos", 5, "Descuentos")}
+          {this.NavLink("/h", 8, "Usuarios")}
+          {this.NavLink("/editmods", 9, "Modificadores y Submodificadores")}
+          {this.NavLink("/i", 666, "Salir")}
+        </Nav>
+        <Nav pullRight>
         </Nav>
       </div>
     );

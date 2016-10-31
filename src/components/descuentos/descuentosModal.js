@@ -173,13 +173,15 @@ let formattedMoment =(fecha)=>{
                       }}
                     />
                   </Col>
-                  <Col md={3}>
+                  <Col md={1}>
                     <Field
                       name="is_inactivo"
                       label="Inactivo"
                       type="checkbox"
                       component={InputField}
                     />
+                  </Col>
+                  <Col md={2}>
                     <Field
                       name="is_excluido_bar"
                       label="Excluido Bar"
