@@ -36,11 +36,10 @@ class TopBarLinks extends Component {
         <Nav bsStyle="tabs" activeKey={this.state.activeKey} onSelect={this.handleSelect}>
           {this.NavLink("/",0,"Inicio")}
           {this.NavLink("/editgrupos",1,"Items")}
-          {this.NavLink("/b",2,"Domiciliarios")}
+          {this.NavLink("/editdomiciliarios",2,"Domiciliarios")}
           {this.NavLink("/d",4,"Categorias")}
           {this.NavLink("/editdescuentos",5,"Descuentos")}
           {this.NavLink("/editformaspago",6,"Formas de Pago")}
-          {this.NavLink("/g",7,"Dias Festivos")}
           {this.NavLink("/h",8,"Usuarios")}
           {this.NavLink("/editmods",9,"Configurador")}
           {this.NavLink("/i",666,"Salir")}

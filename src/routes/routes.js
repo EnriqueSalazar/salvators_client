@@ -14,6 +14,7 @@ import EditGrupos from '../containers/EditGrupos';
 import EditItems from '../containers/EditItems';
 import EditFormasPago from '../containers/EditFormasPago';
 import EditDescuentos from '../containers/EditDescuentos';
+import EditDomiciliarios from '../containers/EditDomiciliarios';
 import Home from '../containers/Home';
 // import Users from './src/containers/Users';
 // import Permisos from './src/containers/Permisos';
@@ -28,6 +29,7 @@ const routes = (
     <Route path="/edititems/:id" component={EditItems}/>
     <Route path="/editformaspago" component={EditFormasPago}/>
     <Route path="/editdescuentos" component={EditDescuentos}/>
+    <Route path="/editdomiciliarios" component={EditDomiciliarios}/>
     <Route path="/*" component={Home}/>
   </Route>
 );

@@ -28,5 +28,6 @@ export let model = {
   submodificador: apiUrl('submodificador'),
   modsubmod: apiUrl('modsubmod'),
   formapago: apiUrl('formapago'),
+  domiciliario: apiUrl('domiciliario'),
   descuento: apiUrl('descuento')
 };

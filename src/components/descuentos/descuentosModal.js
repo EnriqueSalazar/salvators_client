@@ -52,13 +52,21 @@ let DescuentoModal = props => {
     )
   };
   let setTipoDescuento = (e) => {
-    initialValues.id_tipo_descuento = parseInt(e.target.value, 10);
+    // initialValues.id_tipo_descuento = parseInt(e.target.value, 10);
+    props.updateDescuento(
+      Object.assign({},
+        initialValues,
+        {
+          id_tipo_descuento : parseInt(e.target.value, 10)
+        }))
   }
-let formattedMoment;
-  if (initialValues.fecha_inicio) {
-    let momentFromCell = moment.utc(initialValues.fecha_inicio, "YYYY-MM-DDTHH:mm:ssZ");
-     formattedMoment = momentFromCell.format('YYYY-MM-DD');
+let formattedMoment =(fecha)=>{
+  if (fecha) {
+    let momentFromCell = moment.utc(fecha, "YYYY-MM-DDTHH:mm:ssZ");
+    return momentFromCell.format('YYYY-MM-DD');
   }
+};
+
 
 
   return (
@@ -105,6 +113,7 @@ let formattedMoment;
                       placeholder="select"
                       name="id_tipo_descuento"
                     >
+                      <option>Seleccione</option>
                       <option value="1">a</option>
                       <option value="2">b</option>
                       <option value="3">c</option>
@@ -131,10 +140,12 @@ let formattedMoment;
                 <br/>
                 <Row className="show-grid">
                   <Col md={3}>
-                    {initialValues.fecha_inicio}
+                    <ControlLabel>
+                      {'Fecha de Inicio'}
+                    </ControlLabel>
                     <DateField
                       dateFormat="YYYY-MM-DD"
-                      defaultValue={formattedMoment}
+                      defaultValue={formattedMoment(initialValues.fecha_inicio)}
                       onChange={(dateString, {dateMoment, timestamp}) => {
                         props.updateDescuento(
                           Object.assign({},
@@ -146,7 +157,21 @@ let formattedMoment;
                     />
                   </Col>
                   <Col md={3}>
-
+                    <ControlLabel>
+                      {'Fecha de Finalizacion'}
+                    </ControlLabel>
+                    <DateField
+                      dateFormat="YYYY-MM-DD"
+                      defaultValue={formattedMoment(initialValues.fecha_fin)}
+                      onChange={(dateString, {dateMoment, timestamp}) => {
+                        props.updateDescuento(
+                          Object.assign({},
+                            initialValues,
+                            {
+                              fecha_fin: dateMoment.format("YYYY-MM-DDTHH:mm:ssZ")
+                            }))
+                      }}
+                    />
                   </Col>
                   <Col md={3}>
                     <Field
