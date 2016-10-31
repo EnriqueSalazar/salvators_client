@@ -6,7 +6,7 @@ import {Provider} from 'react-redux';
 import {Router} from 'react-router';
 import ReduxToastr from 'react-redux-toastr';
 
-import routes from '../../routes';
+import routes from '../routes/routes';
 import DevTools from './DevTools';
 
 export default class Root extends Component {

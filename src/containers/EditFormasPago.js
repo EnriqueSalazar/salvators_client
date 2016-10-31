@@ -1,77 +1,53 @@
-import React, {Component, PropTypes} from 'react';
-import {connect} from 'react-redux';
-import {DragDropContext} from 'react-dnd';
-import HTML5Backend from 'react-dnd-html5-backend';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 import {
-  loadItems,
-  destroyItem,
-  createItem,
-  updateItem,
-} from '../actions/itemActions';
-import {
-  loadGrupos,
-  destroyGrupo,
-  createGrupo,
-  updateGrupo,
-} from '../actions/grupoActions';
+  loadFormasPago,
+  destroyFormaPago,
+  createFormaPago,
+  updateFormaPago,
+} from '../actions/formaPagoActions';
 
-import GruposPanel from '../components/grupos/GruposPanel'
-import GrupoModal from '../components/grupos/GrupoModal'
-import ItemsList from '../components/grupos/ItemsList'
+import FormaPagoModal from '../components/formasPago/formasPagoModal'
+import FormasPagoList from '../components/formasPago/formasPagoList'
 
-import {Grid, Col, Row} from 'react-bootstrap';
+import { Grid, Col, Row, Button, Glyphicon } from 'react-bootstrap';
 
-
-class EditGrupos extends Component {
+class EditFormasPago extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      grupo: {},
-      editingGrupo: false,
-      selectedGrupo: 0
+      formaPago: {},
+      editingFormaPago: false,
     };
   }
 
   componentDidMount() {
-    this.props.loadGrupos();
-    this.props.loadItems();
+    this.props.loadFormasPago();
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.shouldUpdateItems) {
-      this.props.loadItems();
-    }
-    if (nextProps.shouldUpdateGrupos) {
-      this.props.loadGrupos();
-      this.grupoModalOff();
+    if (nextProps.shouldUpdateFormasPago) {
+      this.props.loadFormasPago();
+      this.formaPagoModalOff();
     }
   }
 
-  selectGrupo = (id) => {
-    this.setState({selectedGrupo: id});
-    console.error('selectedGrupo', this.state.selectedGrupo);
-  };
-
-  itemSelect = (item) => {
-    console.error('itemSelect', item);
-  };
-
-  handleUpdateGrupo = (grupo) => {
-    if (grupo.id) {
-      this.props.updateGrupo(grupo.id, grupo);
+  handleUpdateFormaPago = (formaPago) => {
+    if (formaPago.id) {
+      this.props.updateFormaPago(formaPago.id, formaPago);
     } else {
-      this.props.createGrupo(grupo);
+      this.props.createFormaPago(formaPago);
     }
   };
 
-  grupoModalOff = () => {
-    this.setState({editingGrupo: false, grupo: {}});
+  formaPagoModalOff = () => {
+    this.setState({editingFormaPago: false, formaPago: {}});
   };
 
-  updateGrupo = (grupo) =>{
-    this.setState({editingGrupo: true, grupo: grupo});
+  updateFormaPago = (formaPago) => {
+    this.setState({editingFormaPago: true, formaPago: formaPago});
   }
 
   render = () => {
@@ -79,76 +55,60 @@ class EditGrupos extends Component {
       <div>
         <Grid>
           <Row>
-            <Col md={3}>
-              <GruposPanel
-                grupos={this.props.grupos}
-                updateGrupo={this.updateGrupo}
-                selectGrupo={this.selectGrupo}
-                updateItem={this.props.updateItem}
-                selectedGrupo={this.state.selectedGrupo}
-              />
-            </Col>
             <Col md={9}>
-              <ItemsList
-                itemSelect={this.itemSelect}
-                selectedGrupo={this.state.selectedGrupo}
+              <FormasPagoList
+                selectFormaPago={this.updateFormaPago}
               >
-                {this.props.items}
-              </ItemsList>
+                {this.props.formasPago}
+              </FormasPagoList>
             </Col>
           </Row>
+          <Row>
+            <Button
+              onClick={() => this.updateFormaPago({})}
+              bsStyle="primary"
+            >
+              <Glyphicon glyph="plus"/>{' Agregar'}
+            </Button>
+          </Row>
         </Grid>
-        <GrupoModal
-          initialValues={this.state.grupo}
-          grupoSubmit={this.handleUpdateGrupo}
-          isModalActive={this.state.editingGrupo}
-          grupoModalOff={this.grupoModalOff}
-          destroyGrupo={this.props.destroyGrupo}
+        <FormaPagoModal
+          initialValues={this.state.formaPago}
+          formasPagoSubmit={this.handleUpdateFormaPago}
+          isModalActive={this.state.editingFormaPago}
+          formaPagoModalOff={this.formaPagoModalOff}
+          destroyFormaPago={this.props.destroyFormaPago}
         />
       </div>
     );
   };
 }
 
-EditGrupos.propTypes = {
-  loadGrupos: PropTypes.func.isRequired,
-  destroyGrupo: PropTypes.func.isRequired,
-  createGrupo: PropTypes.func.isRequired,
-  updateGrupo: PropTypes.func.isRequired,
-  loadItems: PropTypes.func.isRequired,
-  destroyItem: PropTypes.func.isRequired,
-  createItem: PropTypes.func.isRequired,
-  updateItem: PropTypes.func.isRequired,
-  grupos: PropTypes.array.isRequired,
-  shouldUpdateGrupos: PropTypes.bool.isRequired,
-  items: PropTypes.array.isRequired,
-  item: PropTypes.object.isRequired,
-  shouldUpdateItems: PropTypes.bool.isRequired,
+EditFormasPago.propTypes = {
+  loadFormasPago: PropTypes.func.isRequired,
+  destroyFormaPago: PropTypes.func.isRequired,
+  createFormaPago: PropTypes.func.isRequired,
+  updateFormaPago: PropTypes.func.isRequired,
+  formasPago: PropTypes.array.isRequired,
+  formaPago: PropTypes.object.isRequired,
+  shouldUpdateFormasPago: PropTypes.bool.isRequired,
 };
 
 function mapStateToProps(state) {
   const {
-    grupoReducer,
-    itemReducer,
+    formaPagoReducer,
   } = state;
-  const {grupos, shouldUpdateGrupos} = grupoReducer;
-  const {items, shouldUpdateItems, item} = itemReducer;
+  const {formasPago, shouldUpdateFormasPago, formaPago} = formaPagoReducer;
   return {
-    grupos,
-    shouldUpdateGrupos,
-    items,
-    item,
-    shouldUpdateItems,
+    formasPago,
+    formaPago,
+    shouldUpdateFormasPago,
   };
 }
 
 export default connect(mapStateToProps, {
-  loadItems,
-  destroyItem,
-  createItem,
-  updateItem,
-  loadGrupos,
-  destroyGrupo,
-  createGrupo,
-  updateGrupo,
-})(DragDropContext(HTML5Backend)(EditGrupos));
+  loadFormasPago,
+  destroyFormaPago,
+  createFormaPago,
+  updateFormaPago,
+})(EditFormasPago);

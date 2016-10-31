@@ -27,5 +27,6 @@ export let model = {
   modificador: apiUrl('modificador'),
   submodificador: apiUrl('submodificador'),
   modsubmod: apiUrl('modsubmod'),
-  formapago: apiUrl('formapago')
+  formapago: apiUrl('formapago'),
+  descuento: apiUrl('descuento')
 };

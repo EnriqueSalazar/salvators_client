@@ -1,11 +1,11 @@
 import React, { PropTypes } from 'react';
 
-const FormasPagoList = props => {
-  let formasPago = props.children;
+const DescuentosList = props => {
+  let descuentos = props.children;
   return (
     <div style={{height: 400}}>
       <BootstrapTable
-        data={formasPago}
+        data={descuentos}
         striped
         hover
         pagination
@@ -16,7 +16,7 @@ const FormasPagoList = props => {
           defaultSortOrder: "asc",
           sizePerPage: 5,
           sizePerPageList: [5, 10, 20, 50],
-          onRowClick: props.selectFormaPago,
+          onRowClick: props.selectDescuento,
         }}
       >
         <TableHeaderColumn
@@ -50,6 +50,6 @@ const FormasPagoList = props => {
   );
 };
 
-FormasPagoList.propTypes = {};
+DescuentosList.propTypes = {};
 
-export default FormasPagoList;
+export default DescuentosList;

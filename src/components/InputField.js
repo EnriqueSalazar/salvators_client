@@ -17,7 +17,8 @@ const InputField= ({input, label, type, meta: {touched, error}}) => (
         {...input}
         placeholder={label}
         type={type}
-      />
+      >
+      </FormControl>
       {touched && error && <span>{error}</span>}
     </div>
   </div>

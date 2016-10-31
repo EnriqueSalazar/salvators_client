@@ -19,7 +19,7 @@ import InputField from '../InputField';
 let FormaPagoModal = props => {
   const {
     initialValues,
-    formasPagoubmit,
+    formasPagoSubmit,
     handleSubmit,
     isModalActive,
     formaPagoModalOff
@@ -48,7 +48,7 @@ let FormaPagoModal = props => {
           <Modal.Title>FormaPago</Modal.Title>
         </Modal.Header>
         <Modal.Body style={{textAlign: "center"}}>
-          <form onSubmit={handleSubmit(formasPagoubmit)}>
+          <form onSubmit={handleSubmit(formasPagoSubmit)}>
             <FormGroup>
               <Grid>
                 <Row className="show-grid">
@@ -103,7 +103,7 @@ FormaPagoModal = reduxForm({
 
 FormaPagoModal.propTypes = {
   initialValues: PropTypes.object.isRequired,
-  formasPagoubmit: PropTypes.func.isRequired,
+  formasPagoSubmit: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func,
 };
 

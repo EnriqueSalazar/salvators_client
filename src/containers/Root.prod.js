@@ -6,7 +6,7 @@ import {Router} from 'react-router';
 import {Provider} from 'react-redux';
 import ReduxToastr from 'react-redux-toastr';
 
-import routes from '../../routes';
+import routes from '../routes/routes';
 
 export default class Root extends Component {
   render() {

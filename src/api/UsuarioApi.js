@@ -1,5 +1,5 @@
 import axios from 'axios';
-import API_URL from '../../cfg/';
+import API_URL from '../config/';
 
 class UsuarioApi {
   static getAllUsuarios() {

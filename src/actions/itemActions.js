@@ -1,6 +1,6 @@
 import {toastr} from 'react-redux-toastr';
 import Api from '../api/Api';
-import {model} from '../../cfg/'
+import {model} from '../config/'
 import { browserHistory } from 'react-router';
 
 export const LOAD_ITEMS_SUCCESS = 'LOAD_ITEMS_SUCCESS';

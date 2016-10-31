@@ -8,11 +8,13 @@ import {
 } from 'react-router';
 
 // import Log from './src/containers/Log';
-import App from './src/containers/App';
-import EditMods from './src/containers/EditMods';
-import EditGrupos from './src/containers/EditGrupos';
-import EditItems from './src/containers/EditItems';
-import Home from './src/containers/Home';
+import App from '../containers/App';
+import EditMods from '../containers/EditMods';
+import EditGrupos from '../containers/EditGrupos';
+import EditItems from '../containers/EditItems';
+import EditFormasPago from '../containers/EditFormasPago';
+import EditDescuentos from '../containers/EditDescuentos';
+import Home from '../containers/Home';
 // import Users from './src/containers/Users';
 // import Permisos from './src/containers/Permisos';
 // import Recurrentes from './src/containers/Recurrentes';
@@ -24,6 +26,8 @@ const routes = (
     <Route path="/editmods" component={EditMods}/>
     <Route path="/editgrupos" component={EditGrupos}/>
     <Route path="/edititems/:id" component={EditItems}/>
+    <Route path="/editformaspago" component={EditFormasPago}/>
+    <Route path="/editdescuentos" component={EditDescuentos}/>
     <Route path="/*" component={Home}/>
   </Route>
 );

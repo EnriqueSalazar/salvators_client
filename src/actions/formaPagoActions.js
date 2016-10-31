@@ -1,6 +1,6 @@
 import {toastr} from 'react-redux-toastr';
 import Api from '../api/Api';
-import {model} from '../../cfg/'
+import {model} from '../config/'
 
 export const LOAD_FORMASPAGO_SUCCESS = 'LOAD_FORMASPAGO_SUCCESS';
 export const LOAD_ONE_FORMAPAGO_SUCCESS = 'LOAD_ONE_FORMAPAGO_SUCCESS';
@@ -29,7 +29,7 @@ export function destroyFormasPagouccess(formaPago) {
 
 export function loadFormasPago() {
   return dispatch => {
-    return Api.findAll(model.formaPagomenu).then(formasPago => {
+    return Api.findAll(model.formapago).then(formasPago => {
       dispatch(loadFormasPagoSuccess(formasPago.data));
     }).catch(error => {
       throw(error);
@@ -39,7 +39,7 @@ export function loadFormasPago() {
 
 export function loadOneFormaPago(id) {
   return dispatch => {
-    return Api.findOne(model.formaPagomenu, id).then(formaPago => {
+    return Api.findOne(model.formapago, id).then(formaPago => {
       dispatch(loadOneFormasPagouccess(formaPago.data));
     }).catch(error => {
       throw(error);
@@ -47,9 +47,8 @@ export function loadOneFormaPago(id) {
   };
 }
 export function updateFormaPago(id, payload) {
-  debugger
-  return dispatch => {
-    return Api.update(model.formaPagomenu, id, payload).then((formaPago) => {
+    return dispatch => {
+    return Api.update(model.formapago, id, payload).then((formaPago) => {
       debugger
       dispatch(updateFormasPagouccess(formaPago.data));
     }).catch(error => {
@@ -58,10 +57,8 @@ export function updateFormaPago(id, payload) {
   };
 }
 export function createFormaPago(payload) {
-  debugger
-  return dispatch => {
-    return Api.create(model.formaPagomenu, payload).then((formaPago) => {
-      debugger
+    return dispatch => {
+    return Api.create(model.formapago, payload).then((formaPago) => {
       dispatch(createFormasPagouccess(formaPago.data));
     }).catch(error => {
       throw(error);
@@ -71,7 +68,7 @@ export function createFormaPago(payload) {
 
 export function destroyFormaPago(id) {
   return dispatch => {
-    return Api.destroy(model.formaPagomenu,id).then((formaPago) => {
+    return Api.destroy(model.formapago,id).then((formaPago) => {
       dispatch(destroyFormasPagouccess(formaPago.data));
     }).catch(error => {
       throw(error);

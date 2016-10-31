@@ -1,6 +1,6 @@
 import { toastr } from 'react-redux-toastr';
 import Api from '../api/Api';
-import { model } from '../../cfg/'
+import { model } from '../config/'
 
 export const LOAD_MODSUBMODS_SUCCESS = 'LOAD_MODSUBMODS_SUCCESS';
 export const CREATE_MODSUBMOD_SUCCESS = 'CREATE_MODSUBMOD_SUCCESS';

@@ -18,9 +18,7 @@ import './node_modules/bootstrap/dist/css/bootstrap.css';
 import './node_modules/react-bootstrap-table/dist/react-bootstrap-table.js';
 import './node_modules/react-redux-toastr/lib/css/react-redux-toastr.css';
 import './src/styles/styles.css';
-// import 'ag-grid-root/dist/styles/ag-grid.css';
-// import 'ag-grid-root/dist/styles/theme-bootstrap.css';
-// import 'ag-grid-root/dist/styles/theme-dark.css';
+import 'react-date-picker/index.css'
 
 import Root from './src/containers/Root';
 import configureStore from './src/store/configureStore';

@@ -1,6 +1,6 @@
 import {toastr} from 'react-redux-toastr';
 import Api from '../api/Api';
-import {model} from '../../cfg/'
+import {model} from '../config/'
 
 export const LOAD_SUBMODIFICADORES_SUCCESS = 'LOAD_SUBMODIFICADORES_SUCCESS';
 export const LOAD_ONE_SUBMODIFICADOR_SUCCESS = 'LOAD_ONE_SUBMODIFICADOR_SUCCESS';
