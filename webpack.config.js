@@ -3,7 +3,7 @@
 let path = require('path')
 let webpack = require('webpack')
 let HtmlWebpackPlugin = require('html-webpack-plugin');
-
+let BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 console.info('Loading webpack.config');
 console.info('Server environment', process.env.NODE_ENV);
 
@@ -35,6 +35,7 @@ module.exports = {
         'NODE_ENV': JSON.stringify('development')
       }
     }),
+    new BundleAnalyzerPlugin()
   ],
   module: {
     loaders: [
