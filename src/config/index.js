@@ -31,6 +31,10 @@ export let model = {
   formapago: apiUrl('formapago'),
   domiciliario: apiUrl('domiciliario'),
   cliente: apiUrl('cliente'),
+  pedidos: apiUrl('pedidos'),
+  pedidoitem: apiUrl('pedidoitem'),
+  pedidoitemparte: apiUrl('pedidoitemparte'),
+  estado: apiUrl('estado'),
   direccion: apiUrl('direccion'),
   descuento: apiUrl('descuento')
 };

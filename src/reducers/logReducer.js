@@ -1,7 +1,6 @@
 
 import {
   LOAD_LOG_SUCCESS,
-
 } from '../actions/logActions';
 
 export default function logReducer(state = {

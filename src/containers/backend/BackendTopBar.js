@@ -3,7 +3,7 @@
  */
 import React, {Component} from 'react';
 import {Navbar} from 'react-bootstrap';
-import TopBarLinks from '../components/TopBarLinks'
+import TopBarLinks from '../../components/BETopBarLinks'
 
 class TopBar extends Component {
 

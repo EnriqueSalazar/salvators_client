@@ -8,17 +8,17 @@ import {
   destroyItem,
   createItem,
   updateItem,
-} from '../actions/itemActions';
+} from '../../actions/itemActions';
 import {
   loadGrupos,
   destroyGrupo,
   createGrupo,
   updateGrupo,
-} from '../actions/grupoActions';
+} from '../../actions/grupoActions';
 
-import GruposPanel from '../components/grupos/GruposPanel'
-import GrupoModal from '../components/grupos/GrupoModal'
-import ItemsList from '../components/grupos/ItemsList'
+import GruposPanel from '../../components/grupos/GruposPanel'
+import GrupoModal from '../../components/grupos/GrupoModal'
+import ItemsList from '../../components/grupos/ItemsList'
 
 import {Grid, Col, Row} from 'react-bootstrap';
 

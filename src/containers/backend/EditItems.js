@@ -7,22 +7,22 @@ import {
   destroyItem,
   createItem,
   updateItem,
-} from '../actions/itemActions';
+} from '../../actions/itemActions';
 import {
   loadModificadores,
   destroyModificador,
   createModificador,
   updateModificador,
-} from '../actions/modificadorActions';
+} from '../../actions/modificadorActions';
 import {
   loadItemMods,
   destroyItemMod,
   createItemMod,
   updateItemMod,
-} from '../actions/itemModActions';
+} from '../../actions/itemModActions';
 import _ from 'lodash';
-import Modificadores from '../components/items/Modificadores'
-import Item from '../components/items/Item'
+import Modificadores from '../../components/items/Modificadores'
+import Item from '../../components/items/Item'
 import { browserHistory } from 'react-router';
 import { Grid, Col, Row } from 'react-bootstrap';
 import {

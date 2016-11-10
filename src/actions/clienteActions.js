@@ -29,7 +29,7 @@ export function destroyClienteSuccess(cliente) {
 
 export function loadClientes() {
   return dispatch => {
-    return Api.findAll(model.clientemenu).then(clientes => {
+    return Api.findAll(model.cliente).then(clientes => {
       dispatch(loadClientesSuccess(clientes.data));
     }).catch(error => {
       throw(error);
@@ -39,7 +39,7 @@ export function loadClientes() {
 
 export function loadOneCliente(id) {
   return dispatch => {
-    return Api.findOne(model.clientemenu, id).then(cliente => {
+    return Api.findOne(model.cliente, id).then(cliente => {
       dispatch(loadOneClienteSuccess(cliente.data));
     }).catch(error => {
       throw(error);
@@ -49,7 +49,7 @@ export function loadOneCliente(id) {
 export function updateCliente(id, payload) {
   debugger
   return dispatch => {
-    return Api.update(model.clientemenu, id, payload).then((cliente) => {
+    return Api.update(model.cliente, id, payload).then((cliente) => {
       debugger
       dispatch(updateClienteSuccess(cliente.data));
     }).catch(error => {
@@ -60,7 +60,7 @@ export function updateCliente(id, payload) {
 export function createCliente(payload) {
   debugger
   return dispatch => {
-    return Api.create(model.clientemenu, payload).then((cliente) => {
+    return Api.create(model.cliente, payload).then((cliente) => {
       debugger
       dispatch(createClienteSuccess(cliente.data));
     }).catch(error => {
@@ -71,7 +71,7 @@ export function createCliente(payload) {
 
 export function destroyCliente(id) {
   return dispatch => {
-    return Api.destroy(model.clientemenu,id).then((cliente) => {
+    return Api.destroy(model.cliente,id).then((cliente) => {
       dispatch(destroyClienteSuccess(cliente.data));
     }).catch(error => {
       throw(error);

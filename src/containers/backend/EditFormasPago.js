@@ -6,10 +6,10 @@ import {
   destroyFormaPago,
   createFormaPago,
   updateFormaPago,
-} from '../actions/formaPagoActions';
+} from '../../actions/formaPagoActions';
 
-import FormaPagoModal from '../components/formasPago/formasPagoModal'
-import FormasPagoList from '../components/formasPago/formasPagoList'
+import FormaPagoModal from '../../components/formasPago/formasPagoModal'
+import FormasPagoList from '../../components/formasPago/formasPagoList'
 
 import { Grid, Col, Row, Button, Glyphicon } from 'react-bootstrap';
 

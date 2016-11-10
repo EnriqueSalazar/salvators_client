@@ -18,6 +18,7 @@ class Home extends Component {
           <Col md={12}>
             <Jumbotron>
               <h1>Salvator's</h1>
+              <h1>{"B a c k e n d"}</h1>
             </Jumbotron>
 
           </Col>

@@ -8,17 +8,17 @@ import {
   destroyItem,
   createItem,
   updateItem,
-} from '../actions/itemActions';
+} from '../../actions/itemActions';
 import {
   loadCategorias,
   destroyCategoria,
   createCategoria,
   updateCategoria,
-} from '../actions/categoriaActions';
+} from '../../actions/categoriaActions';
 
-import CategoriasPanel from '../components/categorias/CategoriasPanel'
-import CategoriaModal from '../components/categorias/CategoriaModal'
-import ItemsList from '../components/categorias/ItemsList'
+import CategoriasPanel from '../../components/categorias/CategoriasPanel'
+import CategoriaModal from '../../components/categorias/CategoriaModal'
+import ItemsList from '../../components/categorias/ItemsList'
 
 import {Grid, Col, Row} from 'react-bootstrap';
 

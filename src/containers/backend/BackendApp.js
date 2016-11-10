@@ -1,9 +1,9 @@
 import React, {Component, PropTypes} from 'react';
 
 import 'react-datepicker/dist/react-datepicker.css';
-import TopBar from './TopBar'
+import BackendTopBar from './BackendTopBar'
 
-class App extends Component {
+class BackendApp extends Component {
   constructor(props) {
     super(props);
   }
@@ -11,7 +11,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <TopBar/>
+        <BackendTopBar/>
         <div>
         </div>
         <div style={{marginTop: '1.5em'}}>   {this.props.children}</div>
@@ -21,8 +21,8 @@ class App extends Component {
   }
 }
 
-App.propTypes = {
+BackendApp.propTypes = {
   children: PropTypes.object.isRequired
 };
 
-export default App;
+export default BackendApp;

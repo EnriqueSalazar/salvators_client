@@ -6,10 +6,10 @@ import {
   destroyDescuento,
   createDescuento,
   updateDescuento,
-} from '../actions/descuentoActions';
+} from '../../actions/descuentoActions';
 
-import DescuentoModal from '../components/descuentos/descuentosModal'
-import DescuentosList from '../components/descuentos/descuentosList'
+import DescuentoModal from '../../components/descuentos/descuentosModal'
+import DescuentosList from '../../components/descuentos/descuentosList'
 
 import { Grid, Col, Row, Button, Glyphicon } from 'react-bootstrap';
 

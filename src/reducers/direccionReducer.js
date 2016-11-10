@@ -1,6 +1,6 @@
 
 import {
-  LOAD_DIRECCIONS_SUCCESS,
+  LOAD_DIRECCIONES_SUCCESS,
   LOAD_ONE_DIRECCION_SUCCESS,
   CREATE_DIRECCION_SUCCESS,
   UPDATE_DIRECCION_SUCCESS,
@@ -8,8 +8,8 @@ import {
 } from '../actions/direccionActions';
 
 export default function direccionReducer(state = {
-  direccions: [],
-  shouldUpdateDireccions: false,
+  direcciones: [],
+  shouldUpdateDirecciones: false,
   direccion:{}
 }, action) {
   switch (action.type) {
@@ -18,15 +18,15 @@ export default function direccionReducer(state = {
     case UPDATE_DIRECCION_SUCCESS:
       return Object.assign({}, state,
         {direccion:action.direccion,
-          shouldUpdateDireccions: true});
+          shouldUpdateDirecciones: true});
     case LOAD_ONE_DIRECCION_SUCCESS:
       return Object.assign({}, state,
         {direccion: action.direccion,
-          shouldUpdateDireccions: false});
-    case LOAD_DIRECCIONS_SUCCESS:
+          shouldUpdateDirecciones: false});
+    case LOAD_DIRECCIONES_SUCCESS:
       return Object.assign({}, state,
-        {direccions: action.direccions,
-          shouldUpdateDireccions: false});
+        {direcciones: action.direcciones,
+          shouldUpdateDirecciones: false});
     default:
       return state;
   }

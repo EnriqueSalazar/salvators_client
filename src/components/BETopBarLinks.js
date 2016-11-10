@@ -41,16 +41,17 @@ class TopBarLinks extends Component {
     return (
       <div>
         <Nav bsStyle="tabs" activeKey={this.state.activeKey} onSelect={this.handleSelect}>
-          {this.NavLink("/", 0, "Inicio")}
-          <NavDropdown eventKey={33} title={'Items'} id="basic-nav-dropdown">
-            {this.NavLink("/editgrupos", 1, "Grupos")}
-            {this.NavLink("/editcategorias", 4, "Categorias")}
-          </NavDropdown> {this.NavLink("/editformaspago", 6, "Formas de Pago")}
-          {this.NavLink("/editdomiciliarios", 2, "Domiciliarios")}
-          {this.NavLink("/editdescuentos", 5, "Descuentos")}
-          {this.NavLink("/h", 8, "Usuarios")}
-          {this.NavLink("/editmods", 9, "Modificadores y Submodificadores")}
-          {this.NavLink("/i", 666, "Salir")}
+          {this.NavLink("/backend", 0, "Inicio")}
+          <NavDropdown eventKey="33" title={'Items'} id="basic-nav-dropdown">
+            {this.MenuLink("/backend/editgrupos", 1, "Grupos")}
+            {this.MenuLink("/backend/editcategorias", 4, "Categorias")}
+          </NavDropdown>
+          {this.NavLink("/backend/editformaspago", 6, "Formas de Pago")}
+          {this.NavLink("/backend/editdomiciliarios", 2, "Domiciliarios")}
+          {this.NavLink("/backend/editdescuentos", 5, "Descuentos")}
+          {this.NavLink("/backend/h", 8, "Usuarios")}
+          {this.NavLink("/backend/editmods", 9, "Modificadores y Submodificadores")}
+          {this.NavLink("/backend/i", 666, "Salir")}
         </Nav>
         <Nav pullRight>
         </Nav>

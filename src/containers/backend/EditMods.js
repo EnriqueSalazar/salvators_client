@@ -7,23 +7,23 @@ import {
   destroyModificador,
   createModificador,
   updateModificador,
-} from '../actions/modificadorActions';
+} from '../../actions/modificadorActions';
 import {
   loadSubmodificadores,
   destroySubmodificador,
   createSubmodificador,
   updateSubmodificador,
-} from '../actions/submodificadorActions';
+} from '../../actions/submodificadorActions';
 import {
   loadModSubmods,
   destroyModSubmod,
   createModSubmod,
   updateModSubmod,
-} from '../actions/modSubmodActions';
+} from '../../actions/modSubmodActions';
 
-import RightPanel from '../components/modificadores/RightPanel'
-import LeftPanel from '../components/modificadores/LeftPanel'
-import SubmodModal from '../components/modificadores/SubmodModal'
+import RightPanel from '../../components/modificadores/RightPanel'
+import LeftPanel from '../../components/modificadores/LeftPanel'
+import SubmodModal from '../../components/modificadores/SubmodModal'
 
 import { Grid, Col, Row } from 'react-bootstrap';
 

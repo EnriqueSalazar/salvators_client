@@ -2,14 +2,14 @@ import {toastr} from 'react-redux-toastr';
 import Api from '../api/Api';
 import {model} from '../config/'
 
-export const LOAD_DIRECCIONS_SUCCESS = 'LOAD_DIRECCIONS_SUCCESS';
+export const LOAD_DIRECCIONES_SUCCESS = 'LOAD_DIRECCIONES_SUCCESS';
 export const LOAD_ONE_DIRECCION_SUCCESS = 'LOAD_ONE_DIRECCION_SUCCESS';
 export const CREATE_DIRECCION_SUCCESS = 'CREATE_DIRECCION_SUCCESS';
 export const UPDATE_DIRECCION_SUCCESS = 'UPDATE_DIRECCION_SUCCESS';
 export const DESTROY_DIRECCION_SUCCESS = 'DESTROY_DIRECCION_SUCCESS';
 
-export function loadDireccionsSuccess(direccions) {
-  return {type: LOAD_DIRECCIONS_SUCCESS, direccions};
+export function loadDireccionesSuccess(direcciones) {
+  return {type: LOAD_DIRECCIONES_SUCCESS, direcciones};
 }
 export function loadOneDireccionSuccess(direccion) {
   return {type: LOAD_ONE_DIRECCION_SUCCESS, direccion};
@@ -27,10 +27,10 @@ export function destroyDireccionSuccess(direccion) {
   return {type: DESTROY_DIRECCION_SUCCESS, direccion:{}};
 }
 
-export function loadDireccions() {
+export function loadDirecciones() {
   return dispatch => {
-    return Api.findAll(model.direccionmenu).then(direccions => {
-      dispatch(loadDireccionsSuccess(direccions.data));
+    return Api.findAll(model.direccion).then(direcciones => {
+      dispatch(loadDireccionesSuccess(direcciones.data));
     }).catch(error => {
       throw(error);
     });
@@ -39,7 +39,7 @@ export function loadDireccions() {
 
 export function loadOneDireccion(id) {
   return dispatch => {
-    return Api.findOne(model.direccionmenu, id).then(direccion => {
+    return Api.findOne(model.direccion, id).then(direccion => {
       dispatch(loadOneDireccionSuccess(direccion.data));
     }).catch(error => {
       throw(error);
@@ -49,7 +49,7 @@ export function loadOneDireccion(id) {
 export function updateDireccion(id, payload) {
   debugger
   return dispatch => {
-    return Api.update(model.direccionmenu, id, payload).then((direccion) => {
+    return Api.update(model.direccion, id, payload).then((direccion) => {
       debugger
       dispatch(updateDireccionSuccess(direccion.data));
     }).catch(error => {
@@ -60,7 +60,7 @@ export function updateDireccion(id, payload) {
 export function createDireccion(payload) {
   debugger
   return dispatch => {
-    return Api.create(model.direccionmenu, payload).then((direccion) => {
+    return Api.create(model.direccion, payload).then((direccion) => {
       debugger
       dispatch(createDireccionSuccess(direccion.data));
     }).catch(error => {
@@ -71,7 +71,7 @@ export function createDireccion(payload) {
 
 export function destroyDireccion(id) {
   return dispatch => {
-    return Api.destroy(model.direccionmenu,id).then((direccion) => {
+    return Api.destroy(model.direccion,id).then((direccion) => {
       dispatch(destroyDireccionSuccess(direccion.data));
     }).catch(error => {
       throw(error);

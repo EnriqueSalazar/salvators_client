@@ -7,18 +7,18 @@ import {Router} from 'react-router';
 import ReduxToastr from 'react-redux-toastr';
 
 import routes from '../routes/routes';
-import DevTools from './DevTools';
+// import DevTools from './DevTools'
 
 export default class Root extends Component {
   render() {
-    const {store, history} = this.props;
+    const {store, history} = this.props
     return (
       <Provider store={store}>
         <div>
           <Router history={history}>
             {routes}
           </Router>
-          <DevTools />
+          {/*<DevTools />*/}
           <ReduxToastr
             timeOut={3000}
             newestOnTop={true}

@@ -6,10 +6,10 @@ import {
   destroyDomiciliario,
   createDomiciliario,
   updateDomiciliario,
-} from '../actions/domiciliarioActions';
+} from '../../actions/domiciliarioActions';
 
-import DomiciliarioModal from '../components/domiciliarios/domiciliariosModal'
-import DomiciliariosList from '../components/domiciliarios/domiciliariosList'
+import DomiciliarioModal from '../../components/domiciliarios/domiciliariosModal'
+import DomiciliariosList from '../../components/domiciliarios/domiciliariosList'
 
 import { Grid, Col, Row, Button, Glyphicon } from 'react-bootstrap';
 

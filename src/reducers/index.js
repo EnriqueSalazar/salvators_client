@@ -21,6 +21,10 @@ import categoriaReducer from './categoriaReducer';
 import formaPagoReducer from './formaPagoReducer';
 import descuentoReducer from './descuentoReducer';
 import domiciliarioReducer from './domiciliarioReducer';
+import estadoReducer from './estadoReducer';
+import pedidoReducer from './pedidoReducer';
+import pedidoItemReducer from './pedidoItemReducer';
+import pedidoItemParteReducer from './pedidoItemParteReducer';
 import clienteReducer from './clienteReducer';
 import direccionReducer from './direccionReducer';
 import itemReducer from './itemReducer';
@@ -42,6 +46,10 @@ const appReducers = combineReducers({
   categoriaReducer,
   clienteReducer,
   direccionReducer,
+  estadoReducer,
+  pedidoReducer,
+  pedidoItemReducer,
+  pedidoItemParteReducer,
   // usuariosReducer,
   // permisosReducer,
   routing: routerReducer,
