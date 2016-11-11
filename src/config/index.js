@@ -36,5 +36,7 @@ export let model = {
   pedidoitemparte: apiUrl('pedidoitemparte'),
   estado: apiUrl('estado'),
   direccion: apiUrl('direccion'),
-  descuento: apiUrl('descuento')
+  descuento: apiUrl('descuento'),
+  ciudad: apiUrl('ciudad'),
+  restaurante: apiUrl('restaurante')
 };

@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import _ from 'lodash';
 
 const DireccionesList = props => {
   let direcciones = props.children;
@@ -16,7 +15,6 @@ const DireccionesList = props => {
     debugger
     // props.destroyDireccion(direccion);
   }
-
   return (
     <div >
       <h3>Direcciones</h3>
@@ -35,10 +33,11 @@ const DireccionesList = props => {
           insertText: 'Nuevo',
           afterInsertRow: handleInsertRow,
           deleteText: 'Eliminar',
-          afterDeleteRow: handleDeleteRow
+          afterDeleteRow: props.handleDestroyDireccion
         }}
         insertRow={true}
         deleteRow={true}
+        selectRow={selectRowProp}
       >
         <TableHeaderColumn
           dataField="id"

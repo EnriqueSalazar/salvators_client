@@ -3,14 +3,25 @@ import React, { PropTypes } from 'react';
 const ClientesList = props => {
   let clientes = props.children;
   let handleInsertRow = (cliente) => {
-    cliente.cedula=parseInt(cliente.cedula,10);
-    cliente.telefono=parseInt(cliente.telefono,10);
+    cliente.cedula = parseInt(cliente.cedula, 10);
+    cliente.telefono = parseInt(cliente.telefono, 10);
+    cliente.id_ciudad = props.ciudad.id
     delete cliente.id;
     props.createCliente(cliente);
   }
-  let handleDeleteRow = (cliente) => {
-    // props.destroyCliente(cliente);
+
+  let ciudadFormatter = (cell, row) => {
+    if (cell) {
+      let ciudad = props.ciudades.find((ciudad) => {
+        return ciudad.id == cell;
+      });
+      return ciudad.nombre;
+    }
   }
+  let selectRowProp = {
+    mode: "radio",
+    clickToSelect: true
+  };
   return (
     <div >
       <h3>Clientes</h3>
@@ -31,10 +42,12 @@ const ClientesList = props => {
           insertText: 'Nuevo',
           afterInsertRow: handleInsertRow,
           deleteText: 'Eliminar',
-          afterDeleteRow: handleDeleteRow
+          afterDeleteRow: props.handleDestroyCliente
         }}
-        insertRow={true}
-        deleteRow={true}      >
+        insertRow={!_.isEmpty(props.ciudad)}
+        deleteRow={true}
+        selectRow={selectRowProp}
+      >
         <TableHeaderColumn
           dataField="id"
           isKey
@@ -62,6 +75,14 @@ const ClientesList = props => {
           dataAlign="center"
         >
           Telefono
+        </TableHeaderColumn>
+        <TableHeaderColumn
+          dataField="id_ciudad"
+          dataAlign="center"
+          dataFormat={ciudadFormatter}
+          hiddenOnInsert
+        >
+          Ciudad
         </TableHeaderColumn>
       </BootstrapTable>
     </div>

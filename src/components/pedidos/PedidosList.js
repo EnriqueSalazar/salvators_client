@@ -2,7 +2,7 @@ import React, {Component, PropTypes} from 'react';
 
 const PedidosList = props => {
   let pedidos = props.children;
-  const width = 150;
+  const width = '150';
   return (
     <div>
       <BootstrapTable

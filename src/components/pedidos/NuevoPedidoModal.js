@@ -16,6 +16,7 @@ import {
 } from 'react-bootstrap';
 import ClientesList from './ClientesList'
 import DireccionesList from './DireccionesList'
+import CiudadesList from './CiudadesList'
 import _ from 'lodash';
 
 let NuevoPedidoModal = props => {
@@ -24,22 +25,25 @@ let NuevoPedidoModal = props => {
     nuevoPedidoModalOff,
     cliente,
     selectDireccion,
-    destroyDireccion,
     createDireccion,
     direcciones,
     direccion,
     selectCliente,
-    destroyCliente,
     createCliente,
     optionsModalOn,
-    clientes
+    clientes,
+    ciudades,
+    selectCiudad,
+    ciudad,
+    handleDestroyCliente,
+    handleDestroyDireccion
   }= props;
   let renderDireccionesList = () => {
     if (!_.isEmpty(cliente)) {
       return (
         <DireccionesList
           selectDireccion={selectDireccion}
-          destroyDireccion={destroyDireccion}
+          handleDestroyDireccion={handleDestroyDireccion}
           createDireccion={createDireccion}
           cliente={cliente}
         >
@@ -48,7 +52,7 @@ let NuevoPedidoModal = props => {
     }
   }
   let renderSiguienteButton = () => {
-    if (!_.isEmpty(direccion)) {
+    if (!_.isEmpty(direccion) && !_.isEmpty(ciudad)) {
       return (
         <Button
           bsSize="large"
@@ -60,7 +64,21 @@ let NuevoPedidoModal = props => {
         </Button>
       )
     }
-
+  }
+  let renderClientesList = ()=>{
+    if (!_.isEmpty(ciudad)){
+      return (
+        <ClientesList
+          selectCliente={selectCliente}
+          createCliente={createCliente}
+          ciudad={ciudad}
+          ciudades={ciudades}
+          handleDestroyCliente={handleDestroyCliente}
+        >
+          {clientes}
+        </ClientesList>
+      )
+    }
   }
   return (
     <div>
@@ -70,22 +88,22 @@ let NuevoPedidoModal = props => {
         //onHide={() => nuevoPedidoModalOff()}
       >
         <Modal.Body style={{textAlign: "center"}}>
-          <Well>
-            <h3>
 
+          <Well>
+
+            <h3>
               <div style={{
                 textAlign: 'left',
               }}>
-                <Grid>
-
+                <Grid fluid>
                   <Row>
-                    <Col md={5}>
+                    <Col md={6}>
                       <strong>
                         Nombre:
                       </strong>
                       {' ' + cliente.nombre}<br />
                     </Col>
-                    <Col md={5}>
+                    <Col md={6}>
                       <strong>
                         Cedula:
                       </strong>
@@ -93,14 +111,14 @@ let NuevoPedidoModal = props => {
                     </Col>
                   </Row>
                   <Row>
-                    <Col md={5}>
+                    <Col md={6}>
                       <strong>
                         Telefono:
                       </strong>
                       {' ' + cliente.telefono}<br />
 
                     </Col>
-                    <Col md={5}>
+                    <Col md={6}>
                       <strong>
                         Direccion:
                       </strong>
@@ -112,13 +130,13 @@ let NuevoPedidoModal = props => {
               </div>
             </h3>
           </Well>
-          <ClientesList
-            selectCliente={selectCliente}
-            destroyCliente={destroyCliente}
-            createCliente={createCliente}
+          <CiudadesList
+            selectCiudad={selectCiudad}
+            ciudad={ciudad}
           >
-            {clientes}
-          </ClientesList>
+            {ciudades}
+          </CiudadesList>
+          {renderClientesList()}
           {renderDireccionesList()}
           {renderSiguienteButton()}
         </Modal.Body>

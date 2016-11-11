@@ -47,10 +47,8 @@ export function loadOneCliente(id) {
   };
 }
 export function updateCliente(id, payload) {
-  debugger
   return dispatch => {
     return Api.update(model.cliente, id, payload).then((cliente) => {
-      debugger
       dispatch(updateClienteSuccess(cliente.data));
     }).catch(error => {
       throw(error);
@@ -58,10 +56,8 @@ export function updateCliente(id, payload) {
   };
 }
 export function createCliente(payload) {
-  debugger
   return dispatch => {
     return Api.create(model.cliente, payload).then((cliente) => {
-      debugger
       dispatch(createClienteSuccess(cliente.data));
     }).catch(error => {
       throw(error);
@@ -70,6 +66,7 @@ export function createCliente(payload) {
 }
 
 export function destroyCliente(id) {
+  debugger
   return dispatch => {
     return Api.destroy(model.cliente,id).then((cliente) => {
       dispatch(destroyClienteSuccess(cliente.data));

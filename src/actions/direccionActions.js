@@ -47,10 +47,8 @@ export function loadOneDireccion(id) {
   };
 }
 export function updateDireccion(id, payload) {
-  debugger
   return dispatch => {
     return Api.update(model.direccion, id, payload).then((direccion) => {
-      debugger
       dispatch(updateDireccionSuccess(direccion.data));
     }).catch(error => {
       throw(error);
@@ -58,10 +56,8 @@ export function updateDireccion(id, payload) {
   };
 }
 export function createDireccion(payload) {
-  debugger
   return dispatch => {
     return Api.create(model.direccion, payload).then((direccion) => {
-      debugger
       dispatch(createDireccionSuccess(direccion.data));
     }).catch(error => {
       throw(error);

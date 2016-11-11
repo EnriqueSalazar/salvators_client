@@ -21,7 +21,9 @@ let OptionsModal = props => {
     isOptionsModalActive,
     optionsModalOff,
     cliente,
-    direccion
+    direccion,
+    ciudad,
+    restauranteModalOn
   }= props;
 
   return (
@@ -52,10 +54,14 @@ let OptionsModal = props => {
                     Direccion:
                   </strong>
                   {' ' + direccion.direccion}<br />
+                <strong>
+                    Ciudad:
+                  </strong>
+                  {' ' + ciudad.nombre}
                 </Col>
                 <Col md={4}>
                   <Button
-                    //onClick={() => this.props.updateOptions({})}
+                    onClick={() => restauranteModalOn()}
                     bsStyle="success"
                     block
                     style={{
@@ -67,7 +73,7 @@ let OptionsModal = props => {
                 </Col>
                 <Col md={4}>
                   <Button
-                    //onClick={() => this.props.updateOptions({})}
+                    //onClick={() => restauranteModalOn()}
                     bsStyle="info"
                     block
                     style={{
