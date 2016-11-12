@@ -16,6 +16,7 @@ import EditFormasPago from '../containers/backend/EditFormasPago';
 import EditDescuentos from '../containers/backend/EditDescuentos';
 import EditRestaurantes from '../containers/backend/EditRestaurantes';
 import EditDomiciliarios from '../containers/backend/EditDomiciliarios';
+import EditEstados from '../containers/backend/EditEstados';
 import BackendApp from '../containers/backend/BackendApp';
 import BackendHome from '../containers/backend/BackendHome';
 import FrontendApp from '../containers/frontend/FrontendApp';
@@ -33,6 +34,7 @@ const routes = (<div>
         <Route path="editgrupos" component={EditGrupos}/>
         <Route path="editcategorias" component={EditCategorias}/>
         <Route path="editdomiciliarios" component={EditDomiciliarios}/>
+        <Route path="editestados" component={EditEstados}/>
         <Route path="edititems/:id" component={EditItems}/>
         <Route path="editformaspago" component={EditFormasPago}/>
         <Route path="editdescuentos" component={EditDescuentos}/>

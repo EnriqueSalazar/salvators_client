@@ -27,6 +27,7 @@ let RestauranteModal = props => {
     restaurantes,
     direccion,
     ciudad,
+    submitInitialPedido
   }= props;
 
   let renderSiguienteButton = () => {
@@ -36,7 +37,7 @@ let RestauranteModal = props => {
           bsSize="large"
           bsStyle="primary"
           block
-          //onClick={() => optionsModalOn()}
+          onClick={() => submitInitialPedido(cliente,direccion,restaurante)}
         >
           Continuar
         </Button>

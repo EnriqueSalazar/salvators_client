@@ -48,9 +48,11 @@ class TopBarLinks extends Component {
           </NavDropdown>
           {this.NavLink("/backend/editformaspago", 6, "Formas de Pago")}
           {this.NavLink("/backend/editdomiciliarios", 2, "Domiciliarios")}
+          {this.NavLink("/backend/editestados", 3, "Estados")}
           {this.NavLink("/backend/editdescuentos", 5, "Descuentos")}
           {this.NavLink("/backend/h", 8, "Usuarios")}
           {this.NavLink("/backend/editmods", 9, "Modificadores y Submodificadores")}
+          {this.NavLink("/backend/editrestaurantes", 10, "Restaurantes")}
           {this.NavLink("/backend/i", 666, "Salir")}
         </Nav>
         <Nav pullRight>
@@ -58,7 +60,6 @@ class TopBarLinks extends Component {
       </div>
     );
   }
-
 }
 
 TopBarLinks.propTypes = {};

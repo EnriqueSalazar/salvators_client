@@ -25,14 +25,27 @@ import {
 import {
   loadCiudades,
 } from '../../actions/ciudadActions';
+import {
+  loadEstados,
+} from '../../actions/estadoActions';
 
-import PedidosList from '../../components/pedidos/PedidosList'
-import OptionsModal from '../../components/pedidos/OptionsModal'
-import NuevoPedidoModal from '../../components/pedidos/NuevoPedidoModal'
-import RestauranteModal from '../../components/pedidos/RestauranteModal'
+import PedidosNavBar
+  from '../../components/pedidos/PedidosNavBar'
+import PedidosList
+  from '../../components/pedidos/PedidosList'
+import OptionsModal
+  from '../../components/pedidos/OptionsModal'
+import NuevoPedidoModal
+  from '../../components/pedidos/NuevoPedidoModal'
+import RestauranteModal
+  from '../../components/pedidos/RestauranteModal'
 
-import { Grid, Col, Row } from 'react-bootstrap';
+import {
+  Button,
+  Glyphicon
+} from 'react-bootstrap';
 import _ from 'lodash';
+import moment from 'moment';
 
 class PedidosStatus extends Component {
 
@@ -48,7 +61,8 @@ class PedidosStatus extends Component {
       direcciones: [],
       ciudad: {},
       restaurantes: [],
-      restaurante: {}
+      restaurante: {},
+      pedidos: []
     };
   }
 
@@ -67,17 +81,39 @@ class PedidosStatus extends Component {
     if (nextProps.shouldUpdateClientes) {
       this.props.loadClientes();
     } else {
-      this.filterClientes(this.state.ciudad, nextProps.clientes);
+      this.filterClientes(
+        this.state.ciudad,
+        nextProps.clientes
+      );
     }
     if (nextProps.shouldUpdateRestaurantes) {
       this.props.loadRestaurantes();
     } else {
-      this.filterRestaurantes(this.state.ciudad, nextProps.restaurantes);
+      this.filterRestaurantes(
+        this.state.ciudad,
+        nextProps.restaurantes
+      );
+    }
+    if (nextProps.shouldUpdatePedidos) {
+      this.props.loadPedidos();
+    } else {
+      _.isEmpty(this.state.restaurante) ?
+        this.filterPedidosCiudad(
+          this.state.ciudad,
+          nextProps.pedidos
+        ) :
+        this.filterPedidosRestaurante(
+          this.state.restaurante,
+          nextProps.pedidos
+        );
     }
     if (nextProps.shouldUpdateDirecciones) {
       this.props.loadDirecciones();
     } else {
-      this.filterDirecciones(this.state.cliente, nextProps.direcciones);
+      this.filterDirecciones(
+        this.state.cliente,
+        nextProps.direcciones
+      );
     }
   }
 
@@ -87,11 +123,9 @@ class PedidosStatus extends Component {
         direccion => direccion.id_cliente == cliente.id
       );
       this.setState({direcciones})
-
-    } else {
-      direcciones = {};
     }
-  }
+  };
+
   filterClientes = (ciudad, clientes) => {
     if (!_.isEmpty(clientes)) {
       if (!_.isEmpty(ciudad)) {
@@ -101,64 +135,128 @@ class PedidosStatus extends Component {
       }
       this.setState({clientes})
     }
-  }
+  };
   filterRestaurantes = (ciudad, restaurantes) => {
     if (!_.isEmpty(restaurantes)) {
       if (!_.isEmpty(ciudad)) {
         restaurantes = restaurantes.filter(
-          restaurante => restaurante.id_ciudad == ciudad.id
+          restaurante =>
+          restaurante.id_ciudad == ciudad.id
         );
       }
       this.setState({restaurantes})
     }
-  }
+  };
+  filterPedidosCiudad = (ciudad, pedidos) => {
+    if (!_.isEmpty(pedidos)) {
+      if (!_.isEmpty(ciudad)) {
+        pedidos = pedidos.filter(
+          pedido => {
+            let restaurante =
+              this.props.restaurantes.find(
+                (restaurante) => {
+                  return restaurante.id == pedido.id_restaurante;
+                });
+            return restaurante ?
+            restaurante.id_ciudad == ciudad.id :
+              false;
+          }
+        );
+      }
+      this.setState({pedidos})
+    }
+  };
+  filterPedidosRestaurante = (restaurante, pedidos) => {
+    if (!_.isEmpty(pedidos)) {
+      if (!_.isEmpty(restaurante)) {
+        pedidos = pedidos.filter(
+          pedido =>
+          pedido.id_restaurante == restaurante.id
+        );
+      }
+      this.setState({pedidos})
+    }
+  };
 
   onPedidosClick = (pedido) => {
     this.setState({
       isNuevoPedidoModalActive: true,
       isOptionsModalActive: false,
-    })
-  }
+    });
+  };
   selectCliente = (cliente) => {
     let direccion = {};
-    this.setState({cliente, direccion})
-    this.filterDirecciones(cliente, this.props.direcciones);
-  }
+    this.setState({cliente, direccion});
+    this.filterDirecciones(
+      cliente,
+      this.props.direcciones
+    );
+  };
   selectCiudad = (ciudad) => {
     let cliente = {};
     let direccion = {};
-    let direcciones = []
-    this.setState({ciudad, cliente, direccion, direcciones});
-    this.filterClientes(ciudad, this.props.clientes);
-    this.filterRestaurantes(ciudad, this.props.restaurantes);
-  }
+    let direcciones = [];
+    let restaurante = {};
+    this.setState({
+      ciudad,
+      cliente,
+      direccion,
+      direcciones,
+      restaurante
+    });
+    this.filterClientes(
+      ciudad,
+      this.props.clientes
+    );
+    this.filterRestaurantes(
+      ciudad,
+      this.props.restaurantes
+    );
+    this.filterPedidosCiudad(
+      ciudad,
+      this.props.pedidos
+    );
+  };
   selectDireccion = (direccion) => {
-    this.setState({direccion})
-  }
+    this.setState({direccion});
+  };
   selectRestaurante = (restaurante) => {
-    this.setState({restaurante})
-  }
+    this.setState({restaurante});
+    this.filterPedidosRestaurante(
+      restaurante,
+      this.props.pedidos
+    );
+  };
   optionsModalOn = () => {
     this.setState({
       isOptionsModalActive: true,
       isNuevoPedidoModalActive: false
     });
-  }
+  };
 
   optionsModalOff = () => {
     this.setState({isOptionsModalActive: false})
-  }
+  };
   restauranteModalOn = () => {
-    debugger
     this.setState({
       isRestauranteModalActive: true,
       isOptionsModalActive: false
     });
-  }
-
+  };
   restauranteModalOff = () => {
     this.setState({isRestauranteModalActive: false})
-  }
+  };
+  submitInitialPedido =
+    (cliente, direccion, restaurante) => {
+      let pedido = {
+        fecha: moment(),
+        h_inicio: moment(),
+        id_cliente: cliente.id,
+        id_direccion: direccion.id,
+        id_restaurante: restaurante.id
+      };
+      this.props.createPedido(pedido);
+    };
   handleDestroyCliente = (id) => {
     let cliente = {};
     let clientes = [];
@@ -167,7 +265,7 @@ class PedidosStatus extends Component {
         this.props.destroyCliente(id)
       }
     );
-  }
+  };
   handleDestroyDireccion = (id) => {
     let direccion = {};
     let direcciones = [];
@@ -175,7 +273,7 @@ class PedidosStatus extends Component {
         this.props.destroyDireccion(id)
       }
     );
-  }
+  };
 
   nuevoPedidoModalOff = () => {
     this.setState({
@@ -186,16 +284,64 @@ class PedidosStatus extends Component {
       ciudad: {},
       clientes: this.props.clientes
     })
-  }
+  };
+  handleSelectedCiudadTab = (id_ciudad) => {
+    let ciudad = this.props.ciudades.find((ciudad) => {
+      return ciudad.id == id_ciudad;
+    });
+    this.selectCiudad(ciudad);
+    this.filterPedidosCiudad(ciudad, this.props.pedidos)
+  };
+
+  handleSelectedRestauranteTab = (id_restaurante) => {
+    let restaurante =
+      this.props.restaurantes.find(
+        (restaurante) => {
+          return restaurante.id == id_restaurante;
+        }
+      );
+    this.selectRestaurante(restaurante);
+    this.filterPedidosRestaurante(
+      restaurante,
+      this.props.pedidos
+    );
+  };
 
   render = () => {
     return (
       <div>
+        <PedidosNavBar
+          list={this.props.ciudades}
+          callback={this.handleSelectedCiudadTab}
+          selectedKey={
+            this.state.ciudad ?
+              this.state.ciudad.id :
+              0
+          }
+        />
+        <PedidosNavBar
+          list={this.state.restaurantes}
+          callback={this.handleSelectedRestauranteTab}
+          selectedKey={
+            this.state.restaurante ?
+              this.state.restaurante.id :
+              0
+          }
+        />
         <PedidosList
-          onPedidosClick={this.onPedidosClick}
+          clientes={this.props.clientes}
+          direcciones={this.props.direcciones}
+          restaurantes={this.props.restaurantes}
+          estados={this.props.estados}
         >
-          {this.props.pedidos}
+          {this.state.pedidos}
         </PedidosList>
+        <Button
+          onClick={() => this.onPedidosClick({})}
+          bsStyle="primary"
+        >
+          <Glyphicon glyph="plus"/>{' Agregar'}
+        </Button>
         <OptionsModal
           isOptionsModalActive={this.state.isOptionsModalActive}
           optionsModalOff={this.optionsModalOff}
@@ -228,10 +374,12 @@ class PedidosStatus extends Component {
           restauranteModalOff={this.restauranteModalOff}
           cliente={this.state.cliente}
           selectRestaurante={this.selectRestaurante}
+          submitInitialPedido={this.submitInitialPedido}
           restaurante={this.state.restaurante}
           restaurantes={this.state.restaurantes}
           direccion={this.state.direccion}
           ciudad={this.state.ciudad}
+
         />
       </div>
     );
@@ -244,6 +392,7 @@ PedidosStatus.propTypes = {
   createPedido: PropTypes.func.isRequired,
   updatePedido: PropTypes.func.isRequired,
   pedidos: PropTypes.array.isRequired,
+  estados: PropTypes.array.isRequired,
   shouldUpdatePedidos: PropTypes.bool.isRequired,
 };
 
@@ -253,13 +402,15 @@ function mapStateToProps(state) {
     clienteReducer,
     restauranteReducer,
     direccionReducer,
-    ciudadReducer
+    ciudadReducer,
+    estadoReducer
   } = state;
   const {pedidos, shouldUpdatePedidos} = pedidoReducer;
   const {direcciones, shouldUpdateDirecciones} = direccionReducer;
   const {restaurantes, shouldUpdateRestaurantes} = restauranteReducer;
   const {ciudades, shouldUpdateCiudades} = ciudadReducer;
   const {clientes, shouldUpdateClientes} = clienteReducer;
+  const {estados, shouldUpdateEstados} = estadoReducer;
   return {
     pedidos,
     shouldUpdatePedidos,
@@ -270,7 +421,9 @@ function mapStateToProps(state) {
     clientes,
     shouldUpdateClientes,
     ciudades,
-    shouldUpdateCiudades
+    shouldUpdateCiudades,
+    estados,
+    shouldUpdateEstados
   };
 }
 
@@ -289,4 +442,5 @@ export default connect(mapStateToProps, {
   createDireccion,
   updateDireccion,
   loadCiudades,
+  loadEstados,
 })(PedidosStatus);

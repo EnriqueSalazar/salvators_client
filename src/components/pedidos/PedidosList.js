@@ -1,8 +1,69 @@
-import React, {Component, PropTypes} from 'react';
+import React, { Component, PropTypes } from 'react';
+import moment from 'moment';
 
 const PedidosList = props => {
   let pedidos = props.children;
+  // if (_.isEmpty(pedidos)) {
+  //   return null;
+  // }
+  // if (_.isEmpty(props.clientes)) {
+  //   return null;
+  // }
+  // if (_.isEmpty(props.direcciones)) {
+  //   return null;
+  // }
+  // if (_.isEmpty(props.restaurantes)) {
+  //   return null;
+  // }
+  // if (_.isEmpty(props.estados)) {
+  //   return null;
+  // }
   const width = '150';
+  let clienteFormatter = (cell, row) => {
+    if (cell) {
+      let cliente = props.clientes.find((cliente) => {
+        return cliente.id == cell;
+      });
+      return cliente ? cliente.nombre : null;
+    }
+  }
+  let direccionFormatter = (cell, row) => {
+    if (cell) {
+      let direccion = props.direcciones.find((direccion) => {
+        return direccion.id == cell;
+      });
+      return direccion ? direccion.nombre : null;
+    }
+  }
+  let restauranteFormatter = (cell, row) => {
+    if (cell) {
+      let restaurante = props.restaurantes.find((restaurante) => {
+        return restaurante.id == cell;
+      });
+      return restaurante ? restaurante.nombre : null;
+    }
+  }
+  let dateFormatter = (cell, row) => {
+    if (cell) {
+      return (
+        <div>
+          {moment.utc(cell, "YYYY-MM-DDTHH:mm:ssZ").format('D MMM YYYY')}
+        </div>
+      );
+    }
+  };
+  let timeFormatter = (cell, row) => {
+    if (cell) {
+      return (
+        <div>
+          {moment.utc(cell, "YYYY-MM-DDTHH:mm:ssZ").format('HH:mm')}
+        </div>
+      );
+    }
+  };
+  let rotateStatusFormatter = (cell, row) => {
+
+  }
   return (
     <div>
       <BootstrapTable
@@ -18,7 +79,7 @@ const PedidosList = props => {
           sortOrder: "desc",
           sizePerPage: 20,
           sizePerPageList: [20, 50, 200, 1000],
-          onRowClick: props.onPedidosClick,
+          //onRowClick: props.onPedidosClick,
         }}
       >
         <TableHeaderColumn
@@ -33,120 +94,122 @@ const PedidosList = props => {
           dataField="fecha"
           dataAlign="center"
           width={width}
+          dataFormat={dateFormatter}
         >
-          fecha
+          Fecha Creacion
         </TableHeaderColumn>
         <TableHeaderColumn
           dataField="factura"
           dataAlign="center"
           width={width}
         >
-          factura
+          Factura
         </TableHeaderColumn>
         <TableHeaderColumn
           dataField="h_inicio"
           dataAlign="center"
           width={width}
+          dataFormat={timeFormatter}
         >
-          h_inicio
+          Hora de Inicio
         </TableHeaderColumn>
         <TableHeaderColumn
           dataField="h_fin"
           dataAlign="center"
           width={width}
+          dataFormat={timeFormatter}
         >
-          h_fin
+          Hora de Finalizacion
         </TableHeaderColumn>
         <TableHeaderColumn
           dataField="id_cliente"
           dataAlign="center"
           width={width}
+          dataFormat={clienteFormatter}
         >
-          id_cliente
+          Cliente
         </TableHeaderColumn>
         <TableHeaderColumn
           dataField="id_direccion"
           dataAlign="center"
           width={width}
+          dataFormat={direccionFormatter}
         >
-          id_direccion
+          Direccion
         </TableHeaderColumn>
         <TableHeaderColumn
           dataField="id_estado"
           dataAlign="center"
           width={width}
         >
-          id_estado
-        </TableHeaderColumn>
-        <TableHeaderColumn
-          dataField="h_digitado"
-          dataAlign="center"
-          width={width}
-        >
-          h_digitado
+          Estado
         </TableHeaderColumn>
         <TableHeaderColumn
           dataField="h_cocina"
           dataAlign="center"
           width={width}
+          dataFormat={timeFormatter}
         >
-          h_cocina
+          En Cocina (hora)
         </TableHeaderColumn>
         <TableHeaderColumn
           dataField="h_barra"
           dataAlign="center"
           width={width}
+          dataFormat={timeFormatter}
         >
-          h_barra
+          En Barra (hora)
         </TableHeaderColumn>
         <TableHeaderColumn
           dataField="h_domiciliario"
           dataAlign="center"
           width={width}
+          dataFormat={timeFormatter}
         >
-          h_domiciliario
-        </TableHeaderColumn>
-        <TableHeaderColumn
-          dataField="id_forma_pago"
-          dataAlign="center"
-          width={width}
-        >
-          id_forma_pago
+          En Domiciliario (hora)
         </TableHeaderColumn>
         <TableHeaderColumn
           dataField="nota_pedido"
           dataAlign="center"
           width={width}
         >
-          nota_pedido
+          Nota Pedido
         </TableHeaderColumn>
         <TableHeaderColumn
           dataField="id_domiciliario"
           dataAlign="center"
           width={width}
         >
-          id_domiciliario
+          Domiciliario
         </TableHeaderColumn>
         <TableHeaderColumn
           dataField="id_operario"
           dataAlign="center"
           width={width}
         >
-          id_operario
+          Operario
+        </TableHeaderColumn>
+        <TableHeaderColumn
+          dataField="id_forma_pago"
+          dataAlign="center"
+          width={width}
+        >
+          Forma de Pago
         </TableHeaderColumn>
         <TableHeaderColumn
           dataField="nota_forma_pago"
           dataAlign="center"
           width={width}
         >
-          nota_forma_pago
+          Nota Forma de Pago
         </TableHeaderColumn>
         <TableHeaderColumn
           dataField="id_restaurante"
           dataAlign="center"
           width={width}
+          dataFormat={restauranteFormatter}
         >
-          id_restaurante
+          Restaurante
         </TableHeaderColumn>
       </BootstrapTable>
     </div>
