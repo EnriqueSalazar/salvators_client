@@ -9,14 +9,14 @@ const PedidosNavBar = props => {
   const {list, callback, selectedKey} = props;
   let navItems = list ? list.map((item) => {
     return (
-      <NavItem eventKey={item.id}>
+      <NavItem key={item.id} eventKey={item.id}>
         {item.nombre}
       </NavItem>)
   }) : null;
   return (
     <div >
       <Nav bsStyle="tabs" activeKey={selectedKey} onSelect={callback}>
-        <NavItem eventKey='0'>
+        <NavItem key ='0' eventKey='0'>
           Todas
         </NavItem>
         {navItems}

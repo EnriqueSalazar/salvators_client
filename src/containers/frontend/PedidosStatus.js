@@ -25,10 +25,6 @@ import {
 import {
   loadCiudades,
 } from '../../actions/ciudadActions';
-import {
-  loadEstados,
-} from '../../actions/estadoActions';
-
 import PedidosNavBar
   from '../../components/pedidos/PedidosNavBar'
 import PedidosList
@@ -46,6 +42,7 @@ import {
 } from 'react-bootstrap';
 import _ from 'lodash';
 import moment from 'moment';
+import { estados } from '../../config/'
 
 class PedidosStatus extends Component {
 
@@ -246,6 +243,7 @@ class PedidosStatus extends Component {
   restauranteModalOff = () => {
     this.setState({isRestauranteModalActive: false})
   };
+  //todo cambiar id_estado a 0
   submitInitialPedido =
     (cliente, direccion, restaurante) => {
       let pedido = {
@@ -253,7 +251,8 @@ class PedidosStatus extends Component {
         h_inicio: moment(),
         id_cliente: cliente.id,
         id_direccion: direccion.id,
-        id_restaurante: restaurante.id
+        id_restaurante: restaurante.id,
+        id_estado:1
       };
       this.props.createPedido(pedido);
     };
@@ -306,6 +305,12 @@ class PedidosStatus extends Component {
       this.props.pedidos
     );
   };
+  handleUpdatePedido = (field, pedido, nextEstado) => {
+    pedido[field] = moment();
+    pedido.id_estado=nextEstado.id;
+    // debugger
+    this.props.updatePedido(pedido.id, pedido);
+  };
 
   render = () => {
     return (
@@ -332,13 +337,15 @@ class PedidosStatus extends Component {
           clientes={this.props.clientes}
           direcciones={this.props.direcciones}
           restaurantes={this.props.restaurantes}
-          estados={this.props.estados}
+          estados={estados}
+          handleUpdatePedido={this.handleUpdatePedido}
         >
           {this.state.pedidos}
         </PedidosList>
         <Button
           onClick={() => this.onPedidosClick({})}
           bsStyle="primary"
+          updatePedido={this.props.updatePedido}
         >
           <Glyphicon glyph="plus"/>{' Agregar'}
         </Button>
@@ -392,7 +399,6 @@ PedidosStatus.propTypes = {
   createPedido: PropTypes.func.isRequired,
   updatePedido: PropTypes.func.isRequired,
   pedidos: PropTypes.array.isRequired,
-  estados: PropTypes.array.isRequired,
   shouldUpdatePedidos: PropTypes.bool.isRequired,
 };
 
@@ -403,14 +409,12 @@ function mapStateToProps(state) {
     restauranteReducer,
     direccionReducer,
     ciudadReducer,
-    estadoReducer
   } = state;
   const {pedidos, shouldUpdatePedidos} = pedidoReducer;
   const {direcciones, shouldUpdateDirecciones} = direccionReducer;
   const {restaurantes, shouldUpdateRestaurantes} = restauranteReducer;
   const {ciudades, shouldUpdateCiudades} = ciudadReducer;
   const {clientes, shouldUpdateClientes} = clienteReducer;
-  const {estados, shouldUpdateEstados} = estadoReducer;
   return {
     pedidos,
     shouldUpdatePedidos,
@@ -422,8 +426,6 @@ function mapStateToProps(state) {
     shouldUpdateClientes,
     ciudades,
     shouldUpdateCiudades,
-    estados,
-    shouldUpdateEstados
   };
 }
 
@@ -442,5 +444,4 @@ export default connect(mapStateToProps, {
   createDireccion,
   updateDireccion,
   loadCiudades,
-  loadEstados,
 })(PedidosStatus);

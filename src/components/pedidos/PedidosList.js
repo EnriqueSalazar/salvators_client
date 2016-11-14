@@ -1,23 +1,11 @@
 import React, { Component, PropTypes } from 'react';
 import moment from 'moment';
-
+import {
+  Button,
+  Glyphicon
+} from 'react-bootstrap';
 const PedidosList = props => {
   let pedidos = props.children;
-  // if (_.isEmpty(pedidos)) {
-  //   return null;
-  // }
-  // if (_.isEmpty(props.clientes)) {
-  //   return null;
-  // }
-  // if (_.isEmpty(props.direcciones)) {
-  //   return null;
-  // }
-  // if (_.isEmpty(props.restaurantes)) {
-  //   return null;
-  // }
-  // if (_.isEmpty(props.estados)) {
-  //   return null;
-  // }
   const width = '150';
   let clienteFormatter = (cell, row) => {
     if (cell) {
@@ -32,7 +20,7 @@ const PedidosList = props => {
       let direccion = props.direcciones.find((direccion) => {
         return direccion.id == cell;
       });
-      return direccion ? direccion.nombre : null;
+      return direccion ? direccion.direccion : null;
     }
   }
   let restauranteFormatter = (cell, row) => {
@@ -43,27 +31,55 @@ const PedidosList = props => {
       return restaurante ? restaurante.nombre : null;
     }
   }
-  let dateFormatter = (cell, row) => {
-    if (cell) {
-      return (
-        <div>
-          {moment.utc(cell, "YYYY-MM-DDTHH:mm:ssZ").format('D MMM YYYY')}
-        </div>
-      );
-    }
-  };
-  let timeFormatter = (cell, row) => {
-    if (cell) {
-      return (
-        <div>
-          {moment.utc(cell, "YYYY-MM-DDTHH:mm:ssZ").format('HH:mm')}
-        </div>
-      );
-    }
-  };
-  let rotateStatusFormatter = (cell, row) => {
+  let momentFormatter = (value, theFormat) =>
+    (moment.utc(value, "YYYY-MM-DDTHH:mm:ssZ").format(theFormat));
 
+  let dateFormatter = (cell, row) =>
+    (cell ? momentFormatter(cell, 'D MMM YYYY') : null);
+
+  let timeFormatter = (cell) =>
+    (cell ? momentFormatter(cell, 'HH:mm') : null);
+
+  let nowFormatter = (field, row, nextEstado) => {
+    return (
+      <Button
+        onClick={() => props.handleUpdatePedido(field, row, nextEstado)}
+        bsStyle="primary"
+        disabled={row.id_estado != (nextEstado.id - 1)}
+      >
+        <Glyphicon glyph="plus"/>
+      </Button>
+    )
   }
+  let estadoFormatter = (cell, row) => {
+    for (let estado in props.estados) {
+      if (props.estados[estado].id == cell) {
+        return estado;
+      }
+    }
+  }
+
+  let cocinaFormatter = (cell, row) => {
+    return cell ?
+      timeFormatter(cell) :
+      nowFormatter('h_cocina', row, props.estados.cocina);
+  }
+  let barraFormatter = (cell, row) => {
+    return cell ?
+      timeFormatter(cell) :
+      nowFormatter('h_barra', row, props.estados.barra);
+  }
+  let domiciliarioFormatter = (cell, row) => {
+    return cell ?
+      timeFormatter(cell) :
+      nowFormatter('h_domiciliario', row, props.estados.domiciliario);
+  }
+  let entregadoFormatter = (cell, row) => {
+    return cell ?
+      timeFormatter(cell) :
+      nowFormatter('h_entregado', row, props.estados.entregado);
+  }
+
   return (
     <div>
       <BootstrapTable
@@ -141,6 +157,7 @@ const PedidosList = props => {
           dataField="id_estado"
           dataAlign="center"
           width={width}
+          dataFormat={estadoFormatter}
         >
           Estado
         </TableHeaderColumn>
@@ -148,7 +165,7 @@ const PedidosList = props => {
           dataField="h_cocina"
           dataAlign="center"
           width={width}
-          dataFormat={timeFormatter}
+          dataFormat={cocinaFormatter}
         >
           En Cocina (hora)
         </TableHeaderColumn>
@@ -156,7 +173,7 @@ const PedidosList = props => {
           dataField="h_barra"
           dataAlign="center"
           width={width}
-          dataFormat={timeFormatter}
+          dataFormat={barraFormatter}
         >
           En Barra (hora)
         </TableHeaderColumn>
@@ -164,9 +181,17 @@ const PedidosList = props => {
           dataField="h_domiciliario"
           dataAlign="center"
           width={width}
-          dataFormat={timeFormatter}
+          dataFormat={domiciliarioFormatter}
         >
           En Domiciliario (hora)
+        </TableHeaderColumn>
+        <TableHeaderColumn
+          dataField="h_entregado"
+          dataAlign="center"
+          width={width}
+          dataFormat={entregadoFormatter}
+        >
+          Entregado (hora)
         </TableHeaderColumn>
         <TableHeaderColumn
           dataField="nota_pedido"

@@ -20,7 +20,7 @@ let apiUrl = (model) => {
   return serverUrl + model + 'API/'
 };
 
-export let model = {
+export const model = {
   grupomenu: apiUrl('grupomenu'),
   categoriamenu: apiUrl('categoriamenu'),
   itemmenu: apiUrl('itemmenu'),
@@ -39,4 +39,42 @@ export let model = {
   descuento: apiUrl('descuento'),
   ciudad: apiUrl('ciudad'),
   restaurante: apiUrl('restaurante')
+};
+
+export const estados = {
+  inicio_pedido: {
+    id: 0,
+    alarma: 5,
+    estilo: 'info'
+  },
+  fin_pedido: {
+    id: 1,
+    alarma: 5,
+    estilo: 'info'
+  },
+  cocina: {
+    id: 2,
+    alarma: 5,
+    estilo: 'info'
+  },
+  barra: {
+    id: 3,
+    alarma: 5,
+    estilo: 'info'
+  },
+  domiciliario: {
+    id: 4,
+    alarma: 5,
+    estilo: 'info'
+  },
+  entregado: {
+    id: 5,
+    alarma: 5,
+    estilo: 'info'
+  },
+  anulado: {
+    id: 6,
+    alarma: 5,
+    estilo: 'info'
+  },
 };

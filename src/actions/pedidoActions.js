@@ -47,10 +47,8 @@ export function loadOnePedido(id) {
   };
 }
 export function updatePedido(id, payload) {
-  debugger
   return dispatch => {
     return Api.update(model.pedidos, id, payload).then((pedido) => {
-      debugger
       dispatch(updatePedidoSuccess(pedido.data));
     }).catch(error => {
       throw(error);
@@ -58,10 +56,8 @@ export function updatePedido(id, payload) {
   };
 }
 export function createPedido(payload) {
-  debugger
   return dispatch => {
     return Api.create(model.pedidos, payload).then((pedido) => {
-      debugger
       dispatch(createPedidoSuccess(pedido.data));
     }).catch(error => {
       throw(error);
