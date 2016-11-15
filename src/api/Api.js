@@ -21,7 +21,6 @@ class Api {
   }
 
   static create(model, payload) {
-    debugger
     if (payload.id) {
       delete payload.id
     }

@@ -47,6 +47,7 @@ export function loadOnePedido(id) {
   };
 }
 export function updatePedido(id, payload) {
+  debugger
   return dispatch => {
     return Api.update(model.pedidos, id, payload).then((pedido) => {
       dispatch(updatePedidoSuccess(pedido.data));

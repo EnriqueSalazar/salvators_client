@@ -11,6 +11,9 @@ import {
   updatePedido,
 } from '../../actions/pedidoActions';
 import {
+  loadDomiciliarios,
+} from '../../actions/domiciliarioActions';
+import {
   loadClientes,
   destroyCliente,
   createCliente,
@@ -35,6 +38,12 @@ import NuevoPedidoModal
   from '../../components/pedidos/NuevoPedidoModal'
 import RestauranteModal
   from '../../components/pedidos/RestauranteModal'
+import NotaModal
+  from '../../components/pedidos/NotaModal'
+import NotaPagoModal
+  from '../../components/pedidos/NotaPagoModal'
+import DomiciliarioModal
+  from '../../components/pedidos/DomiciliarioModal'
 
 import {
   Button,
@@ -52,6 +61,9 @@ class PedidosStatus extends Component {
       isOptionsModalActive: false,
       isRestaurantesModalActive: false,
       isNuevoPedidoModalActive: false,
+      isNotaModalActive: false,
+      isNotaPagoModalActive: false,
+      isDomiciliarioModalActive: false,
       cliente: {},
       clientes: [],
       direccion: {},
@@ -59,7 +71,8 @@ class PedidosStatus extends Component {
       ciudad: {},
       restaurantes: [],
       restaurante: {},
-      pedidos: []
+      pedidos: [],
+      pedido: {}
     };
   }
 
@@ -68,6 +81,7 @@ class PedidosStatus extends Component {
     this.props.loadClientes();
     this.props.loadDirecciones();
     this.props.loadCiudades();
+    this.props.loadDomiciliarios();
     this.props.loadRestaurantes();
   }
 
@@ -174,6 +188,18 @@ class PedidosStatus extends Component {
       this.setState({pedidos})
     }
   };
+  filterPedidosdomiciliario = (domiciliario, pedidos) => {
+    if (!_.isEmpty(pedidos)) {
+      if (!_.isEmpty(domiciliario)) {
+        pedidos = pedidos.filter(
+          pedido =>
+          pedido.id_domiciliario == domiciliario.id &&
+          pedido.id_estado == estados.domiciliario.id
+        );
+      }
+      this.setState({pedidos})
+    }
+  };
 
   onPedidosClick = (pedido) => {
     this.setState({
@@ -214,9 +240,11 @@ class PedidosStatus extends Component {
       this.props.pedidos
     );
   };
+
   selectDireccion = (direccion) => {
     this.setState({direccion});
   };
+
   selectRestaurante = (restaurante) => {
     this.setState({restaurante});
     this.filterPedidosRestaurante(
@@ -224,16 +252,50 @@ class PedidosStatus extends Component {
       this.props.pedidos
     );
   };
+
+  selectDomiciliario = (domiciliario) => {
+    this.setState({domiciliario});
+    this.filterPedidosdomiciliario(
+      domiciliario,
+      this.props.pedidos
+    );
+  };
+
   optionsModalOn = () => {
     this.setState({
       isOptionsModalActive: true,
       isNuevoPedidoModalActive: false
     });
   };
-
   optionsModalOff = () => {
     this.setState({isOptionsModalActive: false})
   };
+
+  notaModalOn = (pedido) => {
+    this.setState({
+      isNotaModalActive: true,
+      pedido
+    });
+  };
+  notaModalOff = () => {
+    this.setState({
+      isNotaModalActive: false,
+      pedido: {}
+    })
+  };
+  notaPagoModalOn = (pedido) => {
+    this.setState({
+      isNotaPagoModalActive: true,
+      pedido
+    });
+  };
+  notaPagoModalOff = () => {
+    this.setState({
+      isNotaPagoModalActive: false,
+      pedido: {}
+    })
+  };
+
   restauranteModalOn = () => {
     this.setState({
       isRestauranteModalActive: true,
@@ -243,6 +305,24 @@ class PedidosStatus extends Component {
   restauranteModalOff = () => {
     this.setState({isRestauranteModalActive: false})
   };
+
+  domiciliarioModalOn = (pedido) => {
+
+    this.setState({
+      isDomiciliarioModalActive: true,
+      isOptionsModalActive: false,
+      pedidos: [],
+      pedido
+    });
+  };
+  domiciliarioModalOff = () => {
+    this.setState({
+      isDomiciliarioModalActive: false,
+      pedido: {}
+    });
+    this.props.loadPedidos();
+  };
+
   //todo cambiar id_estado a 0
   submitInitialPedido =
     (cliente, direccion, restaurante) => {
@@ -252,7 +332,7 @@ class PedidosStatus extends Component {
         id_cliente: cliente.id,
         id_direccion: direccion.id,
         id_restaurante: restaurante.id,
-        id_estado:1
+        id_estado: 1
       };
       this.props.createPedido(pedido);
     };
@@ -305,11 +385,36 @@ class PedidosStatus extends Component {
       this.props.pedidos
     );
   };
-  handleUpdatePedido = (field, pedido, nextEstado) => {
+  handleUpdatePedidoEstado = (field, pedido, nextEstado) => {
     pedido[field] = moment();
-    pedido.id_estado=nextEstado.id;
-    // debugger
+    pedido.id_estado = nextEstado.id;
     this.props.updatePedido(pedido.id, pedido);
+  };
+  handleUpdatePedidoNota = (pedido) => {
+    this.props.updatePedido(pedido.id, pedido);
+    this.setState({isNotaModalActive: false});
+  };
+  handleUpdatePedidoNotaPago = (pedido) => {
+    this.props.updatePedido(pedido.id, pedido);
+    this.setState({isNotaPagoModalActive: false});
+  };
+
+  handleAsignarPedidoDomiciliario = (pedido, domiciliario) => {
+    debugger
+    pedido.id_domiciliario = domiciliario.id;
+    pedido.id_estado= estados.domiciliario.id;
+    pedido.h_domiciliario=moment();
+    this.props.updatePedido(pedido.id, pedido);
+    this.domiciliarioModalOff();
+  };
+  handleAceptarPedidosDomiciliario = (pedidos, pedido, domiciliario) => {
+ debugger
+    pedidos.map(pedido => {
+      pedido.h_entregado=moment();
+      pedido.id_estado = estados.entregado.id;
+      this.props.updatePedido(pedido.id, pedido);
+    });
+    this.handleAsignarPedidoDomiciliario(pedido, domiciliario);
   };
 
   render = () => {
@@ -338,7 +443,11 @@ class PedidosStatus extends Component {
           direcciones={this.props.direcciones}
           restaurantes={this.props.restaurantes}
           estados={estados}
-          handleUpdatePedido={this.handleUpdatePedido}
+          handleUpdatePedido={this.handleUpdatePedidoEstado}
+          notaModalOn={this.notaModalOn}
+          notaPagoModalOn={this.notaPagoModalOn}
+          domiciliarioModalOn={this.domiciliarioModalOn}
+          domiciliarios={this.props.domiciliarios}
         >
           {this.state.pedidos}
         </PedidosList>
@@ -386,9 +495,34 @@ class PedidosStatus extends Component {
           restaurantes={this.state.restaurantes}
           direccion={this.state.direccion}
           ciudad={this.state.ciudad}
-
+        />
+        <NotaModal
+          initialValues={this.state.pedido}
+          notaModalOff={this.notaModalOff}
+          notasSubmit={this.handleUpdatePedidoNota}
+          isModalActive={this.state.isNotaModalActive}
+        />
+        <NotaPagoModal
+          initialValues={this.state.pedido}
+          notaPagoModalOff={this.notaPagoModalOff}
+          notaPagosSubmit={this.handleUpdatePedidoNotaPago}
+          isModalActive={this.state.isNotaPagoModalActive}
+        />
+        <DomiciliarioModal
+          handleAsignarPedidoDomiciliario={this.handleAsignarPedidoDomiciliario}
+          handleAceptarPedidosDomiciliario={this.handleAceptarPedidosDomiciliario}
+          domiciliarios={this.props.domiciliarios}
+          pedidos={this.state.pedidos}
+          domiciliario={this.state.domiciliario}
+          domiciliarioModalOff={this.domiciliarioModalOff}
+          selectDomiciliario={this.selectDomiciliario}
+          clientes={this.props.clientes}
+          direcciones={this.props.direcciones}
+          pedido={this.state.pedido}
+          isDomiciliarioModalActive={this.state.isDomiciliarioModalActive}
         />
       </div>
+
     );
   };
 }
@@ -409,9 +543,11 @@ function mapStateToProps(state) {
     restauranteReducer,
     direccionReducer,
     ciudadReducer,
+    domiciliarioReducer,
   } = state;
   const {pedidos, shouldUpdatePedidos} = pedidoReducer;
   const {direcciones, shouldUpdateDirecciones} = direccionReducer;
+  const {domiciliarios, shouldUpdateDomiciliarios} = domiciliarioReducer;
   const {restaurantes, shouldUpdateRestaurantes} = restauranteReducer;
   const {ciudades, shouldUpdateCiudades} = ciudadReducer;
   const {clientes, shouldUpdateClientes} = clienteReducer;
@@ -426,6 +562,8 @@ function mapStateToProps(state) {
     shouldUpdateClientes,
     ciudades,
     shouldUpdateCiudades,
+    domiciliarios,
+    shouldUpdateDomiciliarios,
   };
 }
 
@@ -444,4 +582,5 @@ export default connect(mapStateToProps, {
   createDireccion,
   updateDireccion,
   loadCiudades,
+  loadDomiciliarios,
 })(PedidosStatus);

@@ -41,23 +41,23 @@ let OptionsModal = props => {
                   <strong>
                     Nombre:
                   </strong>
-                  {' ' + cliente.nombre}<br />
+                  {' ' + cliente ? cliente.nombre : ''}<br />
                   <strong>
                     Cedula:
                   </strong>
-                  {' ' + cliente.cedula}<br />
+                  {' ' + cliente ? cliente.cedula : ''}<br />
                   <strong>
                     Telefono:
                   </strong>
-                  {' ' + cliente.telefono}<br />
+                  {' ' + cliente ? cliente.telefono : ''}<br />
                   <strong>
                     Direccion:
                   </strong>
-                  {' ' + direccion.direccion}<br />
-                <strong>
+                  {' ' + direccion ? direccion.direccion : ''}<br />
+                  <strong>
                     Ciudad:
                   </strong>
-                  {' ' + ciudad.nombre}
+                  {' ' + ciudad ? ciudad.nombre : ''}
                 </Col>
                 <Col md={4}>
                   <Button

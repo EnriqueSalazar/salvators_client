@@ -80,6 +80,56 @@ const PedidosList = props => {
       nowFormatter('h_entregado', row, props.estados.entregado);
   }
 
+  let notaFormatter = (cell, row) => {
+    let trimmedCell = cell ? cell.substring(0, 60) : '';
+    return (<div>
+        {trimmedCell + ' '}
+        <Button
+          bsStyle={cell ? "default" : "primary"}
+          onClick={() => props.notaModalOn(row)}
+          bsSize={cell ? "xsmall" : "default"}
+        >
+          <Glyphicon glyph="edit"/>
+        </Button>
+      </div>
+    )
+  }
+
+  let notaPagoFormatter = (cell, row) => {
+    let trimmedCell = cell ? cell.substring(0, 60) : '';
+    return (<div>
+        {trimmedCell + ' '}
+        <Button
+          bsStyle={cell ? "default" : "primary"}
+          onClick={() => props.notaPagoModalOn(row)}
+          bsSize={cell ? "xsmall" : "default"}
+        >
+          <Glyphicon glyph="edit"/>
+        </Button>
+      </div>
+    )
+  }
+  let domiciliarioNombreFormatter = (cell, row) => {
+    let domiciliario = props.domiciliarios.find(
+      (domiciliario) => {
+        return domiciliario.id == cell;
+      }
+    )
+    return (<div>
+        {domiciliario ? domiciliario.nombre + ' ' : ''}
+        <Button
+          bsStyle={cell ? "default" : "primary"}
+          onClick={() => props.domiciliarioModalOn(row)}
+          bsSize={cell ? "xsmall" : "default"}
+          disabled={row.id_estado != props.estados.barra.id &&
+          row.id_estado != props.estados.domiciliario.id}
+        >
+          <Glyphicon glyph="edit"/>
+        </Button>
+      </div>
+    )
+  }
+
   return (
     <div>
       <BootstrapTable
@@ -178,6 +228,14 @@ const PedidosList = props => {
           En Barra (hora)
         </TableHeaderColumn>
         <TableHeaderColumn
+          dataField="id_domiciliario"
+          dataAlign="center"
+          width={width}
+          dataFormat={domiciliarioNombreFormatter}
+        >
+          Domiciliario
+        </TableHeaderColumn>
+        <TableHeaderColumn
           dataField="h_domiciliario"
           dataAlign="center"
           width={width}
@@ -197,15 +255,9 @@ const PedidosList = props => {
           dataField="nota_pedido"
           dataAlign="center"
           width={width}
+          dataFormat={notaFormatter}
         >
           Nota Pedido
-        </TableHeaderColumn>
-        <TableHeaderColumn
-          dataField="id_domiciliario"
-          dataAlign="center"
-          width={width}
-        >
-          Domiciliario
         </TableHeaderColumn>
         <TableHeaderColumn
           dataField="id_operario"
@@ -224,6 +276,7 @@ const PedidosList = props => {
         <TableHeaderColumn
           dataField="nota_forma_pago"
           dataAlign="center"
+          dataFormat={notaPagoFormatter}
           width={width}
         >
           Nota Forma de Pago
