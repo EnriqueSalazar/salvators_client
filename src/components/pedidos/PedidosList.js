@@ -2,11 +2,13 @@ import React, { Component, PropTypes } from 'react';
 import moment from 'moment';
 import {
   Button,
-  Glyphicon
+  Glyphicon,
+  ProgressBar
 } from 'react-bootstrap';
+import _ from 'lodash';
+import '../../styles/styles.css'
 const PedidosList = props => {
   let pedidos = props.children;
-  const width = '150';
   let clienteFormatter = (cell, row) => {
     if (cell) {
       let cliente = props.clientes.find((cliente) => {
@@ -41,22 +43,33 @@ const PedidosList = props => {
     (cell ? momentFormatter(cell, 'HH:mm') : null);
 
   let nowFormatter = (field, row, nextEstado) => {
-    return (
-      <Button
-        onClick={() => props.handleUpdatePedido(field, row, nextEstado)}
-        bsStyle="primary"
-        disabled={row.id_estado != (nextEstado.id - 1)}
-      >
-        <Glyphicon glyph="plus"/>
-      </Button>
-    )
+    return (<Glyphicon glyph="time"/>);
+
+    // return (
+    //   <Button
+    //     onClick={() => props.handleUpdatePedido(field, row, nextEstado)}
+    //     bsStyle="primary"
+    //     disabled={row.id_estado != (nextEstado.id - 1)}
+    //   >
+    //     <Glyphicon glyph="plus"/>
+    //   </Button>
+    // )
   }
   let estadoFormatter = (cell, row) => {
-    for (let estado in props.estados) {
-      if (props.estados[estado].id == cell) {
-        return estado;
-      }
-    }
+
+    let estadoKey = _.findKey(props.estados, ['id', cell]);
+    let estado = props.estados[estadoKey];
+    let nextEstado = _.findKey(props.estados, ['id', cell + 1]);
+    nextEstado = props.estados[nextEstado]; //craaaaazy shit
+    return (  <Button
+        onClick={() => props.handleUpdatePedido(nextEstado.field, row, nextEstado)}
+        bsStyle="primary"
+        bsSize="large"
+        disabled={row.id_estado >= props.estados.entregado.id}
+      >{estadoKey}
+      </Button>
+    );
+
   }
 
   let cocinaFormatter = (cell, row) => {
@@ -109,6 +122,7 @@ const PedidosList = props => {
       </div>
     )
   }
+  //test
   let domiciliarioNombreFormatter = (cell, row) => {
     let domiciliario = props.domiciliarios.find(
       (domiciliario) => {
@@ -129,11 +143,14 @@ const PedidosList = props => {
       </div>
     )
   }
+  const width = '150';
+  const widthHora = '60';
 
   return (
     <div>
       <BootstrapTable
         style={{width: 2048}}
+        trClassName={'vertical-align'}
         data={pedidos}
         striped
         hover
@@ -145,7 +162,7 @@ const PedidosList = props => {
           sortOrder: "desc",
           sizePerPage: 20,
           sizePerPageList: [20, 50, 200, 1000],
-          //onRowClick: props.onPedidosClick,
+          onRowClick: props.onPedidosClick,
         }}
       >
         <TableHeaderColumn
@@ -157,35 +174,68 @@ const PedidosList = props => {
           ID
         </TableHeaderColumn>
         <TableHeaderColumn
-          dataField="fecha"
+          dataField="id_estado"
           dataAlign="center"
-          width={width}
-          dataFormat={dateFormatter}
+          width={180}
+          dataFormat={estadoFormatter}
         >
-          Fecha Creacion
-        </TableHeaderColumn>
-        <TableHeaderColumn
-          dataField="factura"
-          dataAlign="center"
-          width={width}
-        >
-          Factura
+          Estado
         </TableHeaderColumn>
         <TableHeaderColumn
           dataField="h_inicio"
           dataAlign="center"
-          width={width}
+          width={widthHora}
           dataFormat={timeFormatter}
         >
-          Hora de Inicio
+          Inicio Pedido
         </TableHeaderColumn>
         <TableHeaderColumn
           dataField="h_fin"
           dataAlign="center"
-          width={width}
+          width={widthHora}
           dataFormat={timeFormatter}
         >
-          Hora de Finalizacion
+          Fin Pedido
+        </TableHeaderColumn>
+        <TableHeaderColumn
+          dataField="h_cocina"
+          dataAlign="center"
+          width={widthHora}
+          dataFormat={cocinaFormatter}
+        >
+          Cocina
+        </TableHeaderColumn>
+        <TableHeaderColumn
+          dataField="h_barra"
+          dataAlign="center"
+          width={widthHora}
+          dataFormat={barraFormatter}
+        >
+          Barra
+        </TableHeaderColumn>
+        <TableHeaderColumn
+          dataField="h_domiciliario"
+          dataAlign="center"
+          width={widthHora}
+          dataFormat={domiciliarioFormatter}
+        >
+          Domiciliario
+        </TableHeaderColumn>
+        <TableHeaderColumn
+          dataField="h_entregado"
+          dataAlign="center"
+          width={widthHora}
+          dataFormat={entregadoFormatter}
+        >
+          Entregado
+        </TableHeaderColumn>
+        <TableHeaderColumn
+          dataField="fecha"
+          dataAlign="center"
+          width={widthHora}
+          dataFormat={dateFormatter}
+        >
+          Fecha
         </TableHeaderColumn>
         <TableHeaderColumn
           dataField="id_cliente"
@@ -196,38 +246,6 @@ const PedidosList = props => {
           Cliente
         </TableHeaderColumn>
         <TableHeaderColumn
-          dataField="id_direccion"
-          dataAlign="center"
-          width={width}
-          dataFormat={direccionFormatter}
-        >
-          Direccion
-        </TableHeaderColumn>
-        <TableHeaderColumn
-          dataField="id_estado"
-          dataAlign="center"
-          width={width}
-          dataFormat={estadoFormatter}
-        >
-          Estado
-        </TableHeaderColumn>
-        <TableHeaderColumn
-          dataField="h_cocina"
-          dataAlign="center"
-          width={width}
-          dataFormat={cocinaFormatter}
-        >
-          En Cocina (hora)
-        </TableHeaderColumn>
-        <TableHeaderColumn
-          dataField="h_barra"
-          dataAlign="center"
-          width={width}
-          dataFormat={barraFormatter}
-        >
-          En Barra (hora)
-        </TableHeaderColumn>
-        <TableHeaderColumn
           dataField="id_domiciliario"
           dataAlign="center"
           width={width}
@@ -236,21 +254,21 @@ const PedidosList = props => {
           Domiciliario
         </TableHeaderColumn>
         <TableHeaderColumn
-          dataField="h_domiciliario"
+          dataField="id_direccion"
           dataAlign="center"
           width={width}
-          dataFormat={domiciliarioFormatter}
+          dataFormat={direccionFormatter}
         >
-          En Domiciliario (hora)
+          Direccion
         </TableHeaderColumn>
         <TableHeaderColumn
-          dataField="h_entregado"
+          dataField="factura"
           dataAlign="center"
           width={width}
-          dataFormat={entregadoFormatter}
         >
-          Entregado (hora)
+          Factura
         </TableHeaderColumn>
+
         <TableHeaderColumn
           dataField="nota_pedido"
           dataAlign="center"

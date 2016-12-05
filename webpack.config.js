@@ -3,17 +3,20 @@
 let path = require('path')
 let webpack = require('webpack')
 let HtmlWebpackPlugin = require('html-webpack-plugin');
-let BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+var HappyPack = require('happypack');
+
+// let BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 console.info('Loading webpack.config');
 console.info('Server environment', process.env.NODE_ENV);
 
 module.exports = {
-  devtool: 'eval-source-map',
+  cache: true,
+  devtool: "eval", //or cheap-module-eval-source-map
   entry: [
     'babel-polyfill',
     'webpack-hot-middleware/client?reload=true',
     'react-hot-loader/patch',
-    path.join(__dirname, 'index.js')
+    path.join(__dirname, 'src', 'index.js')
   ],
   output: {
     path: path.join(__dirname, '/dist/'),
@@ -22,12 +25,92 @@ module.exports = {
     publicPath: '/'
   },
   plugins: [
+    // new webpack.DllReferencePlugin({
+    //   context: path.join(__dirname),
+    //   manifest: require("./dll/vendor-manifest.json")
+    // }),
+    // new webpack.optimize.CommonsChunkPlugin({
+    //   name: "commons",
+    //   // (the commons chunk name)
+    //
+    //   filename: "commons.js",
+    //   // (the filename of the commons chunk)
+    //
+    //   // minChunks: 3,
+    //   // (Modules must be shared between 3 entries)
+    //
+    //   // chunks: ["pageA", "pageB"],
+    //   // (Only use these entries)
+    // }),
+    new HappyPack({
+      // loaders is the only required parameter:
+      id: 'jsx',
+      loaders: ['babel-loader?cacheDirectory'],
+      threads: 4,
+      // customize as needed, see Configuration below
+    }),
+    // new HappyPack({
+    //   // loaders is the only required parameter:
+    //   id: 'bootstrap',
+    //   loaders: ['imports?jQuery=jquery,$=jquery,this=>window'],
+    //   threads: 4,
+    //   // customize as needed, see Configuration below
+    // }),
+    // new HappyPack({
+    //   // loaders is the only required parameter:
+    //   id: 'css',
+    //   loaders: ['style!css'],
+    //   threads: 4,
+    //   // customize as needed, see Configuration below
+    // }),
+    // new HappyPack({
+    //   // loaders is the only required parameter:
+    //   id: 'png',
+    //   loaders: ['url-loader?limit=100000'],
+    //   threads: 2,
+    //   // customize as needed, see Configuration below
+    // }),
+    // new HappyPack({
+    //   // loaders is the only required parameter:
+    //   id: 'jpg',
+    //   loaders: ['file-loader'],
+    //   threads: 2,
+    //   // customize as needed, see Configuration below
+    // }),
+    // new HappyPack({
+    //   // loaders is the only required parameter:
+    //   id: 'eot',
+    //   loaders: ['file'],
+    //   threads: 2,
+    //   // customize as needed, see Configuration below
+    // }),
+    // new HappyPack({
+    //   // loaders is the only required parameter:
+    //   id: 'woff',
+    //   loaders: ['url?prefix=font/&limit=5000'],
+    //   threads: 2,
+    //   // customize as needed, see Configuration below
+    // }),
+    // new HappyPack({
+    //   // loaders is the only required parameter:
+    //   id: 'ttf',
+    //   loaders: ['url?limit=10000&mimetype=application/octet-stream'],
+    //   threads: 2,
+    //   // customize as needed, see Configuration below
+    // }),
+    // new HappyPack({
+    //   // loaders is the only required parameter:
+    //   id: 'svg',
+    //   loaders: ['url?limit=10000&mimetype=image/svg+xml'],
+    //   threads: 2,
+    //   // customize as needed, see Configuration below
+    // }),
     new HtmlWebpackPlugin({
       template: 'index.tpl.html',
       inject: 'body',
       filename: 'index.html'
     }),
-    new webpack.optimize.OccurrenceOrderPlugin(),
+    // new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin(),
     new webpack.DefinePlugin({
@@ -42,28 +125,21 @@ module.exports = {
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
-        loader: 'babel',
-        query: {
-          plugins: ["react-hot-loader/babel"],
-          presets: [["es2015", { "loose" : true }], "stage-0", "react"]
-        }
+        loader: 'happypack/loader?id=jsx',
+        include: [
+          path.join(__dirname, "src") //important for performance!
+        ],
       },
-      //   {
-      //      test: /\.jsx?$/,
-      //      exclude: /node_modules/,
-      //      loader: 'babel',
-      //      query: {
-      //        plugins: ['transform-runtime'],
-      //        presets: [ "es2015", "stage-0","react", "react-hmre"]
-      //      }
-      //    },
-      // {test: /\.js$/, exclude: /node_modules/, loader: "babel-loader"}, //<--working!!!
-      // {test: /\.js$/, exclude: /node_modules/, loader: "babel-loader", query: babelSettings},
-      {test: /bootstrap.+\.(jsx|js)$/, loader: 'imports?jQuery=jquery,$=jquery,this=>window'}, /**/
-      // { test: /\.css$/, loader: ExtractTextPlugin.extract({
-      //   fallbackLoader: "style-loader",
-      //   loader: "css-loader"
-      // }) },
+      // {
+      //   test: /bootstrap.+\.(jsx|js)$/, loader: 'happypack/loader?id=bootstrap',
+      // }, /**/
+      // {
+      //   test: /(\.css)$/, loader: 'happypack/loader?id=css',
+      // },
+      {
+        test: /bootstrap.+\.(jsx|js)$/,
+        loader: 'imports?jQuery=jquery,$=jquery,this=>window'
+      },
       {test: /(\.css)$/, loader: "style!css"},
       {test: /\.png$/, loader: "url-loader?limit=100000"},
       {test: /\.jpg$/, loader: "file-loader"},
@@ -71,6 +147,24 @@ module.exports = {
       {test: /\.(woff|woff2)$/, loader: "url?prefix=font/&limit=5000"},
       {test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "url?limit=10000&mimetype=application/octet-stream"},
       {test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: "url?limit=10000&mimetype=image/svg+xml"}
+      // {
+      //   test: /\.png$/, loader: 'happypack/loader?id=png',
+      // },
+      // {
+      //   test: /\.jpg$/, loader: 'happypack/loader?id=jpg',
+      // },
+      // {
+      //   test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: 'happypack/loader?id=eot',
+      // },
+      // {
+      //   test: /\.(woff|woff2)$/, loader: 'happypack/loader?id=woff',
+      // },
+      // {
+      //   test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: 'happypack/loader?id=ttf',
+      // },
+      // {
+      //   test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'happypack/loader?id=svg',
+      // }
     ]
   }
 };

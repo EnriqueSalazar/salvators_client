@@ -9,3 +9,12 @@
   white-space: pre-wrap;
   text-overflow: ellipsis;
 }
+
+.vertical-align tr > td {
+  vertical-align: middle;
+  background-color: red;
+}
+
+.table > tbody > tr > td {
+  vertical-align: middle;
+}

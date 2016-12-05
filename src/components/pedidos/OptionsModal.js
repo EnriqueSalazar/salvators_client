@@ -25,7 +25,6 @@ let OptionsModal = props => {
     ciudad,
     restauranteModalOn
   }= props;
-
   return (
     <div>
       <Modal

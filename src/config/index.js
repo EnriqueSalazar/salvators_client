@@ -45,36 +45,49 @@ export const estados = {
   inicio_pedido: {
     id: 0,
     alarma: 5,
-    estilo: 'info'
+    estilo: 'info',
+    field:'h_inicio',
+    nombre:'Inicio Pedido'
   },
   fin_pedido: {
     id: 1,
     alarma: 5,
-    estilo: 'info'
+    estilo: 'info',
+    field:'h_fin',
+    nombre: 'Fin Pedido'
   },
   cocina: {
     id: 2,
     alarma: 5,
-    estilo: 'info'
+    estilo: 'info',
+    field:'h_cocina',
+    nombre: 'Cocina'
   },
   barra: {
     id: 3,
     alarma: 5,
-    estilo: 'info'
+    estilo: 'info',
+    field:'h_barra',
+    nombre: 'Barra'
   },
   domiciliario: {
     id: 4,
     alarma: 5,
-    estilo: 'info'
+    estilo: 'info',
+    field:'h_domiciliario',
+    nombre: 'Domiciliario'
   },
   entregado: {
     id: 5,
     alarma: 5,
-    estilo: 'info'
+    estilo: 'info',
+    field:'h_entregado',
+    nombre: 'Entregado'
   },
   anulado: {
     id: 6,
     alarma: 5,
-    estilo: 'info'
+    estilo: 'info',
+    nombre: 'Anulado'
   },
 };

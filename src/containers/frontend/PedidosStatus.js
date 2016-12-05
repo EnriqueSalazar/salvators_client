@@ -53,6 +53,8 @@ import _ from 'lodash';
 import moment from 'moment';
 import { estados } from '../../config/'
 
+import { toastr } from 'react-redux-toastr';
+
 class PedidosStatus extends Component {
 
   constructor(props) {
@@ -202,11 +204,32 @@ class PedidosStatus extends Component {
   };
 
   onPedidosClick = (pedido) => {
-    this.setState({
-      isNuevoPedidoModalActive: true,
-      isOptionsModalActive: false,
-    });
+    if (pedido.id) {
+      let cliente = this.props.clientes.find((cliente) => {
+        return cliente.id == pedido.id_cliente;
+      });
+      let ciudad = this.props.ciudades.find((ciudad) => {
+        return ciudad.id == cliente.id_ciudad;
+      });
+      let direccion = this.props.direcciones.find((direccion) => {
+        return direccion.id == pedido.id_direccion;
+      });
+      this.setState({
+          cliente,
+          direccion,
+          ciudad,
+        }, () => {
+          this.optionsModalOn()
+        }
+      );
+    } else {
+      this.setState({
+        isNuevoPedidoModalActive: true,
+        isOptionsModalActive: false,
+      });
+    }
   };
+
   selectCliente = (cliente) => {
     let direccion = {};
     this.setState({cliente, direccion});
@@ -268,7 +291,13 @@ class PedidosStatus extends Component {
     });
   };
   optionsModalOff = () => {
-    this.setState({isOptionsModalActive: false})
+    let cliente = {};
+    let direccion = {};
+    this.setState({
+      cliente,
+      direccion,
+      isOptionsModalActive: false
+    })
   };
 
   notaModalOn = (pedido) => {
@@ -388,7 +417,11 @@ class PedidosStatus extends Component {
   handleUpdatePedidoEstado = (field, pedido, nextEstado) => {
     pedido[field] = moment();
     pedido.id_estado = nextEstado.id;
-    this.props.updatePedido(pedido.id, pedido);
+    const toastrConfirmOptions = {
+      onOk: () => this.props.updatePedido(pedido.id, pedido)
+    };
+    toastr.confirm('Seguro que desea cambiar a estado ' + nextEstado.nombre, toastrConfirmOptions);
+
   };
   handleUpdatePedidoNota = (pedido) => {
     this.props.updatePedido(pedido.id, pedido);
@@ -400,17 +433,15 @@ class PedidosStatus extends Component {
   };
 
   handleAsignarPedidoDomiciliario = (pedido, domiciliario) => {
-    debugger
     pedido.id_domiciliario = domiciliario.id;
-    pedido.id_estado= estados.domiciliario.id;
-    pedido.h_domiciliario=moment();
+    pedido.id_estado = estados.domiciliario.id;
+    pedido.h_domiciliario = moment();
     this.props.updatePedido(pedido.id, pedido);
     this.domiciliarioModalOff();
   };
   handleAceptarPedidosDomiciliario = (pedidos, pedido, domiciliario) => {
- debugger
     pedidos.map(pedido => {
-      pedido.h_entregado=moment();
+      pedido.h_entregado = moment();
       pedido.id_estado = estados.entregado.id;
       this.props.updatePedido(pedido.id, pedido);
     });
@@ -448,13 +479,14 @@ class PedidosStatus extends Component {
           notaPagoModalOn={this.notaPagoModalOn}
           domiciliarioModalOn={this.domiciliarioModalOn}
           domiciliarios={this.props.domiciliarios}
+          onPedidosClick={this.onPedidosClick}
         >
           {this.state.pedidos}
         </PedidosList>
         <Button
           onClick={() => this.onPedidosClick({})}
           bsStyle="primary"
-          updatePedido={this.props.updatePedido}
+          //updatePedido={this.props.updatePedido}
         >
           <Glyphicon glyph="plus"/>{' Agregar'}
         </Button>
@@ -522,7 +554,6 @@ class PedidosStatus extends Component {
           isDomiciliarioModalActive={this.state.isDomiciliarioModalActive}
         />
       </div>
-
     );
   };
 }
