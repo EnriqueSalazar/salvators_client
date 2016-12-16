@@ -24,7 +24,9 @@ let OptionsModal = props => {
     direccion,
     ciudad,
     restauranteModalOn,
-    cancelacionesModalOn,
+    cancelacionFormOn,
+    quejaFormOn,
+    pedido
   }= props;
   return (
     <div>
@@ -36,8 +38,8 @@ let OptionsModal = props => {
         <Modal.Body style={{textAlign: "center"}}>
           <Well>
             <Grid fluid>
-              <Row>
-                <Col md={4}>
+              <Row style={!!pedido.id ? {display: 'none'} : {}}>
+                <Col md={6}>
                   <strong>
                     Nombre:
                   </strong>
@@ -59,7 +61,7 @@ let OptionsModal = props => {
                   </strong>
                   {' ' + ciudad ? ciudad.nombre : ''}
                 </Col>
-                <Col md={4}>
+                <Col md={6}>
                   <Button
                     onClick={() => restauranteModalOn()}
                     bsStyle="success"
@@ -71,23 +73,11 @@ let OptionsModal = props => {
                     <h1><Glyphicon glyph="send"/></h1>{' Nuevo Domicilio'}
                   </Button>
                 </Col>
-                <Col md={4}>
-                  <Button
-                    //onClick={() => restauranteModalOn()}
-                    bsStyle="info"
-                    block
-                    style={{
-                      whiteSpace: 'normal',
-                    }}
-                  >
-                    <h1><Glyphicon glyph="eye-open"/></h1>{' Estado del Pedido'}
-                  </Button>
-                </Col>
               </Row>
-              <Row>
-                <Col md={4}>
+              <Row style={!!pedido.id ? {} : {display: 'none'}}>
+                <Col md={6}>
                   <Button
-                    //onClick={() => this.props.updateOptions({})}
+                    onClick={() => quejaFormOn()}
                     bsStyle="warning"
                     block
                     style={{
@@ -97,30 +87,20 @@ let OptionsModal = props => {
                     <h1><Glyphicon glyph="thumbs-down"/></h1>{' Quejas y Reclamos'}
                   </Button>
                 </Col>
-                <Col md={4}>
+                <Col md={6}>
                   <Button
-                    onClick={() => cancelacionesModalOn()}
+                    onClick={() => cancelacionFormOn()}
                     bsStyle="danger"
                     block
                     style={{
                       whiteSpace: 'normal',
                     }}
+                    disabled={pedido.id && pedido.id_estado >=2}
                   >
                     <h1 ><Glyphicon glyph="trash"/></h1>{' Cancelaciones'}
                   </Button>
                 </Col>
-                <Col md={4}>
-                  <Button
-                    //onClick={() => this.props.updateOptions({})}
-                    bsStyle="primary"
-                    block
-                    style={{
-                      whiteSpace: 'normal',
-                    }}
-                  >
-                    <h1><Glyphicon glyph="arrow-left"/></h1>{' Volver'}
-                  </Button>
-                </Col>
+
               </Row>
             </Grid>
 
@@ -138,8 +118,8 @@ let OptionsModal = props => {
 
           </Well>
         </Modal.Body>
-      </Modal >
-    </div >
+      </Modal>
+    </div>
   );
 };
 

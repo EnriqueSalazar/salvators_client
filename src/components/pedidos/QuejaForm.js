@@ -17,13 +17,13 @@ import {
 import _ from 'lodash';
 import InputField from '../InputField';
 
-let CancelacionForm = props => {
+let QuejaForm = props => {
   const {
     initialValues,
-    cancelacionFormSubmit,
+    quejaFormSubmit,
     handleSubmit,
     isModalActive,
-    cancelacionFormOff
+    quejaFormOff
   }= props;
 
   return (
@@ -31,13 +31,13 @@ let CancelacionForm = props => {
       <Modal
         bsSize="large"
         show={isModalActive}
-        onHide={() => cancelacionFormOff()}
+        onHide={() => quejaFormOff()}
       >
         <Modal.Header closeButton>
-          <Modal.Title>Cancelacion</Modal.Title>
+          <Modal.Title>Queja</Modal.Title>
         </Modal.Header>
         <Modal.Body style={{textAlign: "center"}}>
-          <form onSubmit={handleSubmit(cancelacionFormSubmit)}>
+          <form onSubmit={handleSubmit(quejaFormSubmit)}>
             <FormGroup>
               <Grid>
                 <Row className="show-grid">
@@ -87,15 +87,15 @@ let CancelacionForm = props => {
   );
 };
 
-CancelacionForm = reduxForm({
-  form: 'cancelacionFormForm',
+QuejaForm = reduxForm({
+  form: 'quejaFormForm',
   enableReinitialize: true,
-})(CancelacionForm);
+})(QuejaForm);
 
-CancelacionForm.propTypes = {
+QuejaForm.propTypes = {
   initialValues: PropTypes.object.isRequired,
-  cancelacionFormSubmit: PropTypes.func.isRequired,
+  quejaFormSubmit: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func,
 };
 
-export default CancelacionForm;
+export default QuejaForm;

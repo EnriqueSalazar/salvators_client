@@ -38,7 +38,9 @@ export const model = {
   direccion: apiUrl('direccion'),
   descuento: apiUrl('descuento'),
   ciudad: apiUrl('ciudad'),
-  restaurante: apiUrl('restaurante')
+  restaurante: apiUrl('restaurante'),
+  cancelacion: apiUrl('cancelacion'),
+  queja: apiUrl('queja')
 };
 
 export const estados = {

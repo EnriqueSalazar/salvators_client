@@ -162,7 +162,7 @@ const PedidosList = props => {
           sortOrder: "desc",
           sizePerPage: 20,
           sizePerPageList: [20, 50, 200, 1000],
-          onRowClick: props.onPedidosClick,
+          onRowDoubleClick: props.onPedidosClick,
         }}
       >
         <TableHeaderColumn

@@ -28,8 +28,10 @@ import pedidoItemReducer from './pedidoItemReducer';
 import pedidoItemParteReducer from './pedidoItemParteReducer';
 import clienteReducer from './clienteReducer';
 import direccionReducer from './direccionReducer';
+import cancelacionReducer from './cancelacionReducer';
 import ciudadReducer from './ciudadReducer';
 import itemReducer from './itemReducer';
+import quejaReducer from './quejaReducer';
 import itemModReducer from './itemModReducer';
 // import usuariosReducer from './usuariosReducer';
 // import permisosReducer from './permisosReducer';
@@ -54,6 +56,8 @@ const appReducers = combineReducers({
   pedidoItemParteReducer,
   ciudadReducer,
   restauranteReducer,
+  cancelacionReducer,
+  quejaReducer,
   // usuariosReducer,
   // permisosReducer,
   routing: routerReducer,

@@ -20,32 +20,46 @@ import {
   updateCliente,
 } from '../../actions/clienteActions';
 import {
+  loadQuejas,
+  destroyQueja,
+  createQueja,
+  updateQueja,
+} from '../../actions/quejaActions';
+import {
   loadDirecciones,
   destroyDireccion,
   createDireccion,
   updateDireccion,
 } from '../../actions/direccionActions';
 import {
+  loadCancelaciones,
+  destroyCancelacion,
+  createCancelacion,
+  updateCancelacion,
+} from '../../actions/cancelacionActions';
+import {
   loadCiudades,
 } from '../../actions/ciudadActions';
 import PedidosNavBar
-  from '../../components/pedidos/PedidosNavBar'
+  from '../../components/pedidos/PedidosNavBar';
 import PedidosList
-  from '../../components/pedidos/PedidosList'
+  from '../../components/pedidos/PedidosList';
 import OptionsModal
-  from '../../components/pedidos/OptionsModal'
+  from '../../components/pedidos/OptionsModal';
 import NuevoPedidoModal
-  from '../../components/pedidos/NuevoPedidoModal'
+  from '../../components/pedidos/NuevoPedidoModal';
 import RestauranteModal
-  from '../../components/pedidos/RestauranteModal'
+  from '../../components/pedidos/RestauranteModal';
 import NotaModal
-  from '../../components/pedidos/NotaModal'
+  from '../../components/pedidos/NotaModal';
 import NotaPagoModal
-  from '../../components/pedidos/NotaPagoModal'
+  from '../../components/pedidos/NotaPagoModal';
 import DomiciliarioModal
-  from '../../components/pedidos/DomiciliarioModal'
-import CancelacionesModal
-  from '../../components/pedidos/CancelacionesModal'
+  from '../../components/pedidos/DomiciliarioModal';
+import CancelacionForm
+  from '../../components/pedidos/CancelacionForm';
+import QuejaForm
+from '../../components/pedidos/QuejaForm';
 
 import {
   Button,
@@ -68,7 +82,6 @@ class PedidosStatus extends Component {
       isNotaModalActive: false,
       isNotaPagoModalActive: false,
       isDomiciliarioModalActive: false,
-      isCancelacionesModalActive: false,
       cliente: {},
       clientes: [],
       direccion: {},
@@ -77,7 +90,9 @@ class PedidosStatus extends Component {
       restaurantes: [],
       restaurante: {},
       pedidos: [],
-      pedido: {}
+      pedido: {},
+      cancelacionForm: {},
+      isCancelacionFormActive: false
     };
   }
 
@@ -138,7 +153,7 @@ class PedidosStatus extends Component {
       direcciones = direcciones.filter(
         direccion => direccion.id_cliente == cliente.id
       );
-      this.setState({direcciones})
+      this.setState({direcciones});
     }
   };
 
@@ -149,7 +164,7 @@ class PedidosStatus extends Component {
           cliente => cliente.id_ciudad == ciudad.id
         );
       }
-      this.setState({clientes})
+      this.setState({clientes});
     }
   };
   filterRestaurantes = (ciudad, restaurantes) => {
@@ -160,7 +175,7 @@ class PedidosStatus extends Component {
           restaurante.id_ciudad == ciudad.id
         );
       }
-      this.setState({restaurantes})
+      this.setState({restaurantes});
     }
   };
   filterPedidosCiudad = (ciudad, pedidos) => {
@@ -179,7 +194,7 @@ class PedidosStatus extends Component {
           }
         );
       }
-      this.setState({pedidos})
+      this.setState({pedidos});
     }
   };
   filterPedidosRestaurante = (restaurante, pedidos) => {
@@ -190,7 +205,7 @@ class PedidosStatus extends Component {
           pedido.id_restaurante == restaurante.id
         );
       }
-      this.setState({pedidos})
+      this.setState({pedidos});
     }
   };
   filterPedidosdomiciliario = (domiciliario, pedidos) => {
@@ -202,7 +217,7 @@ class PedidosStatus extends Component {
           pedido.id_estado == estados.domiciliario.id
         );
       }
-      this.setState({pedidos})
+      this.setState({pedidos});
     }
   };
 
@@ -303,20 +318,71 @@ class PedidosStatus extends Component {
       direccion,
       pedido,
       isOptionsModalActive: false
-    })
+    });
   };
-cancelacionesModalOn = () => {
-  this.setState({
-    isOptionsModalActive: false,
-    isCancelacionesModalActive: true
-  })
-}
-cancelacionesModalOff = () => {
-  this.setState({
-    isOptionsModalActive:true,
-    isCancelacionesModalActive: false
-  })
-}
+  cancelacionFormOn = () => {
+    this.setState({
+      isOptionsModalActive: false,
+      isCancelacionFormActive: true,
+      cancelacionForm: {
+        id_pedido: this.state.pedido.id,
+        nota_cliente: '',
+        nota_operador: ''
+      }
+    });
+  };
+  cancelacionFormOff = () => {
+    this.setState({
+      isCancelacionFormActive: false,
+      cancelacionForm: {},
+      pedido: {}
+    });
+  };
+  handleUpdateCancelacionForm = (cancelacion) => {
+    let pedido = this.state.pedido;
+    pedido.id_estado = 6;
+    Promise.all([
+      this.props.createCancelacion(cancelacion),
+      this.props.updatePedido(pedido.id, pedido)
+    ]).then(() => {
+      this.setState({
+          pedido: {}
+        },
+        () => this.cancelacionFormOff()
+      )
+    });
+  };
+  quejaFormOn = () => {
+    this.setState({
+      isOptionsModalActive: false,
+      isQuejaFormActive: true,
+      quejaForm: {
+        id_pedido: this.state.pedido.id,
+        nota_cliente: '',
+        nota_operador: ''
+      }
+    });
+  };
+  quejaFormOff = () => {
+    this.setState({
+      isQuejaFormActive: false,
+      quejaForm: {},
+      pedido: {}
+    });
+  };
+  handleUpdateQuejaForm = (queja) => {
+    let pedido = this.state.pedido;
+    pedido.id_estado = 6;
+    Promise.all([
+      this.props.createQueja(queja),
+    ]).then(() => {
+      this.setState({
+          pedido: {}
+        },
+        () => this.quejaFormOff()
+      )
+    });
+  };
   notaModalOn = (pedido) => {
     this.setState({
       isNotaModalActive: true,
@@ -327,7 +393,7 @@ cancelacionesModalOff = () => {
     this.setState({
       isNotaModalActive: false,
       pedido: {}
-    })
+    });
   };
   notaPagoModalOn = (pedido) => {
     this.setState({
@@ -353,7 +419,6 @@ cancelacionesModalOff = () => {
   };
 
   domiciliarioModalOn = (pedido) => {
-
     this.setState({
       isDomiciliarioModalActive: true,
       isOptionsModalActive: false,
@@ -369,7 +434,6 @@ cancelacionesModalOff = () => {
     this.props.loadPedidos();
   };
 
-  //todo cambiar id_estado a 0
   submitInitialPedido =
     (cliente, direccion, restaurante) => {
       let pedido = {
@@ -378,7 +442,7 @@ cancelacionesModalOff = () => {
         id_cliente: cliente.id,
         id_direccion: direccion.id,
         id_restaurante: restaurante.id,
-        id_estado: 1
+        id_estado: 0
       };
       this.props.createPedido(pedido);
     };
@@ -432,13 +496,14 @@ cancelacionesModalOff = () => {
     );
   };
   handleUpdatePedidoEstado = (field, pedido, nextEstado) => {
+    this.optionsModalOff();
     pedido[field] = moment();
     pedido.id_estado = nextEstado.id;
     const toastrConfirmOptions = {
-      onOk: () => this.props.updatePedido(pedido.id, pedido)
+      onOk: () => this.props.updatePedido(pedido.id, pedido),
+      onCancel: () => this.props.loadPedidos()
     };
     toastr.confirm('Seguro que desea cambiar a estado ' + nextEstado.nombre, toastrConfirmOptions);
-
   };
   handleUpdatePedidoNota = (pedido) => {
     this.props.updatePedido(pedido.id, pedido);
@@ -500,23 +565,6 @@ cancelacionesModalOff = () => {
         >
           {this.state.pedidos}
         </PedidosList>
-        <CancelacionesModal
-          isCancelacionesModalActive={this.state.isCancelacionesModalActive}
-          cancelacionesModalOff={this.cancelacionesModalOff}
-          clientes={this.props.clientes}
-          direcciones={this.props.direcciones}
-          restaurantes={this.props.restaurantes}
-          estados={estados}
-          pedidos={this.state.pedidos}
-          handleUpdatePedido={this.handleUpdatePedidoEstado}
-          notaModalOn={this.notaModalOn}
-          notaPagoModalOn={this.notaPagoModalOn}
-          domiciliarioModalOn={this.domiciliarioModalOn}
-          domiciliarios={this.props.domiciliarios}
-          onPedidosClick={this.onPedidosClick}
-          cliente={this.state.cliente}
-          pedido={this.state.pedido}
-        />
         <Button
           onClick={() => this.onPedidosClick({})}
           bsStyle="primary"
@@ -531,7 +579,9 @@ cancelacionesModalOff = () => {
           direccion={this.state.direccion}
           ciudad={this.state.ciudad}
           restauranteModalOn={this.restauranteModalOn}
-          cancelacionesModalOn={this.cancelacionesModalOn}
+          cancelacionFormOn={this.cancelacionFormOn}
+          quejaFormOn={this.quejaFormOn}
+          pedido={this.state.pedido}
         />
         <NuevoPedidoModal
           isNuevoPedidoModalActive={this.state.isNuevoPedidoModalActive}
@@ -588,6 +638,18 @@ cancelacionesModalOff = () => {
           pedido={this.state.pedido}
           isDomiciliarioModalActive={this.state.isDomiciliarioModalActive}
         />
+        <CancelacionForm
+          initialValues={this.state.cancelacionForm}
+          cancelacionFormSubmit={this.handleUpdateCancelacionForm}
+          isModalActive={this.state.isCancelacionFormActive}
+          cancelacionFormOff={this.cancelacionFormOff}
+        />
+        <QuejaForm
+          initialValues={this.state.quejaForm}
+          quejaFormSubmit={this.handleUpdateQuejaForm}
+          isModalActive={this.state.isQuejaFormActive}
+          quejaFormOff={this.quejaFormOff}
+        />
       </div>
     );
   };
@@ -610,10 +672,14 @@ function mapStateToProps(state) {
     direccionReducer,
     ciudadReducer,
     domiciliarioReducer,
+    cancelacionReducer,
+    quejaReducer
   } = state;
   const {pedidos, shouldUpdatePedidos} = pedidoReducer;
   const {direcciones, shouldUpdateDirecciones} = direccionReducer;
   const {domiciliarios, shouldUpdateDomiciliarios} = domiciliarioReducer;
+  const {cancelaciones, shouldUpdateCancelaciones, cancelacion} = cancelacionReducer;
+  const {quejas, shouldUpdateQuejas, queja} = quejaReducer;
   const {restaurantes, shouldUpdateRestaurantes} = restauranteReducer;
   const {ciudades, shouldUpdateCiudades} = ciudadReducer;
   const {clientes, shouldUpdateClientes} = clienteReducer;
@@ -630,6 +696,12 @@ function mapStateToProps(state) {
     shouldUpdateCiudades,
     domiciliarios,
     shouldUpdateDomiciliarios,
+    cancelaciones,
+    shouldUpdateCancelaciones,
+    cancelacion,
+    quejas,
+    shouldUpdateQuejas,
+    queja
   };
 }
 
@@ -649,4 +721,12 @@ export default connect(mapStateToProps, {
   updateDireccion,
   loadCiudades,
   loadDomiciliarios,
+  loadCancelaciones,
+  destroyCancelacion,
+  createCancelacion,
+  updateCancelacion,
+  loadQuejas,
+  destroyQueja,
+  createQueja,
+  updateQueja,
 })(PedidosStatus);
