@@ -1,13 +1,12 @@
 import React, { Component, PropTypes } from 'react';
 import moment from 'moment';
 import {
-  Button,
   Glyphicon,
   ProgressBar
 } from 'react-bootstrap';
 import _ from 'lodash';
-import '../../styles/styles.css';
-const PedidosList = props => {
+import '../../styles/styles.css'
+const CancelacionesList = props => {
   let pedidos = props.children;
   let clienteFormatter = (cell, row) => {
     if (cell) {
@@ -16,7 +15,7 @@ const PedidosList = props => {
       });
       return cliente ? cliente.nombre : null;
     }
-  };
+  }
   let direccionFormatter = (cell, row) => {
     if (cell) {
       let direccion = props.direcciones.find((direccion) => {
@@ -24,7 +23,7 @@ const PedidosList = props => {
       });
       return direccion ? direccion.direccion : null;
     }
-  };
+  }
   let restauranteFormatter = (cell, row) => {
     if (cell) {
       let restaurante = props.restaurantes.find((restaurante) => {
@@ -32,43 +31,26 @@ const PedidosList = props => {
       });
       return restaurante ? restaurante.nombre : null;
     }
-  };
+  }
   let momentFormatter = (value, theFormat) =>
     (moment.utc(value, "YYYY-MM-DDTHH:mm:ssZ").format(theFormat));
 
   let dateFormatter = (cell, row) =>
-    (cell ? momentFormatter(cell, 'D MMM YYYY') : null);
+    (cell ? momentFormatter(cell, 'D/M/YYYY') : null);
 
   let timeFormatter = (cell) =>
     (cell ? momentFormatter(cell, 'HH:mm') : null);
 
   let nowFormatter = (field, row, nextEstado) => {
     return (<Glyphicon glyph="time"/>);
-
-    // return (
-    //   <Button
-    //     onClick={() => props.handleUpdatePedido(field, row, nextEstado)}
-    //     bsStyle="primary"
-    //     disabled={row.id_estado != (nextEstado.id - 1)}
-    //   >
-    //     <Glyphicon glyph="plus"/>
-    //   </Button>
-    // )
-  };
+  }
   let estadoFormatter = (cell, row) => {
 
     let estadoKey = _.findKey(props.estados, ['id', cell]);
     let estado = props.estados[estadoKey];
     let nextEstado = _.findKey(props.estados, ['id', cell + 1]);
     nextEstado = props.estados[nextEstado]; //craaaaazy shit
-    return (  <Button
-        onClick={() => props.handleUpdatePedido(nextEstado.field, row, nextEstado)}
-        bsStyle="primary"
-        bsSize="large"
-        disabled={row.id_estado >= props.estados.entregado.id}
-      >{estadoKey}
-      </Button>
-    );
+    return (estadoKey);
 
   }
 
@@ -93,36 +75,6 @@ const PedidosList = props => {
       nowFormatter('h_entregado', row, props.estados.entregado);
   }
 
-  let notaFormatter = (cell, row) => {
-    let trimmedCell = cell ? cell.substring(0, 60) : '';
-    return (<div>
-        {trimmedCell + ' '}
-        <Button
-          bsStyle={cell ? "default" : "primary"}
-          onClick={() => props.notaModalOn(row)}
-          bsSize={cell ? "xsmall" : "default"}
-        >
-          <Glyphicon glyph="edit"/>
-        </Button>
-      </div>
-    )
-  }
-
-  let notaPagoFormatter = (cell, row) => {
-    let trimmedCell = cell ? cell.substring(0, 60) : '';
-    return (<div>
-        {trimmedCell + ' '}
-        <Button
-          bsStyle={cell ? "default" : "primary"}
-          onClick={() => props.notaPagoModalOn(row)}
-          bsSize={cell ? "xsmall" : "default"}
-        >
-          <Glyphicon glyph="edit"/>
-        </Button>
-      </div>
-    )
-  }
-  //test
   let domiciliarioNombreFormatter = (cell, row) => {
     let domiciliario = props.domiciliarios.find(
       (domiciliario) => {
@@ -130,16 +82,7 @@ const PedidosList = props => {
       }
     )
     return (<div>
-        {domiciliario ? domiciliario.nombre + ' ' : ''}
-        <Button
-          bsStyle={cell ? "default" : "primary"}
-          onClick={() => props.domiciliarioModalOn(row)}
-          bsSize={cell ? "xsmall" : "default"}
-          disabled={row.id_estado != props.estados.barra.id &&
-          row.id_estado != props.estados.domiciliario.id}
-        >
-          <Glyphicon glyph="edit"/>
-        </Button>
+        {domiciliario ? domiciliario.nombre: ''}
       </div>
     )
   }
@@ -232,7 +175,7 @@ const PedidosList = props => {
         <TableHeaderColumn
           dataField="fecha"
           dataAlign="center"
-          width={widthHora}
+          width={+widthHora+30}
           dataFormat={dateFormatter}
         >
           Fecha
@@ -268,15 +211,6 @@ const PedidosList = props => {
         >
           Factura
         </TableHeaderColumn>
-
-        <TableHeaderColumn
-          dataField="nota_pedido"
-          dataAlign="center"
-          width={width}
-          dataFormat={notaFormatter}
-        >
-          Nota Pedido
-        </TableHeaderColumn>
         <TableHeaderColumn
           dataField="id_operario"
           dataAlign="center"
@@ -292,14 +226,6 @@ const PedidosList = props => {
           Forma de Pago
         </TableHeaderColumn>
         <TableHeaderColumn
-          dataField="nota_forma_pago"
-          dataAlign="center"
-          dataFormat={notaPagoFormatter}
-          width={width}
-        >
-          Nota Forma de Pago
-        </TableHeaderColumn>
-        <TableHeaderColumn
           dataField="id_restaurante"
           dataAlign="center"
           width={width}
@@ -312,6 +238,6 @@ const PedidosList = props => {
   );
 };
 
-PedidosList.propTypes = {};
+CancelacionesList.propTypes = {};
 
-export default PedidosList;
+export default CancelacionesList;

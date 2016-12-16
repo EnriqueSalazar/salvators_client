@@ -11,7 +11,8 @@ console.info('Server environment', process.env.NODE_ENV);
 
 module.exports = {
   cache: true,
-  devtool: "eval", //or cheap-module-eval-source-map
+  // devtool: "eval", //or cheap-module-eval-source-map
+  devtool: "eval-source-map",
   entry: [
     'babel-polyfill',
     'webpack-hot-middleware/client?reload=true',

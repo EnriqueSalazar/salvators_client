@@ -44,6 +44,8 @@ import NotaPagoModal
   from '../../components/pedidos/NotaPagoModal'
 import DomiciliarioModal
   from '../../components/pedidos/DomiciliarioModal'
+import CancelacionesModal
+  from '../../components/pedidos/CancelacionesModal'
 
 import {
   Button,
@@ -66,6 +68,7 @@ class PedidosStatus extends Component {
       isNotaModalActive: false,
       isNotaPagoModalActive: false,
       isDomiciliarioModalActive: false,
+      isCancelacionesModalActive: false,
       cliente: {},
       clientes: [],
       direccion: {},
@@ -218,6 +221,7 @@ class PedidosStatus extends Component {
           cliente,
           direccion,
           ciudad,
+          pedido
         }, () => {
           this.optionsModalOn()
         }
@@ -293,13 +297,26 @@ class PedidosStatus extends Component {
   optionsModalOff = () => {
     let cliente = {};
     let direccion = {};
+    let pedido = {};
     this.setState({
       cliente,
       direccion,
+      pedido,
       isOptionsModalActive: false
     })
   };
-
+cancelacionesModalOn = () => {
+  this.setState({
+    isOptionsModalActive: false,
+    isCancelacionesModalActive: true
+  })
+}
+cancelacionesModalOff = () => {
+  this.setState({
+    isOptionsModalActive:true,
+    isCancelacionesModalActive: false
+  })
+}
   notaModalOn = (pedido) => {
     this.setState({
       isNotaModalActive: true,
@@ -483,12 +500,29 @@ class PedidosStatus extends Component {
         >
           {this.state.pedidos}
         </PedidosList>
+        <CancelacionesModal
+          isCancelacionesModalActive={this.state.isCancelacionesModalActive}
+          cancelacionesModalOff={this.cancelacionesModalOff}
+          clientes={this.props.clientes}
+          direcciones={this.props.direcciones}
+          restaurantes={this.props.restaurantes}
+          estados={estados}
+          pedidos={this.state.pedidos}
+          handleUpdatePedido={this.handleUpdatePedidoEstado}
+          notaModalOn={this.notaModalOn}
+          notaPagoModalOn={this.notaPagoModalOn}
+          domiciliarioModalOn={this.domiciliarioModalOn}
+          domiciliarios={this.props.domiciliarios}
+          onPedidosClick={this.onPedidosClick}
+          cliente={this.state.cliente}
+          pedido={this.state.pedido}
+        />
         <Button
           onClick={() => this.onPedidosClick({})}
           bsStyle="primary"
           //updatePedido={this.props.updatePedido}
         >
-          <Glyphicon glyph="plus"/>{' Agregar'}
+          <Glyphicon glyph="modal-window"/>{' Iniciar'}
         </Button>
         <OptionsModal
           isOptionsModalActive={this.state.isOptionsModalActive}
@@ -497,6 +531,7 @@ class PedidosStatus extends Component {
           direccion={this.state.direccion}
           ciudad={this.state.ciudad}
           restauranteModalOn={this.restauranteModalOn}
+          cancelacionesModalOn={this.cancelacionesModalOn}
         />
         <NuevoPedidoModal
           isNuevoPedidoModalActive={this.state.isNuevoPedidoModalActive}

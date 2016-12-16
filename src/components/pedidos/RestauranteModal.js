@@ -130,15 +130,11 @@ let RestauranteModal = props => {
         <Modal.Footer>
           <Button onClick={() => restauranteModalOff()}>Cerrar</Button>
         </Modal.Footer>
-      </Modal >
-    </
-      div >
-  )
-    ;
+      </Modal>
+    </div>
+  );
 };
 
 RestauranteModal.propTypes = {};
 
 export default RestauranteModal;
-
-

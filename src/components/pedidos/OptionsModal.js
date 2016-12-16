@@ -23,7 +23,8 @@ let OptionsModal = props => {
     cliente,
     direccion,
     ciudad,
-    restauranteModalOn
+    restauranteModalOn,
+    cancelacionesModalOn,
   }= props;
   return (
     <div>
@@ -98,7 +99,7 @@ let OptionsModal = props => {
                 </Col>
                 <Col md={4}>
                   <Button
-                    //onClick={() => this.props.updateOptions({})}
+                    onClick={() => cancelacionesModalOn()}
                     bsStyle="danger"
                     block
                     style={{
