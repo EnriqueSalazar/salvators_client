@@ -40,9 +40,32 @@ import {
 import {
   loadCiudades,
 } from '../../actions/ciudadActions';
+import {
+  loadModificadores,
+  destroyModificador,
+  createModificador,
+  updateModificador,
+} from '../../actions/modificadorActions';
+import {
+  loadSubmodificadores,
+  destroySubmodificador,
+  createSubmodificador,
+  updateSubmodificador,
+} from '../../actions/submodificadorActions';
+import {
+  loadModSubmods,
+  destroyModSubmod,
+  createModSubmod,
+  updateModSubmod,
+} from '../../actions/modSubmodActions';
+import {
+  loadItemMods,
+  destroyItemMod,
+  createItemMod,
+  updateItemMod,
+} from '../../actions/itemModActions';
 
 import ButtonsPanel from '../../components/pedidodetalle/ButtonsPanel'
-import { browserHistory } from 'react-router';
 
 import {
   Grid,
@@ -54,67 +77,83 @@ import {
 import _ from 'lodash';
 import moment from 'moment';
 import { estados } from '../../config/'
-
+import { browserHistory } from 'react-router';
 import { toastr } from 'react-redux-toastr';
 
-class PedidoDetalle extends Component {
+class PedidoItem extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      selectedGrupoId: 0,
-      selectedItemId:0,
-      filteredItems:[]
+      filteredMods: [],
+      filteredSubmods: [],
+      selectedModId: 0,
+      selectedSubmodId: 0
     };
   }
 
   componentDidMount() {
-    this.props.loadGrupos();
-    this.props.loadItems();
+    this.props.loadModificadores();
+    this.props.loadSubmodificadores();
+    this.props.loadModSubmods();
+    this.props.loadItemMods();
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.shouldUpdateGrupos) {
-      this.props.loadGrupos();
-    }
+    let filteredMods = nextProps.modificadores.filter((mod) => {
+      let hasItemMod = this.props.itemMods.find((itemMod) => {
+        let isIdItem = itemMod.id_item_menu == this.props.params.id_item;
+        let isIdMod = itemMod.id_modificador == mod.id;
+        console.error(itemMod.id_item_menu, this.props.params.id_item, isIdItem)
+        console.error(itemMod.id_modificador, mod.id, isIdMod)
+        return isIdItem && isIdMod;
+      })
+      console.error('hasItemMod', hasItemMod);
+      return hasItemMod;
+    })
+    this.setState({filteredMods});
   }
 
-  handleGrupoClick = (selectedGrupoId) => {
-    let filteredItems = this.props.items.filter((item) => {
-      return (
-        item.id_grupo_menu == selectedGrupoId
-      );
+  handleModClick = (selectedModId) => {
+    let filteredSubmods = this.props.submodificadores.filter((submod) => {
+      let hasModSubmods = this.props.modSubmods.find((modSubmod) => {
+        let isIdMod = modSubmod.id_modificador == selectedModId;
+        let isIdSubmod = modSubmod.id_submodificador == submod.id;
+        return isIdMod && isIdSubmod;
+      })
+      return hasModSubmods;
     });
-    this.setState({selectedGrupoId,filteredItems});
+    this.setState({selectedModId, filteredSubmods});
   }
-   handleItemClick = (selectedItemId) => {
-    this.setState({selectedItemId});
-     browserHistory.push('/frontend/pedidoitem/'+this.props.params.id+'/'+selectedItemId);
-   }
+
+  handleSubmodClick = (selectedSubmodId) => {
+    this.setState({selectedSubmodId});
+  }
+
   render = () => {
     return (
       <div>
         <Grid>
           <Row>
-            <Col md={3}>
+            <Col md={12}>
               <ButtonsPanel
-                list={this.props.grupos}
-                onClick={this.handleGrupoClick}
-                selectedId={this.state.selectedGrupoId}
+                list={this.state.filteredMods}
+                onClick={this.handleModClick}
+                selectedId={this.state.selectedModId}
                 bsStyle='primary'
                 activeStyle='danger'
               />
-
             </Col>
-            <Col md={9}>
+          </Row>
+          <Row>
+            <Col md={12}>
               <ButtonsPanel
-                list={this.state.filteredItems}
-                onClick={this.handleItemClick}
-                selectedId={this.state.selectedItemId}
+                list={this.state.filteredSubmods}
+                onClick={this.handleSubmodClick}
+                selectedId={this.state.selectedSubmodId}
                 bsStyle='warning'
                 activeStyle='danger'
               />
-
             </Col>
           </Row>
         </Grid></div>
@@ -122,7 +161,7 @@ class PedidoDetalle extends Component {
   };
 }
 
-PedidoDetalle.propTypes = {
+PedidoItem.propTypes = {
   loadPedidos: PropTypes.func.isRequired,
   destroyPedido: PropTypes.func.isRequired,
   createPedido: PropTypes.func.isRequired,
@@ -142,7 +181,11 @@ function mapStateToProps(state) {
     ciudadReducer,
     domiciliarioReducer,
     cancelacionReducer,
-    quejaReducer
+    quejaReducer,
+    modificadorReducer,
+    submodificadorReducer,
+    modSubmodReducer,
+    itemModReducer
   } = state;
   const {pedidos, shouldUpdatePedidos} = pedidoReducer;
   const {direcciones, shouldUpdateDirecciones} = direccionReducer;
@@ -152,6 +195,10 @@ function mapStateToProps(state) {
   const {clientes, shouldUpdateClientes} = clienteReducer;
   const {grupos, shouldUpdateGrupos} = grupoReducer;
   const {items, shouldUpdateItems, item} = itemReducer;
+  const {modificadores, shouldUpdateModificadores} = modificadorReducer;
+  const {submodificadores, shouldUpdateSubmodificadores, submodificador} = submodificadorReducer;
+  const {modSubmods, shouldUpdateModSubmods} = modSubmodReducer;
+  const {itemMods, shouldUpdateItemMods} = itemModReducer;
   return {
     pedidos,
     shouldUpdatePedidos,
@@ -170,6 +217,15 @@ function mapStateToProps(state) {
     items,
     item,
     shouldUpdateItems,
+    modificadores,
+    shouldUpdateModificadores,
+    submodificadores,
+    submodificador,
+    shouldUpdateSubmodificadores,
+    modSubmods,
+    shouldUpdateModSubmods,
+    itemMods,
+    shouldUpdateItemMods
   };
 }
 
@@ -197,4 +253,20 @@ export default connect(mapStateToProps, {
   destroyGrupo,
   createGrupo,
   updateGrupo,
-})(PedidoDetalle);
+  loadModificadores,
+  destroyModificador,
+  createModificador,
+  updateModificador,
+  loadSubmodificadores,
+  destroySubmodificador,
+  createSubmodificador,
+  updateSubmodificador,
+  loadModSubmods,
+  destroyModSubmod,
+  createModSubmod,
+  updateModSubmod,
+  loadItemMods,
+  destroyItemMod,
+  createItemMod,
+  updateItemMod,
+})(PedidoItem);

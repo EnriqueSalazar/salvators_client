@@ -1,6 +1,7 @@
 import {toastr} from 'react-redux-toastr';
 import Api from '../api/Api';
 import {model} from '../config/'
+import { browserHistory } from 'react-router';
 
 export const LOAD_PEDIDOS_SUCCESS = 'LOAD_PEDIDOS_SUCCESS';
 export const LOAD_ONE_PEDIDO_SUCCESS = 'LOAD_ONE_PEDIDO_SUCCESS';
@@ -59,6 +60,9 @@ export function createPedido(payload) {
   return dispatch => {
     return Api.create(model.pedidos, payload).then((pedido) => {
       dispatch(createPedidoSuccess(pedido.data));
+      setTimeout(() => {
+        browserHistory.push('/frontend/pedidodetalle/' + pedido.data.id);
+      }, 2000);
     }).catch(error => {
       throw(error);
     });
