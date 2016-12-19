@@ -28,6 +28,9 @@ let OptionsModal = props => {
     quejaFormOn,
     pedido
   }= props;
+  let isCliente = cliente && cliente.id;
+  let isCiudad = ciudad && ciudad.id;
+  let isDireccion = direccion && direccion.id;
   return (
     <div>
       <Modal
@@ -43,23 +46,23 @@ let OptionsModal = props => {
                   <strong>
                     Nombre:
                   </strong>
-                  {' ' + cliente ? cliente.nombre : ''}<br />
+                  {' ' + isCliente ? cliente.nombre : ''}<br />
                   <strong>
                     Cedula:
                   </strong>
-                  {' ' + cliente ? cliente.cedula : ''}<br />
+                  {' ' + isCliente ? cliente.cedula : ''}<br />
                   <strong>
                     Telefono:
                   </strong>
-                  {' ' + cliente ? cliente.telefono : ''}<br />
+                  {' ' + isCliente ? cliente.telefono : ''}<br />
                   <strong>
                     Direccion:
                   </strong>
-                  {' ' + direccion ? direccion.direccion : ''}<br />
+                  {' ' + isDireccion ? direccion.direccion : ''}<br />
                   <strong>
                     Ciudad:
                   </strong>
-                  {' ' + ciudad ? ciudad.nombre : ''}
+                  {' ' + isCiudad ? ciudad.nombre : ''}
                 </Col>
                 <Col md={6}>
                   <Button

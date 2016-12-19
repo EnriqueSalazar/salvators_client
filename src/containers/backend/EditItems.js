@@ -55,7 +55,7 @@ class EditItems extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.item.id
       && (nextProps.item.id != this.props.params.id)) {
-      browserHistory.push('/edititems/' + nextProps.item.id);
+      browserHistory.push('/backend/edititems/' + nextProps.item.id);
       this.props.loadItemMods();
     }
     if (nextProps.shouldUpdateModificadores) {
@@ -118,7 +118,7 @@ class EditItems extends Component {
 
   handleDestroyItem = (id) => {
     this.props.destroyItem(id);
-    browserHistory.push('/editgrupos/');
+    browserHistory.push('/backend/editgrupos/');
   };
 
   render = () => {
@@ -129,7 +129,7 @@ class EditItems extends Component {
             <Button
               className="play"
               onClick={() => {
-                browserHistory.push('/editgrupos');
+                browserHistory.push('/backend/editgrupos');
               }}
               bsSize="xsmall"
               bsStyle="info"

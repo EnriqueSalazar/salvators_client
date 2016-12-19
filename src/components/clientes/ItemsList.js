@@ -23,7 +23,7 @@ const ItemsList = props => {
           <Button
             className="play"
             onClick={() => {
-              browserHistory.push('/edititems/' + row.id);
+              browserHistory.push('/backend/edititems/' + row.id);
             }}
             bsSize="xsmall"
             bsStyle="info"
@@ -93,7 +93,7 @@ const ItemsList = props => {
       </BootstrapTable>
       <Button
         onClick={() => {
-          browserHistory.push('/edititems/0');
+          browserHistory.push('/backend/edititems/0');
         }}        bsStyle="primary"
       >
         <Glyphicon glyph="plus"/>{' Crear'}

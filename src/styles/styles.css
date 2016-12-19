@@ -12,9 +12,43 @@
 
 .vertical-align tr > td {
   vertical-align: middle;
-  background-color: red;
 }
 
 .table > tbody > tr > td {
   vertical-align: middle;
+}
+
+.min25 {
+  vertical-align: middle;
+  background-color: #ffd143;
+}
+
+.min30 {
+  vertical-align: middle;
+  background-color: #990000;
+  color: white;
+}
+
+.onOperator {
+  vertical-align: middle;
+  background-color: pink;
+}
+
+.anulado {
+  vertical-align: middle;
+  background-color: #286e41;
+  color: white;
+}
+
+.onOperator:hover {
+  color: black;
+}
+.min25:hover {
+  color: black;
+}
+.min30:hover {
+  color: black;
+}
+.anulado:hover {
+  color: black;
 }

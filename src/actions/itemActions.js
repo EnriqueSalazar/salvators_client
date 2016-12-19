@@ -59,7 +59,7 @@ export function updateItem(id, payload) {
 export function createItem(payload) {
   return dispatch => {
     return Api.create(model.itemmenu, payload).then((item) => {
-      browserHistory.push('/edititems/0');
+      browserHistory.push('/backend/edititems/0');
       dispatch(createItemSuccess(item.data));
 
     }).catch(error => {

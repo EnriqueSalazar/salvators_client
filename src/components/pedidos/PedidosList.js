@@ -44,28 +44,22 @@ const PedidosList = props => {
 
   let nowFormatter = (field, row, nextEstado) => {
     return (<Glyphicon glyph="time"/>);
-
-    // return (
-    //   <Button
-    //     onClick={() => props.handleUpdatePedido(field, row, nextEstado)}
-    //     bsStyle="primary"
-    //     disabled={row.id_estado != (nextEstado.id - 1)}
-    //   >
-    //     <Glyphicon glyph="plus"/>
-    //   </Button>
-    // )
   };
+
   let estadoFormatter = (cell, row) => {
 
     let estadoKey = _.findKey(props.estados, ['id', cell]);
     let estado = props.estados[estadoKey];
     let nextEstado = _.findKey(props.estados, ['id', cell + 1]);
     nextEstado = props.estados[nextEstado]; //craaaaazy shit
+    let isAnulado = cell == props.estados.anulado.id;
     return (  <Button
-        onClick={() => props.handleUpdatePedido(nextEstado.field, row, nextEstado)}
-        bsStyle="primary"
+        onClick={isAnulado
+          ? () => props.cancelacionFormOn(row.id)
+          : () => props.handleUpdatePedido(nextEstado.field, row, nextEstado)}
+        bsStyle={ isAnulado ? "danger" : "primary"}
         bsSize="large"
-        disabled={row.id_estado >= props.estados.entregado.id}
+        disabled={row.id_estado == props.estados.entregado.id}
       >{estadoKey}
       </Button>
     );
@@ -122,7 +116,7 @@ const PedidosList = props => {
       </div>
     )
   }
-  //test
+
   let domiciliarioNombreFormatter = (cell, row) => {
     let domiciliario = props.domiciliarios.find(
       (domiciliario) => {
@@ -143,6 +137,16 @@ const PedidosList = props => {
       </div>
     )
   }
+
+  let trClassFormat = (row, rowIndex) => {
+    if (row.id_estado < 2) return 'onOperator';
+    if (row.id_estado == 6) return 'anulado';
+    let isAnuladoOrEntregado = (row.id_estado >= 5);
+    let sinceCocinaMinutos = moment().diff(row.h_cocina, 'minutes');
+    if (!isAnuladoOrEntregado && sinceCocinaMinutos > 30) return 'min30';
+    if (!isAnuladoOrEntregado && sinceCocinaMinutos >25) return 'min25';
+  }
+
   const width = '150';
   const widthHora = '60';
 
@@ -150,9 +154,8 @@ const PedidosList = props => {
     <div>
       <BootstrapTable
         style={{width: 2048}}
-        trClassName={'vertical-align'}
+        trClassName={trClassFormat}
         data={pedidos}
-        striped
         hover
         pagination
         search

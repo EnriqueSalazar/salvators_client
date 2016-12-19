@@ -59,7 +59,7 @@ import DomiciliarioModal
 import CancelacionForm
   from '../../components/pedidos/CancelacionForm';
 import QuejaForm
-from '../../components/pedidos/QuejaForm';
+  from '../../components/pedidos/QuejaForm';
 
 import {
   Button,
@@ -103,6 +103,7 @@ class PedidosStatus extends Component {
     this.props.loadCiudades();
     this.props.loadDomiciliarios();
     this.props.loadRestaurantes();
+    this.props.loadCancelaciones();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -145,6 +146,9 @@ class PedidosStatus extends Component {
         this.state.cliente,
         nextProps.direcciones
       );
+    }
+    if (nextProps.shouldUpdateCancelaciones) {
+      this.props.loadCancelaciones();
     }
   }
 
@@ -320,15 +324,23 @@ class PedidosStatus extends Component {
       isOptionsModalActive: false
     });
   };
-  cancelacionFormOn = () => {
-    this.setState({
-      isOptionsModalActive: false,
-      isCancelacionFormActive: true,
-      cancelacionForm: {
+  cancelacionFormOn = (id_pedido) => {
+    let cancelacionForm = {};
+    if (id_pedido) {
+      cancelacionForm = this.props.cancelaciones.find((cancelacion) => {
+        return cancelacion.id_pedido == id_pedido;
+      });
+    } else {
+      cancelacionForm = {
         id_pedido: this.state.pedido.id,
         nota_cliente: '',
         nota_operador: ''
       }
+    }
+    this.setState({
+      isOptionsModalActive: false,
+      isCancelacionFormActive: true,
+      cancelacionForm
     });
   };
   cancelacionFormOff = () => {
@@ -562,6 +574,7 @@ class PedidosStatus extends Component {
           domiciliarioModalOn={this.domiciliarioModalOn}
           domiciliarios={this.props.domiciliarios}
           onPedidosClick={this.onPedidosClick}
+          cancelacionFormOn={this.cancelacionFormOn}
         >
           {this.state.pedidos}
         </PedidosList>
