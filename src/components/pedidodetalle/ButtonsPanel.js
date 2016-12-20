@@ -5,7 +5,12 @@ let ButtonsPanel = props => {
   return (
     <div>
       {props.list.map((button, i) => {
-        let isActive = button.id == props.selectedId;
+        let isActive = false;
+        if (Array.isArray(props.selectedId)) {
+          isActive = props.selectedId.includes(button.id);
+        } else {
+          isActive = button.id == props.selectedId;
+        }
         return (
           <ButtonItem
             key={i}

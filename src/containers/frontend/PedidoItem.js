@@ -88,7 +88,9 @@ class PedidoItem extends Component {
       filteredMods: [],
       filteredSubmods: [],
       selectedModId: 0,
-      selectedSubmodId: 0
+      selectedModSubmod: [],
+      selectedModIds: [],
+      selectedSubmodIds: []
     };
   }
 
@@ -101,19 +103,28 @@ class PedidoItem extends Component {
 
   componentWillReceiveProps(nextProps) {
     let filteredMods = nextProps.modificadores.filter((mod) => {
-      let hasItemMod = this.props.itemMods.find((itemMod) => {
-        let isIdItem = itemMod.id_item_menu == this.props.params.id_item;
+      let hasItemMod = nextProps.itemMods.find((itemMod) => {
+        let isIdItem = itemMod.id_item_menu == +nextProps.params.id_item;
         let isIdMod = itemMod.id_modificador == mod.id;
-        console.error(itemMod.id_item_menu, this.props.params.id_item, isIdItem)
-        console.error(itemMod.id_modificador, mod.id, isIdMod)
         return isIdItem && isIdMod;
       })
-      console.error('hasItemMod', hasItemMod);
       return hasItemMod;
     })
     this.setState({filteredMods});
   }
 
+  filterActiveSelected = () => {
+    let selectedModIds = this.state.selectedModSubmod.map(m => m.id_modificador)
+    selectedModIds = Array.from(new Set(selectedModIds));
+    let selectedSubmodIds = this.state.selectedModSubmod.reduce((result, s) => {
+      if (s.id_modificador == this.state.selectedModId) {
+        result.push(s.id_submodificador);
+      }
+      return result;
+    }, [])
+    this.setState({selectedModIds, selectedSubmodIds});
+
+  }
   handleModClick = (selectedModId) => {
     let filteredSubmods = this.props.submodificadores.filter((submod) => {
       let hasModSubmods = this.props.modSubmods.find((modSubmod) => {
@@ -123,11 +134,23 @@ class PedidoItem extends Component {
       })
       return hasModSubmods;
     });
-    this.setState({selectedModId, filteredSubmods});
+    this.setState({selectedModId, filteredSubmods}, () => this.filterActiveSelected());
   }
-
   handleSubmodClick = (selectedSubmodId) => {
-    this.setState({selectedSubmodId});
+    let hasModSubmod = this.state.selectedModSubmod.find((modSubmod) => {
+      let isIdMod = modSubmod.id_modificador == this.state.selectedModId;
+      let isIdSubmod = modSubmod.id_submodificador == selectedSubmodId;
+      return isIdMod && isIdSubmod
+    })
+    let selectedModSubmod = [];
+    if (hasModSubmod) {
+      selectedModSubmod = this.state.selectedModSubmod.filter((m) => m != hasModSubmod)
+    } else {
+      let id_modificador = this.state.selectedModId;
+      let id_submodificador = selectedSubmodId;
+      selectedModSubmod = [...this.state.selectedModSubmod, {id_modificador, id_submodificador}]
+    }
+    this.setState({selectedModSubmod}, () => this.filterActiveSelected());
   }
 
   render = () => {
@@ -139,7 +162,7 @@ class PedidoItem extends Component {
               <ButtonsPanel
                 list={this.state.filteredMods}
                 onClick={this.handleModClick}
-                selectedId={this.state.selectedModId}
+                selectedId={this.state.selectedModIds}
                 bsStyle='primary'
                 activeStyle='danger'
               />
@@ -150,7 +173,7 @@ class PedidoItem extends Component {
               <ButtonsPanel
                 list={this.state.filteredSubmods}
                 onClick={this.handleSubmodClick}
-                selectedId={this.state.selectedSubmodId}
+                selectedId={this.state.selectedSubmodIds}
                 bsStyle='warning'
                 activeStyle='danger'
               />
