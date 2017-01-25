@@ -66,13 +66,16 @@ import {
 } from '../../actions/itemModActions';
 
 import ButtonsPanel from '../../components/pedidodetalle/ButtonsPanel'
+import PedidoItemModList from '../../components/pedidodetalle/PedidoItemModList'
 
 import {
   Grid,
   Row,
   Col,
   Button,
-  Glyphicon
+  Glyphicon,
+  Well,
+  Label
 } from 'react-bootstrap';
 import _ from 'lodash';
 import moment from 'moment';
@@ -90,7 +93,8 @@ class PedidoItem extends Component {
       selectedModId: 0,
       selectedModSubmod: [],
       selectedModIds: [],
-      selectedSubmodIds: []
+      selectedSubmodIds: [],
+      nombreItem: ''
     };
   }
 
@@ -99,18 +103,21 @@ class PedidoItem extends Component {
     this.props.loadSubmodificadores();
     this.props.loadModSubmods();
     this.props.loadItemMods();
+    this.props.loadItems();
   }
 
   componentWillReceiveProps(nextProps) {
     let filteredMods = nextProps.modificadores.filter((mod) => {
       let hasItemMod = nextProps.itemMods.find((itemMod) => {
-        let isIdItem = itemMod.id_item_menu == +nextProps.params.id_item;
+        let isIdItem = itemMod.id_item_menu == +nextProps.idItem;
         let isIdMod = itemMod.id_modificador == mod.id;
         return isIdItem && isIdMod;
       })
       return hasItemMod;
     })
-    this.setState({filteredMods});
+    let item = nextProps.items.find(item => item.id == +nextProps.idItem);
+    let nombreItem = item && item.id ? item.nombre : '';
+    this.setState({filteredMods, nombreItem});
   }
 
   filterActiveSelected = () => {
@@ -156,31 +163,72 @@ class PedidoItem extends Component {
   render = () => {
     return (
       <div>
+        <center>
+        <h1>{this.state.nombreItem}</h1>
+        </center>
         <Grid>
           <Row>
-            <Col md={12}>
-              <ButtonsPanel
-                list={this.state.filteredMods}
-                onClick={this.handleModClick}
-                selectedId={this.state.selectedModIds}
-                bsStyle='primary'
-                activeStyle='danger'
-              />
+            <Col md={8}>
+              <center>
+                <Well>
+                  <h1><Label>Modificadores</Label></h1>
+                  <ButtonsPanel
+                    list={this.state.filteredMods}
+                    onClick={this.handleModClick}
+                    selectedId={this.state.selectedModIds}
+                    bsStyle='primary'
+                    activeStyle='danger'
+                  />
+                </Well>
+                <Well>
+                  <h1><Label>Submodificadores</Label></h1>
+                  <ButtonsPanel
+                    list={this.state.filteredSubmods}
+                    onClick={this.handleSubmodClick}
+                    selectedId={this.state.selectedSubmodIds}
+                    bsStyle='warning'
+                    activeStyle='danger'
+                  />
+                </Well>
+              </center>
             </Col>
+            <Col md={4}>
+              <Well>
+                  <PedidoItemModList
+                    filteredMods={this.state.filteredMods}
+                    selectedModSubmod={this.state.selectedModSubmod}
+                    submodificadores={this.props.submodificadores}
+                  />
+              </Well>
+              <center>
+              <Button
+                onClick={() => this.props.handleItemAccept(this.state.selectedModSubmod)}
+                style={{
+                  whiteSpace: 'normal',
+                  width: '12em',
+                  height: '6em',
+                }}
+              >
+                {'Aceptar'}
+              </Button>
+              <Button
+                onClick={() => this.props.handleItemCancel()}
+                style={{
+                  whiteSpace: 'normal',
+                  width: '12em',
+                  height: '6em',
+                }}
+              >
+                {'Cancelar'}
+              </Button>
+              </center>
+          </Col>
           </Row>
-          <Row>
-            <Col md={12}>
-              <ButtonsPanel
-                list={this.state.filteredSubmods}
-                onClick={this.handleSubmodClick}
-                selectedId={this.state.selectedSubmodIds}
-                bsStyle='warning'
-                activeStyle='danger'
-              />
-            </Col>
-          </Row>
-        </Grid></div>
-    );
+
+        </Grid>
+      </div>
+    )
+      ;
   };
 }
 

@@ -1,5 +1,5 @@
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
+import React, {Component, PropTypes} from 'react';
+import {connect} from 'react-redux';
 
 import {
   loadRestaurantes,
@@ -40,22 +40,39 @@ import {
 import {
   loadCiudades,
 } from '../../actions/ciudadActions';
+import {
+  loadModificadores,
+  destroyModificador,
+  createModificador,
+  updateModificador,
+} from '../../actions/modificadorActions';
+import {
+  loadSubmodificadores,
+  destroySubmodificador,
+  createSubmodificador,
+  updateSubmodificador,
+} from '../../actions/submodificadorActions';
 
 import ButtonsPanel from '../../components/pedidodetalle/ButtonsPanel'
-import { browserHistory } from 'react-router';
+import PedidoItemList from '../../components/pedidodetalle/PedidoItemList'
+import PedidoItem from './PedidoItem';
+
+import {browserHistory} from 'react-router';
 
 import {
   Grid,
   Row,
   Col,
   Button,
-  Glyphicon
+  Glyphicon,
+  Well,
+  Label
 } from 'react-bootstrap';
 import _ from 'lodash';
 import moment from 'moment';
-import { estados } from '../../config/'
+import {estados} from '../../config/'
 
-import { toastr } from 'react-redux-toastr';
+import {toastr} from 'react-redux-toastr';
 
 class PedidoDetalle extends Component {
 
@@ -63,14 +80,20 @@ class PedidoDetalle extends Component {
     super(props);
     this.state = {
       selectedGrupoId: 0,
-      selectedItemId:0,
-      filteredItems:[]
+      selectedItemId: 0,
+      filteredItems: [],
+      idPedido: 0,
+      showItemDetails: 0,
+      pedidoItems: [],
     };
   }
 
   componentDidMount() {
     this.props.loadGrupos();
     this.props.loadItems();
+    this.props.loadModificadores();
+    this.props.loadSubmodificadores();
+    this.setState({idPedido: this.props.params.id_pedido});
   }
 
   componentWillReceiveProps(nextProps) {
@@ -79,46 +102,99 @@ class PedidoDetalle extends Component {
     }
   }
 
+  toggleShowItemDetails = () => {
+    const showItemDetails= !this.state.showItemDetails;
+    this.setState({showItemDetails});
+  }
   handleGrupoClick = (selectedGrupoId) => {
     let filteredItems = this.props.items.filter((item) => {
       return (
         item.id_grupo_menu == selectedGrupoId
       );
     });
-    this.setState({selectedGrupoId,filteredItems});
+    this.setState({selectedGrupoId, filteredItems});
   }
-   handleItemClick = (selectedItemId) => {
-    this.setState({selectedItemId});
-     browserHistory.push('/frontend/pedidoitem/'+this.props.params.id+'/'+selectedItemId);
-   }
-  render = () => {
+  handleItemClick = (selectedItemId) => {
+    this.setState({selectedItemId}, this.toggleShowItemDetails);
+  }
+  handleItemAccept = (selectedModSubmods) =>{
+    let pedidoItems = this.state.pedidoItems;
+    let id_item = this.state.selectedItemId;
+    pedidoItems.push({id_item, selectedModSubmods});
+    let selectedItemId=0;
+    this.setState({selectedItemId, pedidoItems}, this.toggleShowItemDetails);
+  }
+  handleItemCancel =()=>{
+    let selectedItemId = 0;
+    this.setState({selectedItemId}, this.toggleShowItemDetails);
+  }
+
+  pedidoGrupos = () => {
     return (
       <div>
         <Grid>
           <Row>
             <Col md={3}>
-              <ButtonsPanel
-                list={this.props.grupos}
-                onClick={this.handleGrupoClick}
-                selectedId={this.state.selectedGrupoId}
-                bsStyle='primary'
-                activeStyle='danger'
-              />
+              <Well>
+                <center>
+                  <h1><Label>Grupos</Label></h1>
+                  <ButtonsPanel
+                    list={this.props.grupos}
+                    onClick={this.handleGrupoClick}
+                    selectedId={this.state.selectedGrupoId}
+                    bsStyle='primary'
+                    activeStyle='danger'
+                  />
+                </center>
+              </Well>
 
             </Col>
-            <Col md={9}>
-              <ButtonsPanel
-                list={this.state.filteredItems}
-                onClick={this.handleItemClick}
-                selectedId={this.state.selectedItemId}
-                bsStyle='warning'
-                activeStyle='danger'
-              />
+            <Col md={6}>
+              <Well>
+                <center>
 
+                  <h1><Label>Items</Label></h1>
+                  <ButtonsPanel
+                    list={this.state.filteredItems}
+                    onClick={this.handleItemClick}
+                    selectedId={this.state.selectedItemId}
+                    bsStyle='warning'
+                    activeStyle='danger'
+                  />
+                </center>
+              </Well>
+
+            </Col>
+            <Col md={3}>
+              {this.state.pedidoItems && this.pedidoItemList()}
             </Col>
           </Row>
-        </Grid></div>
-    );
+        </Grid>
+      </div>
+    )
+  }
+
+  pedidoItemList =()=>{
+    return (<PedidoItemList
+      pedidoItems={this.state.pedidoItems}
+      items={this.props.items}
+      modificadores={this.props.modificadores}
+      submodificadores={this.props.submodificadores}
+    />)
+  }
+  pedidoItem = () => {
+    return (<PedidoItem
+      idItem={this.state.selectedItemId}
+      handleItemAccept={this.handleItemAccept}
+      handleItemCancel={this.handleItemCancel}
+    />)
+  }
+  render = () => {
+    return <div>{
+      this.state.showItemDetails ?
+        this.pedidoItem() :
+        this.pedidoGrupos()
+    }</div>
   };
 }
 
@@ -142,6 +218,8 @@ function mapStateToProps(state) {
     ciudadReducer,
     domiciliarioReducer,
     cancelacionReducer,
+    modificadorReducer,
+    submodificadorReducer,
     quejaReducer
   } = state;
   const {pedidos, shouldUpdatePedidos} = pedidoReducer;
@@ -152,6 +230,8 @@ function mapStateToProps(state) {
   const {clientes, shouldUpdateClientes} = clienteReducer;
   const {grupos, shouldUpdateGrupos} = grupoReducer;
   const {items, shouldUpdateItems, item} = itemReducer;
+  const {modificadores, shouldUpdateModificadores} = modificadorReducer;
+  const {submodificadores, shouldUpdateSubmodificadores, submodificador} = submodificadorReducer;
   return {
     pedidos,
     shouldUpdatePedidos,
@@ -170,6 +250,11 @@ function mapStateToProps(state) {
     items,
     item,
     shouldUpdateItems,
+    modificadores,
+    shouldUpdateModificadores,
+    submodificadores,
+    submodificador,
+    shouldUpdateSubmodificadores,
   };
 }
 
@@ -197,4 +282,12 @@ export default connect(mapStateToProps, {
   destroyGrupo,
   createGrupo,
   updateGrupo,
+  loadModificadores,
+  destroyModificador,
+  createModificador,
+  updateModificador,
+  loadSubmodificadores,
+  destroySubmodificador,
+  createSubmodificador,
+  updateSubmodificador,
 })(PedidoDetalle);

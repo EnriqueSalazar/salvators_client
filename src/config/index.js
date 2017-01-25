@@ -11,9 +11,9 @@ if (isProduction) {
   server = '52.39.41.242';
   port = '80';
 } else {
-  server = '192.168.1.7';
+  server = '192.168.178.248';
   port = '1337';
-}
+};;//
 export let serverUrl = 'http://' + server + ':' + port + '/';
 
 let apiUrl = (model) => {

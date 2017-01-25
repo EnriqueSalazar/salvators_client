@@ -23,7 +23,6 @@ import FrontendApp from '../containers/frontend/FrontendApp';
 import FrontendHome from '../containers/frontend/FrontendHome';
 import PedidosStatus from '../containers/frontend/PedidosStatus';
 import PedidoDetalle from '../containers/frontend/PedidoDetalle';
-import PedidoItem from '../containers/frontend/PedidoItem';
 import Home from '../containers/Home';
 // import Users from './src/containers/Users';
 // import Permisos from './src/containers/Permisos';
@@ -46,8 +45,7 @@ const routes = (<div>
     <Route path="/frontend" component={FrontendApp}>
       <IndexRoute component={FrontendHome}/>
       <Route path="pedidosstatus" component={PedidosStatus}/>
-      <Route path="pedidodetalle/:id" component={PedidoDetalle}/>
-      <Route path="pedidoitem/:id_pedido/:id_item" component={PedidoItem}/>
+      <Route path="pedidodetalle/:id_pedido" component={PedidoDetalle}/>
       <Route path="*" component={FrontendHome}/>
     </Route>
     <Route path="/*" component={Home}/>
