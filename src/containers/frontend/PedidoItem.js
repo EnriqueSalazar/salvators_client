@@ -233,12 +233,6 @@ class PedidoItem extends Component {
 }
 
 PedidoItem.propTypes = {
-  loadPedidos: PropTypes.func.isRequired,
-  destroyPedido: PropTypes.func.isRequired,
-  createPedido: PropTypes.func.isRequired,
-  updatePedido: PropTypes.func.isRequired,
-  pedidos: PropTypes.array.isRequired,
-  shouldUpdatePedidos: PropTypes.bool.isRequired,
 };
 
 function mapStateToProps(state) {

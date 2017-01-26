@@ -6,7 +6,7 @@ let PedidoItemList = props => {
       {props.pedidoItems.map((item, h)=>{
         let itemComplete=props.items.find((i)=> i.id == item.id_item)
         return <div key={h}>
-          <h2>{itemComplete.nombre}</h2>
+          <h2>{itemComplete && itemComplete.nombre}</h2>
               {props.modificadores.map((mod, i) => {
                 let submodsSelected = item.selectedModSubmods.filter((m)=> m.id_modificador == mod.id)
                 if (submodsSelected.length>0){

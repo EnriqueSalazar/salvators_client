@@ -85,6 +85,8 @@ class PedidoDetalle extends Component {
       idPedido: 0,
       showItemDetails: 0,
       pedidoItems: [],
+      saved: true,
+      pedido: null,
     };
   }
 
@@ -93,18 +95,40 @@ class PedidoDetalle extends Component {
     this.props.loadItems();
     this.props.loadModificadores();
     this.props.loadSubmodificadores();
+    this.props.loadPedidos();
     this.setState({idPedido: this.props.params.id_pedido});
   }
 
   componentWillReceiveProps(nextProps) {
+
     if (nextProps.shouldUpdateGrupos) {
       this.props.loadGrupos();
+    }
+    if (nextProps.shouldUpdatePedidos) {
+      this.props.loadPedidos();
+    }
+    if (nextProps.pedidos) {
+      console.error('updating pedidos');
+      let pedido = nextProps.pedidos.find(p => p.id == this.state.idPedido);
+      if (pedido && pedido.items) {
+        let pedidoItems = JSON.parse(pedido.items);
+        let isPedidoItemsEmpty = this.state.pedidoItems.length == 0;
+        let saved = true;
+        if (isPedidoItemsEmpty) {
+          this.setState({pedidoItems});
+        } else if (!_.isEqual(this.state.pedidoItems, pedidoItems)) {
+          saved = false;
+        }
+        this.setState({saved});
+      }
     }
   }
 
   toggleShowItemDetails = () => {
-    const showItemDetails= !this.state.showItemDetails;
-    this.setState({showItemDetails});
+    const showItemDetails = !this.state.showItemDetails;
+    this.setState({showItemDetails},
+      this.props.loadPedidos
+    );
   }
   handleGrupoClick = (selectedGrupoId) => {
     let filteredItems = this.props.items.filter((item) => {
@@ -117,18 +141,28 @@ class PedidoDetalle extends Component {
   handleItemClick = (selectedItemId) => {
     this.setState({selectedItemId}, this.toggleShowItemDetails);
   }
-  handleItemAccept = (selectedModSubmods) =>{
+  handleItemAccept = (selectedModSubmods) => {
     let pedidoItems = this.state.pedidoItems;
     let id_item = this.state.selectedItemId;
     pedidoItems.push({id_item, selectedModSubmods});
-    let selectedItemId=0;
+    let selectedItemId = 0;
     this.setState({selectedItemId, pedidoItems}, this.toggleShowItemDetails);
   }
-  handleItemCancel =()=>{
+  handleItemCancel = () => {
     let selectedItemId = 0;
     this.setState({selectedItemId}, this.toggleShowItemDetails);
   }
 
+  handlePedidoAccept = () => {
+    let pedido = this.props.pedidos.find((p) => p.id == this.state.idPedido);
+    if (pedido) {
+      pedido.items = JSON.stringify(this.state.pedidoItems);
+      this.props.updatePedido(pedido.id, pedido);
+    }
+  }
+  handlePedidoCancel = () => {
+
+  }
   pedidoGrupos = () => {
     return (
       <div>
@@ -167,6 +201,28 @@ class PedidoDetalle extends Component {
             </Col>
             <Col md={3}>
               {this.state.pedidoItems && this.pedidoItemList()}
+              <center>
+                <Button
+                  onClick={() => this.handlePedidoAccept()}
+                  style={{
+                    whiteSpace: 'normal',
+                    width: '12em',
+                    height: '6em',
+                  }}
+                >
+                  {'Saved: ' + this.state.saved}
+                </Button>
+                <Button
+                  onClick={() => this.handlePedidoCancel()}
+                  style={{
+                    whiteSpace: 'normal',
+                    width: '12em',
+                    height: '6em',
+                  }}
+                >
+                  {'Cancelar'}
+                </Button>
+              </center>
             </Col>
           </Row>
         </Grid>
@@ -174,7 +230,7 @@ class PedidoDetalle extends Component {
     )
   }
 
-  pedidoItemList =()=>{
+  pedidoItemList = () => {
     return (<PedidoItemList
       pedidoItems={this.state.pedidoItems}
       items={this.props.items}
