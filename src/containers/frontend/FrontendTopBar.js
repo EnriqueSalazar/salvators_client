@@ -3,7 +3,7 @@
  */
 import React, {Component} from 'react';
 import {Navbar} from 'react-bootstrap';
-import TopBarLinks from '../../components/BETopBarLinks'
+import TopBarLinks from '../../components/FETopBarLinks'
 
 class TopBar extends Component {
 
@@ -18,10 +18,8 @@ class TopBar extends Component {
           <Navbar.Brand>
             <a href="/"><h1>Salvator's Frontend</h1></a>
           </Navbar.Brand>
-          <Navbar.Toggle />
         </Navbar.Header>
         <br /> <br /> <br /> <br />
-        <TopBarLinks />
       </Navbar>
     );
   }

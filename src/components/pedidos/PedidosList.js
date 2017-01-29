@@ -158,10 +158,8 @@ const PedidosList = props => {
         data={pedidos}
         hover
         pagination
-        search
-        clearSearch
         options={{
-          defaultSortName: "orden",
+          defaultSortName: "id",
           sortOrder: "desc",
           sizePerPage: 20,
           sizePerPageList: [20, 50, 200, 1000],

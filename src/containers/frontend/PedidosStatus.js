@@ -1,5 +1,5 @@
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
+import React, {Component, PropTypes} from 'react';
+import {connect} from 'react-redux';
 
 import {
   loadRestaurantes,
@@ -63,13 +63,17 @@ import QuejaForm
 
 import {
   Button,
-  Glyphicon
+  Glyphicon,
+  FormControl,
+  Row,
+  Col,
+  Well,
 } from 'react-bootstrap';
 import _ from 'lodash';
 import moment from 'moment';
-import { estados } from '../../config/'
+import {estados} from '../../config/'
 
-import { toastr } from 'react-redux-toastr';
+import {toastr} from 'react-redux-toastr';
 
 class PedidosStatus extends Component {
 
@@ -152,6 +156,10 @@ class PedidosStatus extends Component {
     }
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.state.pedidos.length > 0;
+  }
+
   filterDirecciones = (cliente, direcciones) => {
     if (!_.isEmpty(cliente) && !_.isEmpty(direcciones)) {
       direcciones = direcciones.filter(
@@ -193,7 +201,7 @@ class PedidosStatus extends Component {
                   return restaurante.id == pedido.id_restaurante;
                 });
             return restaurante ?
-            restaurante.id_ciudad == ciudad.id :
+              restaurante.id_ciudad == ciudad.id :
               false;
           }
         );
@@ -541,7 +549,18 @@ class PedidosStatus extends Component {
     });
     this.handleAsignarPedidoDomiciliario(pedido, domiciliario);
   };
-
+  handleSearchChange = (e) => {
+    const search = e.target.value;
+    if (search != '') {
+      const clientes = this.state.clientes.filter((c) => c.nombre.includes(search));
+      const pedidos = this.state.pedidos.filter((p) => {
+        return _.find(clientes, {'id': p.id_cliente});
+      });
+      this.setState({pedidos});
+    }else{
+      this.props.loadPedidos();
+    }
+  }
   render = () => {
     return (
       <div>
@@ -563,6 +582,23 @@ class PedidosStatus extends Component {
               0
           }
         />
+        <Well>
+
+          <Row>
+            <Col md={6}>
+              <Button block><Glyphicon glyph="new-window"/>{' Nuevo Pedido'}</Button>
+
+            </Col>
+            <Col md={6}>
+              <FormControl
+                type="text"
+                placeholder="Buscar cliente..."
+                onChange={this.handleSearchChange}
+              />
+
+            </Col>
+          </Row>
+        </Well>
         <PedidosList
           clientes={this.props.clientes}
           direcciones={this.props.direcciones}
