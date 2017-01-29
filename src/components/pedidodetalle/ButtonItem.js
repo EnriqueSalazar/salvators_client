@@ -11,11 +11,13 @@ let ButtonItem = props => {
         onClick={() => props.onClick(props.id)}
         style={{
           whiteSpace: 'normal',
-          width: '12em',
-          height: '6em',
+          width: '10em',
+          height: '5em',
         }}
+
         active={props.active}
         bsStyle={props.bsStyle}
+        disabled={props.isDisabled}
       >
         {props.nombre}
       </Button>

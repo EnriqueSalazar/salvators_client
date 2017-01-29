@@ -1,26 +1,41 @@
-import React, { Component, PropTypes } from 'react';
-
+import React, {Component, PropTypes} from 'react';
+import {
+  Badge,
+  Glyphicon
+} from 'react-bootstrap';
 let PedidoItemModList = props => {
-  // modfiltered, allsubmods, selectedsubmods
+
   return (
     <div>
       {props.filteredMods.map((mod, i) => {
-        let submodsSelected = props.selectedModSubmod.filter((m)=> m.id_modificador == mod.id)
-        if (submodsSelected.length>0){
+        let submodsSelected = props.selectedModSubmod.filter((m) => m.id_modificador == mod.id)
+        if (submodsSelected.length > 0) {
+          const threshold = <span><Glyphicon glyph="arrow-down"/>{mod.minimo}{' '}
+            <Glyphicon glyph="arrow-up"/>{mod.maximo}</span>;
+          let counterColor = 'black';
+          if (submodsSelected.length < mod.minimo || submodsSelected.length > mod.maximo) {
+            counterColor = 'red';
+          }
           return (
             <div key={i}>
-              <h4> {mod.nombre} </h4>
+              <strong> {mod.nombre} </strong>
+              <Badge>{submodsSelected.length}</Badge>
+              <span
+              style={{whiteSpace: 'nowrap', color: counterColor}}
+              >
+                {threshold}
+                </span>
               <ul>
-              {submodsSelected.map((s, k)=>{
-                let completeSubmod = props.submodificadores.find((sub)=> sub.id == s.id_submodificador);
-                if (completeSubmod && completeSubmod.nombre){
-                  return (
-                    <li key={k}>
-                      {completeSubmod.nombre}
-                    </li>
-                  )
-                }
-              })}
+                {submodsSelected.map((s, k) => {
+                  let completeSubmod = props.submodificadores.find((sub) => sub.id == s.id_submodificador);
+                  if (completeSubmod && completeSubmod.nombre) {
+                    return (
+                      <li key={k}>
+                        {completeSubmod.nombre}
+                      </li>
+                    )
+                  }
+                })}
               </ul>
             </div>
           )

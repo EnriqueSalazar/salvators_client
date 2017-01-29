@@ -1,6 +1,10 @@
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
-
+import {
+  Panel,
+  ListGroup,
+  ListGroupItem
+} from 'react-bootstrap';
 import {
   loadRestaurantes,
 } from '../../actions/restauranteActions';
@@ -87,6 +91,9 @@ class PedidoDetalle extends Component {
       pedidoItems: [],
       saved: true,
       pedido: null,
+      cliente: null,
+      direccion: null,
+      restaurante: null,
     };
   }
 
@@ -96,6 +103,9 @@ class PedidoDetalle extends Component {
     this.props.loadModificadores();
     this.props.loadSubmodificadores();
     this.props.loadPedidos();
+    this.props.loadClientes();
+    this.props.loadRestaurantes();
+    this.props.loadDirecciones();
     this.setState({idPedido: this.props.params.id_pedido});
   }
 
@@ -108,20 +118,38 @@ class PedidoDetalle extends Component {
       this.props.loadPedidos();
     }
     if (nextProps.pedidos) {
-      console.error('updating pedidos');
       let pedido = nextProps.pedidos.find(p => p.id == this.state.idPedido);
-      if (pedido && pedido.items) {
-        let pedidoItems = JSON.parse(pedido.items);
-        let isPedidoItemsEmpty = this.state.pedidoItems.length == 0;
-        let saved = true;
-        if (isPedidoItemsEmpty) {
-          this.setState({pedidoItems});
-        } else if (!_.isEqual(this.state.pedidoItems, pedidoItems)) {
-          saved = false;
+      if (pedido) {
+        this.setState({pedido});
+        if (nextProps.clientes && !this.state.cliente) {
+          let cliente = nextProps.clientes.find(c => c.id == pedido.id_cliente);
+          this.setState({cliente});
         }
-        this.setState({saved});
+        if (nextProps.restaurantes && !this.state.restaurante) {
+          let restaurante = nextProps.restaurantes.find(c => c.id == pedido.id_restaurante);
+          this.setState({restaurante});
+        }
+        if (nextProps.direcciones && !this.state.direccion) {
+          let direccion = nextProps.direcciones.find(c => c.id == pedido.id_direccion);
+          this.setState({direccion});
+        }
+        if (pedido && pedido.items) {
+          let pedidoItems = JSON.parse(pedido.items);
+          let isPedidoItemsEmpty = this.state.pedidoItems.length == 0;
+          let saved = true;
+          if (isPedidoItemsEmpty) {
+            this.setState({pedidoItems});
+          } else if (!_.isEqual(this.state.pedidoItems, pedidoItems)) {
+            saved = false;
+          }
+          this.setState({saved});
+        }
       }
     }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextProps.pedidos.length > 0;
   }
 
   toggleShowItemDetails = () => {
@@ -154,7 +182,8 @@ class PedidoDetalle extends Component {
   }
 
   handlePedidoAccept = () => {
-    let pedido = this.props.pedidos.find((p) => p.id == this.state.idPedido);
+    // let pedido = this.props.pedidos.find((p) => p.id == this.state.idPedido);
+    let pedido = this.state.pedido;
     if (pedido) {
       pedido.items = JSON.stringify(this.state.pedidoItems);
       this.props.updatePedido(pedido.id, pedido);
@@ -163,66 +192,119 @@ class PedidoDetalle extends Component {
   handlePedidoCancel = () => {
 
   }
+  handleRemoveItem = (i) => {
+    let pedidoItems = this.state.pedidoItems;
+    pedidoItems.splice(i, 1);
+    let saved = false;
+    this.setState({pedidoItems, saved});
+  }
+
+  printCliente = () => {
+    const cliente = this.state.cliente;
+    return (
+      <div>
+        {'Nombre: ' + cliente.nombre}<br />
+        {'Cedula: ' + cliente.cedula}<br />
+        {'Telefono: ' + cliente.telefono}
+      </div>
+    )
+  }
+  printDireccion = () => {
+    const direccion = this.state.direccion;
+    return (
+      <div>
+        {'Direccion: '+direccion.direccion}
+      </div>
+    )
+  }
+  printRestaurante = () => {
+const restaurante = this.state.restaurante;
+return (
+  <div>
+    {'Nombre: '+restaurante.nombre}<br />
+    {'Direccion'+restaurante.direccion}
+  </div>
+)
+  }
+
   pedidoGrupos = () => {
     return (
       <div>
         <Grid>
           <Row>
             <Col md={3}>
-              <Well>
+              <Panel header="Grupos">
                 <center>
-                  <h1><Label>Grupos</Label></h1>
                   <ButtonsPanel
                     list={this.props.grupos}
                     onClick={this.handleGrupoClick}
                     selectedId={this.state.selectedGrupoId}
                     bsStyle='primary'
                     activeStyle='danger'
+                    isDisabled={false}
                   />
                 </center>
-              </Well>
+              </Panel>
 
             </Col>
             <Col md={6}>
-              <Well>
-                <center>
-
-                  <h1><Label>Items</Label></h1>
+              <Panel header="Items">
                   <ButtonsPanel
                     list={this.state.filteredItems}
                     onClick={this.handleItemClick}
                     selectedId={this.state.selectedItemId}
                     bsStyle='warning'
                     activeStyle='danger'
+                    isDisabled={false}
                   />
-                </center>
-              </Well>
+              </Panel>
 
             </Col>
             <Col md={3}>
+              <Panel header="Pedido">
+
               {this.state.pedidoItems && this.pedidoItemList()}
-              <center>
-                <Button
-                  onClick={() => this.handlePedidoAccept()}
-                  style={{
-                    whiteSpace: 'normal',
-                    width: '12em',
-                    height: '6em',
-                  }}
-                >
-                  {'Saved: ' + this.state.saved}
-                </Button>
-                <Button
-                  onClick={() => this.handlePedidoCancel()}
-                  style={{
-                    whiteSpace: 'normal',
-                    width: '12em',
-                    height: '6em',
-                  }}
-                >
-                  {'Cancelar'}
-                </Button>
-              </center>
+                <center>
+                  <Button
+                    onClick={() => this.handlePedidoAccept()}
+                    style={{
+                      whiteSpace: 'normal',
+                      width: '8em',
+                      height: '4em',
+                    }}
+                    disabled={this.state.saved}
+                  >
+                    {'Guardar'}
+                  </Button>
+                  <Button
+                    onClick={() => this.handlePedidoCancel()}
+                    style={{
+                      whiteSpace: 'normal',
+                      width: '8em',
+                      height: '4em',
+                    }}
+                  >
+                    {this.state.saved ? 'Cerrar' : 'Cancelar'}
+                  </Button>
+                </center>
+                <ListGroup fill>
+                  <ListGroupItem>
+                    <strong>{'Cliente'}</strong>
+
+                    {this.state.cliente && this.printCliente()}
+                    {this.state.direccion && this.printDireccion()}
+
+                  </ListGroupItem>
+                  <ListGroupItem>
+                    <strong>{'Restaurante'}</strong>
+
+                    {this.state.restaurante && this.printRestaurante()}
+
+                  </ListGroupItem>
+                </ListGroup>
+
+
+              </Panel>
             </Col>
           </Row>
         </Grid>
@@ -236,6 +318,7 @@ class PedidoDetalle extends Component {
       items={this.props.items}
       modificadores={this.props.modificadores}
       submodificadores={this.props.submodificadores}
+      handleRemoveItem={this.handleRemoveItem}
     />)
   }
   pedidoItem = () => {

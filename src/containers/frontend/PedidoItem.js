@@ -1,6 +1,10 @@
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
-
+import React, {Component, PropTypes} from 'react';
+import {connect} from 'react-redux';
+import {
+  Panel,
+  ListGroup,
+  ListGroupItem
+} from 'react-bootstrap';
 import {
   loadRestaurantes,
 } from '../../actions/restauranteActions';
@@ -79,9 +83,9 @@ import {
 } from 'react-bootstrap';
 import _ from 'lodash';
 import moment from 'moment';
-import { estados } from '../../config/'
-import { browserHistory } from 'react-router';
-import { toastr } from 'react-redux-toastr';
+import {estados} from '../../config/'
+import {browserHistory} from 'react-router';
+import {toastr} from 'react-redux-toastr';
 
 class PedidoItem extends Component {
 
@@ -94,7 +98,9 @@ class PedidoItem extends Component {
       selectedModSubmod: [],
       selectedModIds: [],
       selectedSubmodIds: [],
-      nombreItem: ''
+      nombreItem: '',
+      submodDisabled: false,
+      isSaveDisabled: true,
     };
   }
 
@@ -118,6 +124,7 @@ class PedidoItem extends Component {
     let item = nextProps.items.find(item => item.id == +nextProps.idItem);
     let nombreItem = item && item.id ? item.nombre : '';
     this.setState({filteredMods, nombreItem});
+
   }
 
   filterActiveSelected = () => {
@@ -129,7 +136,15 @@ class PedidoItem extends Component {
       }
       return result;
     }, [])
-    this.setState({selectedModIds, selectedSubmodIds});
+    let isSaveDisabled=false
+    this.state.filteredMods.map((mod, i) => {
+      let submodsSelected = this.state.selectedModSubmod.filter((m)=> m.id_modificador == mod.id)
+      const length= submodsSelected.length;
+        if (length>0 && (length<mod.minimo || length>mod.maximo)){
+          isSaveDisabled=true;
+        }
+    })
+    this.setState({selectedModIds, selectedSubmodIds, isSaveDisabled});
 
   }
   handleModClick = (selectedModId) => {
@@ -163,66 +178,65 @@ class PedidoItem extends Component {
   render = () => {
     return (
       <div>
-        <center>
-        <h1>{this.state.nombreItem}</h1>
-        </center>
+
         <Grid>
           <Row>
-            <Col md={8}>
-              <center>
-                <Well>
-                  <h1><Label>Modificadores</Label></h1>
+            <Panel header={this.state.nombreItem}>
+              <Col md={9}>
+                <Panel header="Modificadores">
                   <ButtonsPanel
                     list={this.state.filteredMods}
                     onClick={this.handleModClick}
                     selectedId={this.state.selectedModIds}
                     bsStyle='primary'
                     activeStyle='danger'
+                    isDisabled={false}
                   />
-                </Well>
-                <Well>
-                  <h1><Label>Submodificadores</Label></h1>
+                </Panel>
+                <Panel header="Subodificadores">
                   <ButtonsPanel
                     list={this.state.filteredSubmods}
                     onClick={this.handleSubmodClick}
                     selectedId={this.state.selectedSubmodIds}
                     bsStyle='warning'
                     activeStyle='danger'
+                    isDisabled={this.state.submodDisabled}
                   />
-                </Well>
-              </center>
-            </Col>
-            <Col md={4}>
-              <Well>
+                </Panel>
+              </Col>
+              <Col md={3}>
+                <Panel>
                   <PedidoItemModList
                     filteredMods={this.state.filteredMods}
                     selectedModSubmod={this.state.selectedModSubmod}
                     submodificadores={this.props.submodificadores}
                   />
-              </Well>
-              <center>
-              <Button
-                onClick={() => this.props.handleItemAccept(this.state.selectedModSubmod)}
-                style={{
-                  whiteSpace: 'normal',
-                  width: '12em',
-                  height: '6em',
-                }}
-              >
-                {'Aceptar'}
-              </Button>
-              <Button
-                onClick={() => this.props.handleItemCancel()}
-                style={{
-                  whiteSpace: 'normal',
-                  width: '12em',
-                  height: '6em',
-                }}
-              >
-                {'Cancelar'}
-              </Button>
-              </center>
-          </Col>
+                <center>
+                  <Button
+                    onClick={() => this.props.handleItemAccept(this.state.selectedModSubmod)}
+                    style={{
+                      whiteSpace: 'normal',
+                      width: '7em',
+                      height: '4em',
+                    }}
+                    disabled={this.state.isSaveDisabled}
+                  >
+                    {'Aceptar'}
+                  </Button>
+                  <Button
+                    onClick={() => this.props.handleItemCancel()}
+                    style={{
+                      whiteSpace: 'normal',
+                      width: '7em',
+                      height: '4em',
+                    }}
+                  >
+                    {'Cancelar'}
+                  </Button>
+                </center>
+                </Panel>
+              </Col>
+            </Panel>
           </Row>
 
         </Grid>
@@ -232,8 +246,7 @@ class PedidoItem extends Component {
   };
 }
 
-PedidoItem.propTypes = {
-};
+PedidoItem.propTypes = {};
 
 function mapStateToProps(state) {
   const {

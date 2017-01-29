@@ -19,6 +19,7 @@ let ButtonsPanel = props => {
             onClick={props.onClick}
             active={isActive}
             bsStyle={isActive ? props.activeStyle : props.bsStyle}
+            isDisabled={props.isDisabled}
           />
         )
       })}
