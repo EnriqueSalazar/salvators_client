@@ -111,12 +111,14 @@ class PedidosStatus extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.shouldUpdatePedidos) {
-      this.props.loadPedidos();
-    }
+
+    const isChangePedidos = !_.isEqual(this.props.pedidos, nextProps.pedidos);
+    const isChangeClientes = !_.isEqual(this.props.clientes, nextProps.clientes);
+    const isChangeRestaurantes = !_.isEqual(this.props.restaurantes, nextProps.restaurantes);
+    const isChangeDirecciones = !_.isEqual(this.props.direcciones, nextProps.direcciones);
     if (nextProps.shouldUpdateClientes) {
       this.props.loadClientes();
-    } else {
+    } else if (isChangeClientes) {
       this.filterClientes(
         this.state.ciudad,
         nextProps.clientes
@@ -124,7 +126,7 @@ class PedidosStatus extends Component {
     }
     if (nextProps.shouldUpdateRestaurantes) {
       this.props.loadRestaurantes();
-    } else {
+    } else if (isChangeRestaurantes) {
       this.filterRestaurantes(
         this.state.ciudad,
         nextProps.restaurantes
@@ -132,7 +134,7 @@ class PedidosStatus extends Component {
     }
     if (nextProps.shouldUpdatePedidos) {
       this.props.loadPedidos();
-    } else {
+    } else if (isChangePedidos) {
       _.isEmpty(this.state.restaurante) ?
         this.filterPedidosCiudad(
           this.state.ciudad,
@@ -145,7 +147,7 @@ class PedidosStatus extends Component {
     }
     if (nextProps.shouldUpdateDirecciones) {
       this.props.loadDirecciones();
-    } else {
+    } else if (isChangeDirecciones) {
       this.filterDirecciones(
         this.state.cliente,
         nextProps.direcciones
@@ -157,7 +159,10 @@ class PedidosStatus extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return this.state.pedidos.length > 0;
+    const isPedidos = nextState.pedidos.length > 0;
+    const pedidosChanged = !_.isEqual(this.props.pedidos, nextProps.pedidos);
+    const stateChanged = !_.isEqual(this.state, nextState);
+    return isPedidos && (pedidosChanged || stateChanged);
   }
 
   filterDirecciones = (cliente, direcciones) => {
@@ -557,10 +562,36 @@ class PedidosStatus extends Component {
         return _.find(clientes, {'id': p.id_cliente});
       });
       this.setState({pedidos});
-    }else{
-      this.props.loadPedidos();
+    } else {
+      _.isEmpty(this.state.restaurante) ?
+        this.filterPedidosCiudad(
+          this.state.ciudad,
+          this.props.pedidos
+        ) :
+        this.filterPedidosRestaurante(
+          this.state.restaurante,
+          this.props.pedidos
+        );
     }
-  }
+  };
+  handleEstadoFilterChange = (e) => {
+    const search = +e.target.value;
+    if (search != 666) {
+      const pedidos = this.props.pedidos.filter((p) => p.id_estado == search);
+      this.setState({pedidos});
+    } else {
+      _.isEmpty(this.state.restaurante) ?
+        this.filterPedidosCiudad(
+          this.state.ciudad,
+          this.props.pedidos
+        ) :
+        this.filterPedidosRestaurante(
+          this.state.restaurante,
+          this.props.pedidos
+        );
+    }
+  };
+
   render = () => {
     return (
       <div>
@@ -583,19 +614,32 @@ class PedidosStatus extends Component {
           }
         />
         <Well>
-
           <Row>
-            <Col md={6}>
+            <Col md={4}>
               <Button block><Glyphicon glyph="new-window"/>{' Nuevo Pedido'}</Button>
-
             </Col>
-            <Col md={6}>
+            <Col md={4}>
               <FormControl
                 type="text"
                 placeholder="Buscar cliente..."
                 onChange={this.handleSearchChange}
               />
-
+            </Col>
+            <Col md={4}>
+              <FormControl
+                componentClass="select"
+                placeholder="Seleccione estado..."
+                onChange={this.handleEstadoFilterChange}
+              >
+                <option value={666}>Todos</option>
+                <option value={estados.inicio_pedido.id}>{estados.inicio_pedido.nombre}</option>
+                <option value={estados.fin_pedido.id}>{estados.fin_pedido.nombre}</option>
+                <option value={estados.cocina.id}>{estados.cocina.nombre}</option>
+                <option value={estados.barra.id}>{estados.barra.nombre}</option>
+                <option value={estados.domiciliario.id}>{estados.domiciliario.nombre}</option>
+                <option value={estados.entregado.id}>{estados.entregado.nombre}</option>
+                <option value={estados.anulado.id}>{estados.anulado.nombre}</option>
+              </FormControl>
             </Col>
           </Row>
         </Well>
