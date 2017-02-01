@@ -96,11 +96,14 @@ class PedidosStatus extends Component {
       pedidos: [],
       pedido: {},
       cancelacionForm: {},
-      isCancelacionFormActive: false
+      isCancelacionFormActive: false,
+      search: '',
+      filter: 666,
     };
   }
 
   componentDidMount() {
+
     this.props.loadPedidos();
     this.props.loadClientes();
     this.props.loadDirecciones();
@@ -134,7 +137,8 @@ class PedidosStatus extends Component {
     }
     if (nextProps.shouldUpdatePedidos) {
       this.props.loadPedidos();
-    } else if (isChangePedidos) {
+    } else if (isChangePedidos || _.isEmpty(this.state.pedidos)) {
+
       _.isEmpty(this.state.restaurante) ?
         this.filterPedidosCiudad(
           this.state.ciudad,
@@ -158,12 +162,12 @@ class PedidosStatus extends Component {
     }
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    const isPedidos = nextState.pedidos.length > 0;
-    const pedidosChanged = !_.isEqual(this.props.pedidos, nextProps.pedidos);
-    const stateChanged = !_.isEqual(this.state, nextState);
-    return isPedidos && (pedidosChanged || stateChanged);
-  }
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   const isPedidos = nextState.pedidos.length > 0;
+  //   const pedidosChanged = !_.isEqual(this.props.pedidos, nextProps.pedidos);
+  //   const stateChanged = !_.isEqual(this.state, nextState);
+  //   return isPedidos && (pedidosChanged || stateChanged);
+  // }
 
   filterDirecciones = (cliente, direcciones) => {
     if (!_.isEmpty(cliente) && !_.isEmpty(direcciones)) {
@@ -556,12 +560,30 @@ class PedidosStatus extends Component {
   };
   handleSearchChange = (e) => {
     const search = e.target.value;
-    if (search != '') {
+    this.setState({search}, () => this.filterSearch());
+  };
+
+  handleEstadoFilterChange = (e) => {
+    const filter = +e.target.value;
+    this.setState({filter}, () => this.filterSearch());
+  };
+
+  filterSearch = () => {
+    const search = this.state.search;
+    const filter = this.state.filter;
+    let pedidos = null;
+    if (filter != 666 && search != '') {
       const clientes = this.state.clientes.filter((c) => c.nombre.includes(search));
-      const pedidos = this.state.pedidos.filter((p) => {
+      pedidos = this.props.pedidos.filter((p) => {
+        return p.id_estado == filter && !!_.find(clientes, {'id': p.id_cliente});
+      });
+    } else if (filter != 666) {
+      pedidos = this.props.pedidos.filter((p) => p.id_estado == filter);
+    } else if (search != '') {
+      const clientes = this.state.clientes.filter((c) => c.nombre.includes(search));
+      pedidos = this.props.pedidos.filter((p) => {
         return _.find(clientes, {'id': p.id_cliente});
       });
-      this.setState({pedidos});
     } else {
       _.isEmpty(this.state.restaurante) ?
         this.filterPedidosCiudad(
@@ -573,23 +595,7 @@ class PedidosStatus extends Component {
           this.props.pedidos
         );
     }
-  };
-  handleEstadoFilterChange = (e) => {
-    const search = +e.target.value;
-    if (search != 666) {
-      const pedidos = this.props.pedidos.filter((p) => p.id_estado == search);
-      this.setState({pedidos});
-    } else {
-      _.isEmpty(this.state.restaurante) ?
-        this.filterPedidosCiudad(
-          this.state.ciudad,
-          this.props.pedidos
-        ) :
-        this.filterPedidosRestaurante(
-          this.state.restaurante,
-          this.props.pedidos
-        );
-    }
+    pedidos && this.setState({pedidos});
   };
 
   render = () => {
@@ -616,13 +622,16 @@ class PedidosStatus extends Component {
         <Well>
           <Row>
             <Col md={4}>
-              <Button block><Glyphicon glyph="new-window"/>{' Nuevo Pedido'}</Button>
+              <Button block onClick={() => this.onPedidosClick({})}>
+                <Glyphicon glyph="new-window"/>{' Nuevo Pedido'}
+              </Button>
             </Col>
             <Col md={4}>
               <FormControl
                 type="text"
                 placeholder="Buscar cliente..."
                 onChange={this.handleSearchChange}
+                value={this.state.search}
               />
             </Col>
             <Col md={4}>
@@ -630,6 +639,7 @@ class PedidosStatus extends Component {
                 componentClass="select"
                 placeholder="Seleccione estado..."
                 onChange={this.handleEstadoFilterChange}
+                value={this.state.filter}
               >
                 <option value={666}>Todos</option>
                 <option value={estados.inicio_pedido.id}>{estados.inicio_pedido.nombre}</option>
@@ -658,13 +668,6 @@ class PedidosStatus extends Component {
         >
           {this.state.pedidos}
         </PedidosList>
-        <Button
-          onClick={() => this.onPedidosClick({})}
-          bsStyle="primary"
-          //updatePedido={this.props.updatePedido}
-        >
-          <Glyphicon glyph="modal-window"/>{' Iniciar'}
-        </Button>
         <OptionsModal
           isOptionsModalActive={this.state.isOptionsModalActive}
           optionsModalOff={this.optionsModalOff}

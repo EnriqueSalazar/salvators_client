@@ -190,7 +190,7 @@ class PedidoDetalle extends Component {
     }
   }
   handlePedidoCancel = () => {
-
+        browserHistory.push('/frontend/pedidosstatus/');
   }
   handleRemoveItem = (i) => {
     let pedidoItems = this.state.pedidoItems;

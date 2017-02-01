@@ -4,6 +4,8 @@
 
 import React, { PropTypes } from 'react';
 import { reduxForm, Field } from 'redux-form';
+import { browserHistory } from 'react-router';
+
 import {
   Button,
   Glyphicon,
@@ -31,6 +33,8 @@ let OptionsModal = props => {
   let isCliente = cliente && cliente.id;
   let isCiudad = ciudad && ciudad.id;
   let isDireccion = direccion && direccion.id;
+  //              <Row style={!!pedido.id ? {display: 'none'} : {}}>
+
   return (
     <div>
       <Modal
@@ -41,7 +45,7 @@ let OptionsModal = props => {
         <Modal.Body style={{textAlign: "center"}}>
           <Well>
             <Grid fluid>
-              <Row style={!!pedido.id ? {display: 'none'} : {}}>
+              <Row >
                 <Col md={6}>
                   <strong>
                     Nombre:
@@ -66,14 +70,16 @@ let OptionsModal = props => {
                 </Col>
                 <Col md={6}>
                   <Button
-                    onClick={() => restauranteModalOn()}
+                    onClick={!!pedido.id?()=>{
+                        browserHistory.push('/frontend/pedidodetalle/' + pedido.id);
+                      }:() => restauranteModalOn()}
                     bsStyle="success"
                     block
                     style={{
                       whiteSpace: 'normal',
                     }}
                   >
-                    <h1><Glyphicon glyph="send"/></h1>{' Nuevo Domicilio'}
+                    <h1><Glyphicon glyph="send"/></h1>{!!pedido.id?'Editar Pedido':' Nuevo Pedido'}
                   </Button>
                 </Col>
               </Row>
