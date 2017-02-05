@@ -26,6 +26,10 @@ class Api {
     }
     return axios.post(model, payload)
   }
+
+  static getToken(tokenUrl){
+    return axios.post(tokenUrl);
+  }
 }
 
 export default Api;

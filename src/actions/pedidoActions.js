@@ -1,6 +1,6 @@
 import {toastr} from 'react-redux-toastr';
 import Api from '../api/Api';
-import {model} from '../config/'
+import {model, tokenUrl} from '../config/'
 import { browserHistory } from 'react-router';
 
 export const LOAD_PEDIDOS_SUCCESS = 'LOAD_PEDIDOS_SUCCESS';
@@ -8,6 +8,7 @@ export const LOAD_ONE_PEDIDO_SUCCESS = 'LOAD_ONE_PEDIDO_SUCCESS';
 export const CREATE_PEDIDO_SUCCESS = 'CREATE_PEDIDO_SUCCESS';
 export const UPDATE_PEDIDO_SUCCESS = 'UPDATE_PEDIDO_SUCCESS';
 export const DESTROY_PEDIDO_SUCCESS = 'DESTROY_PEDIDO_SUCCESS';
+export const GET_TOKEN_SUCCESS = 'GET_TOKEN_SUCCESS';
 
 export function loadPedidosSuccess(pedidos) {
   return {type: LOAD_PEDIDOS_SUCCESS, pedidos};
@@ -26,6 +27,10 @@ export function createPedidoSuccess(pedido) {
 export function destroyPedidoSuccess(pedido) {
   toastr.success(pedido.nombre+' Eliminación exitosa.');
   return {type: DESTROY_PEDIDO_SUCCESS, pedido:{}};
+}
+export function getTokenSuccess(token) {
+  console.info('access_token', token);
+  return {type: GET_TOKEN_SUCCESS, token};
 }
 
 export function loadPedidos() {
@@ -73,6 +78,16 @@ export function destroyPedido(id) {
   return dispatch => {
     return Api.destroy(model.pedidos,id).then((pedido) => {
       dispatch(destroyPedidoSuccess(pedido.data));
+    }).catch(error => {
+      throw(error);
+    });
+  };
+}
+export function getToken() {
+  return dispatch => {
+    return Api.getToken(tokenUrl).then((result) => {
+      const token = result.data.access_token
+      dispatch(getTokenSuccess(token));
     }).catch(error => {
       throw(error);
     });

@@ -9,6 +9,7 @@ import {
   destroyPedido,
   createPedido,
   updatePedido,
+  getToken,
 } from '../../actions/pedidoActions';
 import {
   loadDomiciliarios,
@@ -111,6 +112,7 @@ class PedidosStatus extends Component {
     this.props.loadDomiciliarios();
     this.props.loadRestaurantes();
     this.props.loadCancelaciones();
+    this.props.getToken();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -169,6 +171,14 @@ class PedidosStatus extends Component {
   //   return isPedidos && (pedidosChanged || stateChanged);
   // }
 
+  checkToken = () => {
+    const token = this.props.token;
+    if (token === '') {
+      console.info('Uh-oh no token. Getting one...');
+      this.props.getToken();
+    }
+  };
+
   filterDirecciones = (cliente, direcciones) => {
     if (!_.isEmpty(cliente) && !_.isEmpty(direcciones)) {
       direcciones = direcciones.filter(
@@ -201,20 +211,21 @@ class PedidosStatus extends Component {
   };
   filterPedidosCiudad = (ciudad, pedidos) => {
     if (!_.isEmpty(pedidos)) {
-      if (!_.isEmpty(ciudad)) {
-        pedidos = pedidos.filter(
-          pedido => {
+      pedidos = pedidos.filter(
+        pedido => {
+          let isCiudad = true;
+          if (!_.isEmpty(ciudad)) {
             let restaurante =
               this.props.restaurantes.find(
                 (restaurante) => {
                   return restaurante.id == pedido.id_restaurante;
                 });
-            return restaurante ?
-              restaurante.id_ciudad == ciudad.id :
-              false;
+            isCiudad = restaurante.id_ciudad == ciudad.id;
           }
-        );
-      }
+          const isActive = pedido.id_estado < 5;
+          return isCiudad && isActive;
+        }
+      );
       this.setState({pedidos});
     }
   };
@@ -222,8 +233,11 @@ class PedidosStatus extends Component {
     if (!_.isEmpty(pedidos)) {
       if (!_.isEmpty(restaurante)) {
         pedidos = pedidos.filter(
-          pedido =>
-          pedido.id_restaurante == restaurante.id
+          pedido => {
+            const isRestaurante = pedido.id_restaurante == restaurante.id;
+            const isActive = pedido.id_estado < 5;
+            return isRestaurante && isActive;
+          }
         );
       }
       this.setState({pedidos});
@@ -243,6 +257,7 @@ class PedidosStatus extends Component {
   };
 
   onPedidosClick = (pedido) => {
+    this.checkToken();
     if (pedido.id) {
       let cliente = this.props.clientes.find((cliente) => {
         return cliente.id == pedido.id_cliente;
@@ -641,7 +656,7 @@ class PedidosStatus extends Component {
                 onChange={this.handleEstadoFilterChange}
                 value={this.state.filter}
               >
-                <option value={666}>Todos</option>
+                <option value={666}>Activos</option>
                 <option value={estados.inicio_pedido.id}>{estados.inicio_pedido.nombre}</option>
                 <option value={estados.fin_pedido.id}>{estados.fin_pedido.nombre}</option>
                 <option value={estados.cocina.id}>{estados.cocina.nombre}</option>
@@ -771,7 +786,7 @@ function mapStateToProps(state) {
     cancelacionReducer,
     quejaReducer
   } = state;
-  const {pedidos, shouldUpdatePedidos} = pedidoReducer;
+  const {pedidos, shouldUpdatePedidos, token} = pedidoReducer;
   const {direcciones, shouldUpdateDirecciones} = direccionReducer;
   const {domiciliarios, shouldUpdateDomiciliarios} = domiciliarioReducer;
   const {cancelaciones, shouldUpdateCancelaciones, cancelacion} = cancelacionReducer;
@@ -782,6 +797,7 @@ function mapStateToProps(state) {
   return {
     pedidos,
     shouldUpdatePedidos,
+    token,
     direcciones,
     shouldUpdateDirecciones,
     restaurantes,
@@ -806,6 +822,7 @@ export default connect(mapStateToProps, {
   destroyPedido,
   createPedido,
   updatePedido,
+  getToken,
   loadClientes,
   destroyCliente,
   createCliente,

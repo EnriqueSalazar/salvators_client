@@ -133,13 +133,14 @@ class PedidoDetalle extends Component {
           let direccion = nextProps.direcciones.find(c => c.id == pedido.id_direccion);
           this.setState({direccion});
         }
-        if (pedido && pedido.items) {
-          let pedidoItems = JSON.parse(pedido.items);
-          let isPedidoItemsEmpty = this.state.pedidoItems.length == 0;
+        if (pedido) {
+          const pedidoItems = pedido.items ? JSON.parse(pedido.items) : [];
+          const isStatePedidoItemsEmpty = this.state.pedidoItems.length == 0;
+          const isPropsPedidoItemsEmpty = pedidoItems.length == 0;
           let saved = true;
-          if (isPedidoItemsEmpty) {
+          if (isStatePedidoItemsEmpty && !isPropsPedidoItemsEmpty) {
             this.setState({pedidoItems});
-          } else if (!_.isEqual(this.state.pedidoItems, pedidoItems)) {
+          } else if (!_.isEqual(this.state.pedidoItems, pedidoItems) || isStatePedidoItemsEmpty) {
             saved = false;
           }
           this.setState({saved});
@@ -181,7 +182,7 @@ class PedidoDetalle extends Component {
     this.setState({selectedItemId}, this.toggleShowItemDetails);
   }
 
-  handlePedidoAccept = () => {
+  handlePedidoSave = () => {
     // let pedido = this.props.pedidos.find((p) => p.id == this.state.idPedido);
     let pedido = this.state.pedido;
     if (pedido) {
@@ -190,7 +191,17 @@ class PedidoDetalle extends Component {
     }
   }
   handlePedidoCancel = () => {
+    browserHistory.push('/frontend/pedidosstatus/');
+  }
+  handlePedidoAccept = () => {
+    let pedido = this.state.pedido;
+    if (pedido) {
+      pedido.id_estado = 1;
+      this.props.updatePedido(pedido.id, pedido).then(() => {
         browserHistory.push('/frontend/pedidosstatus/');
+      });
+    }
+
   }
   handleRemoveItem = (i) => {
     let pedidoItems = this.state.pedidoItems;
@@ -213,18 +224,18 @@ class PedidoDetalle extends Component {
     const direccion = this.state.direccion;
     return (
       <div>
-        {'Direccion: '+direccion.direccion}
+        {'Direccion: ' + direccion.direccion}
       </div>
     )
   }
   printRestaurante = () => {
-const restaurante = this.state.restaurante;
-return (
-  <div>
-    {'Nombre: '+restaurante.nombre}<br />
-    {'Direccion'+restaurante.direccion}
-  </div>
-)
+    const restaurante = this.state.restaurante;
+    return (
+      <div>
+        {'Nombre: ' + restaurante.nombre}<br />
+        {'Direccion' + restaurante.direccion}
+      </div>
+    )
   }
 
   pedidoGrupos = () => {
@@ -249,42 +260,42 @@ return (
             </Col>
             <Col md={6}>
               <Panel header="Items">
-                  <ButtonsPanel
-                    list={this.state.filteredItems}
-                    onClick={this.handleItemClick}
-                    selectedId={this.state.selectedItemId}
-                    bsStyle='warning'
-                    activeStyle='danger'
-                    isDisabled={false}
-                  />
+                <ButtonsPanel
+                  list={this.state.filteredItems}
+                  onClick={this.handleItemClick}
+                  selectedId={this.state.selectedItemId}
+                  bsStyle='warning'
+                  activeStyle='danger'
+                  isDisabled={false}
+                />
               </Panel>
 
             </Col>
             <Col md={3}>
               <Panel header="Pedido">
 
-              {this.state.pedidoItems && this.pedidoItemList()}
+                {this.state.pedidoItems && this.pedidoItemList()}
                 <center>
                   <Button
-                    onClick={() => this.handlePedidoAccept()}
+                    onClick={() => this.handlePedidoSave()}
                     style={{
                       whiteSpace: 'normal',
                       width: '8em',
                       height: '4em',
                     }}
-                    disabled={this.state.saved}
+                    disabled={this.state.saved || _.isEmpty(this.state.pedidoItems)}
                   >
                     {'Guardar'}
                   </Button>
                   <Button
-                    onClick={() => this.handlePedidoCancel()}
+                    onClick={this.state.saved ? () => this.handlePedidoAccept() : () => this.handlePedidoCancel()}
                     style={{
                       whiteSpace: 'normal',
                       width: '8em',
                       height: '4em',
                     }}
                   >
-                    {this.state.saved ? 'Cerrar' : 'Cancelar'}
+                    {this.state.saved ? 'Aceptar y enviar' : 'Cancelar'}
                   </Button>
                 </center>
                 <ListGroup fill>

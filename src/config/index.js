@@ -20,6 +20,7 @@ let apiUrl = (model) => {
   return serverUrl + model + 'API/'
 };
 
+export const tokenUrl = 'https://www.arcgis.com/sharing/rest/oauth2/token/?client_id=ZKpIf9sIkasqBBz8&client_secret=842edfa1a476440b8675f70379844c2f&grant_type=client_credentials&expiration=120';
 export const model = {
   grupomenu: apiUrl('grupomenu'),
   categoriamenu: apiUrl('categoriamenu'),

@@ -5,12 +5,14 @@ import {
   CREATE_PEDIDO_SUCCESS,
   UPDATE_PEDIDO_SUCCESS,
   DESTROY_PEDIDO_SUCCESS,
+  GET_TOKEN_SUCCESS,
 } from '../actions/pedidoActions';
 
 export default function pedidoReducer(state = {
   pedidos: [],
   shouldUpdatePedidos: false,
-  pedido:{}
+  pedido:{},
+  token:'',
 }, action) {
   switch (action.type) {
     case CREATE_PEDIDO_SUCCESS:
@@ -27,6 +29,9 @@ export default function pedidoReducer(state = {
       return Object.assign({}, state,
         {pedidos: action.pedidos,
           shouldUpdatePedidos: false});
+   case GET_TOKEN_SUCCESS:
+      return Object.assign({}, state,
+        {token: action.token});
     default:
       return state;
   }

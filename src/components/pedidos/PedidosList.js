@@ -161,8 +161,8 @@ const PedidosList = props => {
         options={{
           defaultSortName: "id",
           sortOrder: "desc",
-          sizePerPage: 20,
-          sizePerPageList: [20, 50, 200, 1000],
+          sizePerPage: 10,
+          sizePerPageList: [5, 10, 20, 50, 100, 250, 1000],
           onRowDoubleClick: props.onPedidosClick,
         }}
       >
