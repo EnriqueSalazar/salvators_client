@@ -13,7 +13,7 @@ if (isProduction) {
 } else {
   server = '192.168.178.248';
   port = '1337';
-};;//
+};
 export let serverUrl = 'http://' + server + ':' + port + '/';
 
 let apiUrl = (model) => {

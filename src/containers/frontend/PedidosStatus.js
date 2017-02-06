@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
+import geocoding from 'geocoding';
 
 import {
   loadRestaurantes,
@@ -100,6 +101,8 @@ class PedidosStatus extends Component {
       isCancelacionFormActive: false,
       search: '',
       filter: 666,
+      lat: null,
+      lng: null,
     };
   }
 
@@ -321,6 +324,7 @@ class PedidosStatus extends Component {
 
   selectDireccion = (direccion) => {
     this.setState({direccion});
+    this.gGeocoding(direccion.direccion + ', ' + this.state.ciudad.nombre);
   };
 
   selectRestaurante = (restaurante) => {
@@ -613,6 +617,19 @@ class PedidosStatus extends Component {
     pedidos && this.setState({pedidos});
   };
 
+  gGeocoding = (address) => {
+    const self = this;
+    // console.error(addresss);
+    // const address = 'carrera 54 # 64a - 75, Bogota';
+    geocoding({address}).then(function (results) {
+      const location = results[0].geometry.location;
+      const lat = location.lat;
+      const lng = location.lng;
+      console.log(lat,lng);
+      self.setState({lat, lng});
+    });
+  };
+
   render = () => {
     return (
       <div>
@@ -698,20 +715,14 @@ class PedidosStatus extends Component {
           isNuevoPedidoModalActive={this.state.isNuevoPedidoModalActive}
           nuevoPedidoModalOff={this.nuevoPedidoModalOff}
           selectCliente={this.selectCliente}
-          selectDireccion={this.selectDireccion}
           cliente={this.state.cliente}
           clientes={this.state.clientes}
-          direcciones={this.state.direcciones}
-          direccion={this.state.direccion}
-          createDireccion={this.props.createDireccion}
-          destroyDireccion={this.props.destroyDireccion}
           createCliente={this.props.createCliente}
           optionsModalOn={this.optionsModalOn}
           ciudades={this.props.ciudades}
           selectCiudad={this.selectCiudad}
           ciudad={this.state.ciudad}
           handleDestroyCliente={this.handleDestroyCliente}
-          handleDestroyDireccion={this.handleDestroyDireccion}
         />
         <RestauranteModal
           isRestauranteModalActive={this.state.isRestauranteModalActive}
@@ -721,8 +732,15 @@ class PedidosStatus extends Component {
           submitInitialPedido={this.submitInitialPedido}
           restaurante={this.state.restaurante}
           restaurantes={this.state.restaurantes}
+          direcciones={this.state.direcciones}
           direccion={this.state.direccion}
+          createDireccion={this.props.createDireccion}
+          destroyDireccion={this.props.destroyDireccion}
           ciudad={this.state.ciudad}
+          handleDestroyDireccion={this.handleDestroyDireccion}
+          selectDireccion={this.selectDireccion}
+          lat={this.state.lat}
+          lng={this.state.lng}
         />
         <NotaModal
           initialValues={this.state.pedido}

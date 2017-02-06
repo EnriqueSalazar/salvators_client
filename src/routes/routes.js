@@ -27,6 +27,7 @@ import Home from '../containers/Home';
 // import Users from './src/containers/Users';
 // import Permisos from './src/containers/Permisos';
 // import Recurrentes from './src/containers/Recurrentes';
+import geocoding from '../components/geocoding/geocoding';
 
 const routes = (<div>
     <Route path="/backend" component={BackendApp}>
@@ -48,6 +49,8 @@ const routes = (<div>
       <Route path="pedidodetalle/:id_pedido" component={PedidoDetalle}/>
       <Route path="*" component={FrontendHome}/>
     </Route>
+    <Route path="/geocoding" component={geocoding} />
+
     <Route path="/*" component={Home}/>
   </div>
 );

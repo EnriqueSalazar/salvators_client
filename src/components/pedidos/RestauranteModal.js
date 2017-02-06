@@ -15,6 +15,7 @@ import {
   Well
 } from 'react-bootstrap';
 import RestaurantesList from './RestaurantesList'
+import DireccionesList from './DireccionesList'
 import _ from 'lodash';
 
 let RestauranteModal = props => {
@@ -27,7 +28,13 @@ let RestauranteModal = props => {
     restaurantes,
     direccion,
     ciudad,
-    submitInitialPedido
+    submitInitialPedido,
+    selectDireccion,
+    createDireccion,
+    direcciones,
+    handleDestroyDireccion,
+    lat,
+    lng,
   }= props;
 
   let renderSiguienteButton = () => {
@@ -56,6 +63,20 @@ let RestauranteModal = props => {
       )
     }
   }
+
+  let renderDireccionesList = () => {
+    if (!_.isEmpty(cliente)) {
+      return (
+        <DireccionesList
+          selectDireccion={selectDireccion}
+          handleDestroyDireccion={handleDestroyDireccion}
+          createDireccion={createDireccion}
+          cliente={cliente}
+        >
+          {direcciones}
+        </DireccionesList>)
+    }
+  }
   return (
     <div>
       <Modal
@@ -64,67 +85,9 @@ let RestauranteModal = props => {
         //onHide={() => restauranteModalOff()}
       >
         <Modal.Body style={{textAlign: "center"}}>
-
-          <Well>
-
-            <h3>
-              <div style={{
-                textAlign: 'left',
-              }}>
-                <Grid fluid>
-                  <Row>
-                    <Col md={6}>
-                      <h1>
-                        Cliente
-                      </h1>
-                      <strong>
-                        Nombre:
-                      </strong>
-                      {' ' + cliente.nombre}<br />
-                      <strong>
-                        Cedula:
-                      </strong>
-                      {' ' + cliente.cedula}<br />
-                      <strong>
-                        Telefono:
-                      </strong>
-                      {' ' + cliente.telefono}<br />
-                      <strong>
-                        Direccion:
-                      </strong>
-                      {' ' + direccion.direccion}<br />
-                      <strong>
-                        Ciudad:
-                      </strong>
-                      {' ' + ciudad.nombre}
-                    </Col>
-                    <Col md={6}>
-                      <h1>
-                        Restaurante
-                      </h1>
-                      <strong>
-                        Nombre:
-                      </strong>
-                      {' ' + restaurante.nombre}<br />
-                      <strong>
-                        Cedula:
-                      </strong>
-                      {' ' + restaurante.valor}<br />
-                      <strong>
-                        Direccion:
-                      </strong>
-                      {' ' + restaurante.direccion}<br />
-                      <strong>
-                        Ciudad:
-                      </strong>
-                      {' ' + ciudad.nombre}
-                    </Col>
-                  </Row>
-                </Grid>
-              </div>
-            </h3>
-          </Well>
+          {renderDireccionesList()}
           {renderRestaurantesList()}
+          {lat+' - '+lng}
           {renderSiguienteButton()}
         </Modal.Body>
         <Modal.Footer>
