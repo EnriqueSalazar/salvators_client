@@ -1,6 +1,8 @@
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import geocoding from 'geocoding';
+import inside from 'point-in-polygon';
+
 
 import {
   loadRestaurantes,
@@ -73,7 +75,7 @@ import {
 } from 'react-bootstrap';
 import _ from 'lodash';
 import moment from 'moment';
-import {estados} from '../../config/'
+import {estados, polys} from '../../config/'
 
 import {toastr} from 'react-redux-toastr';
 
@@ -327,6 +329,16 @@ class PedidosStatus extends Component {
     this.gGeocoding(direccion.direccion + ', ' + this.state.ciudad.nombre);
   };
 
+  selectRestauranteForm = (e) => {
+    const restauranteId = e.target.value;
+    const restaurante = this.props.restaurantes.find((r)=>r.id == restauranteId);
+    this.setState({restaurante});
+    this.filterPedidosRestaurante(
+      restaurante,
+      this.props.pedidos
+    );
+  };
+//todo bug en guardar detalle pedido
   selectRestaurante = (restaurante) => {
     this.setState({restaurante});
     this.filterPedidosRestaurante(
@@ -334,7 +346,6 @@ class PedidosStatus extends Component {
       this.props.pedidos
     );
   };
-
   selectDomiciliario = (domiciliario) => {
     this.setState({domiciliario});
     this.filterPedidosdomiciliario(
@@ -619,14 +630,29 @@ class PedidosStatus extends Component {
 
   gGeocoding = (address) => {
     const self = this;
-    // console.error(addresss);
-    // const address = 'carrera 54 # 64a - 75, Bogota';
     geocoding({address}).then(function (results) {
       const location = results[0].geometry.location;
       const lat = location.lat;
       const lng = location.lng;
-      console.log(lat,lng);
+      console.log(lat, lng);
       self.setState({lat, lng});
+      const polyRestaurante = polys.find((coord) => {
+        return inside([lat, lng], coord.poly);
+      });
+      if (polyRestaurante && self.props.restaurantes) {
+        const restaurante = self.props.restaurantes.find((restaurante) => {
+          return restaurante.nombre == polyRestaurante.nombre;
+        });
+        self.setState({restaurante});
+      }
+      // let polygon = [
+      //   [10.999563, -74.814313],
+      //   [11.007851, -74.809603],
+      //   [11.015002, -74.819270],
+      //   [11.003565, -74.824259]
+      // ];
+      // console.info('inside polygon', inside([lat, lng], polygon));
+
     });
   };
 
@@ -728,7 +754,7 @@ class PedidosStatus extends Component {
           isRestauranteModalActive={this.state.isRestauranteModalActive}
           restauranteModalOff={this.restauranteModalOff}
           cliente={this.state.cliente}
-          selectRestaurante={this.selectRestaurante}
+          selectRestauranteForm={this.selectRestauranteForm}
           submitInitialPedido={this.submitInitialPedido}
           restaurante={this.state.restaurante}
           restaurantes={this.state.restaurantes}

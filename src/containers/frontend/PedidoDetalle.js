@@ -233,7 +233,8 @@ class PedidoDetalle extends Component {
     return (
       <div>
         {'Nombre: ' + restaurante.nombre}<br />
-        {'Direccion' + restaurante.direccion}
+        {'Direccion: ' + restaurante.direccion}<br />
+        {'Valor domicilio: ' + restaurante.valor}<br />
       </div>
     )
   }

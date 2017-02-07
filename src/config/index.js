@@ -13,7 +13,8 @@ if (isProduction) {
 } else {
   server = '192.168.178.248';
   port = '1337';
-};
+}
+;
 export let serverUrl = 'http://' + server + ':' + port + '/';
 
 let apiUrl = (model) => {
@@ -44,47 +45,59 @@ export const model = {
   queja: apiUrl('queja')
 };
 
+export const polys = [
+  {
+    nombre: 'principal',
+    poly: [
+      [10.999563, -74.814313],
+      [11.007851, -74.809603],
+      [11.015002, -74.819270],
+      [11.003565, -74.824259]
+    ]
+  }
+];
+
 export const estados = {
   inicio_pedido: {
     id: 0,
     alarma: 5,
     estilo: 'info',
-    field:'h_inicio',
-    nombre:'Inicio Pedido'
+    field: 'h_inicio',
+    nombre: 'Inicio Pedido'
   },
   fin_pedido: {
     id: 1,
     alarma: 5,
     estilo: 'info',
-    field:'h_fin',
+    field: 'h_fin',
     nombre: 'Fin Pedido'
   },
   cocina: {
     id: 2,
     alarma: 5,
     estilo: 'info',
-    field:'h_cocina',
+    field: 'h_cocina',
     nombre: 'Cocina'
   },
   barra: {
     id: 3,
     alarma: 5,
     estilo: 'info',
-    field:'h_barra',
+    field: 'h_barra',
     nombre: 'Barra'
   },
   domiciliario: {
     id: 4,
     alarma: 5,
     estilo: 'info',
-    field:'h_domiciliario',
+    field: 'h_domiciliario',
     nombre: 'Domiciliario'
   },
   entregado: {
     id: 5,
     alarma: 5,
     estilo: 'info',
-    field:'h_entregado',
+    field: 'h_entregado',
     nombre: 'Entregado'
   },
   anulado: {

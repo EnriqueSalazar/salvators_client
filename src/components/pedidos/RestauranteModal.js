@@ -9,6 +9,8 @@ import {
   Glyphicon,
   Row, Col,
   FormGroup,
+  ControlLabel,
+  FormControl,
   Grid,
   Modal,
   ButtonGroup,
@@ -23,7 +25,7 @@ let RestauranteModal = props => {
     isRestauranteModalActive,
     restauranteModalOff,
     cliente,
-    selectRestaurante,
+    selectRestauranteForm,
     restaurante,
     restaurantes,
     direccion,
@@ -54,12 +56,20 @@ let RestauranteModal = props => {
   let renderRestaurantesList = () => {
     if (!_.isEmpty(ciudad)) {
       return (
-        <RestaurantesList
-          selectRestaurante={selectRestaurante}
-          direccion={direccion}
-        >
-          {restaurantes}
-        </RestaurantesList>
+        <FormGroup controlId="formControlsSelect">
+          <ControlLabel>Restaurante</ControlLabel>
+          <FormControl
+            componentClass="select"
+            placeholder="Seleccione"
+            value={restaurante.id}
+            onChange={selectRestauranteForm}
+          >
+            <option value="select">select</option>
+            {restaurantes.map((restaurante, i)=>{
+              return <option key={i} value={restaurante.id}>{restaurante.nombre}</option>
+            })}
+          </FormControl>
+        </FormGroup>
       )
     }
   }
