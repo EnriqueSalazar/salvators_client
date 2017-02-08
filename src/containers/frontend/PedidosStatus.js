@@ -331,14 +331,20 @@ class PedidosStatus extends Component {
 
   selectRestauranteForm = (e) => {
     const restauranteId = e.target.value;
-    const restaurante = this.props.restaurantes.find((r)=>r.id == restauranteId);
+    let restaurante = {}
+    if (restauranteId == 0) {
+      restaurante.id = restauranteId;
+      restaurante.nombre = 'PickUp';
+    } else {
+      restaurante = this.props.restaurantes.find((r) => r.id == restauranteId);
+    }
     this.setState({restaurante});
-    this.filterPedidosRestaurante(
-      restaurante,
-      this.props.pedidos
-    );
+    // this.filterPedidosRestaurante(
+    //   restaurante,
+    //   this.props.pedidos
+    // );
   };
-//todo bug en guardar detalle pedido
+
   selectRestaurante = (restaurante) => {
     this.setState({restaurante});
     this.filterPedidosRestaurante(

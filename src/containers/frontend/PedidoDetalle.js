@@ -1,3 +1,4 @@
+//todo select dropdown for restaurants to change on the fly
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import {
@@ -176,6 +177,7 @@ class PedidoDetalle extends Component {
     pedidoItems.push({id_item, selectedModSubmods});
     let selectedItemId = 0;
     this.setState({selectedItemId, pedidoItems}, this.toggleShowItemDetails);
+    !_.isEmpty(selectedModSubmods) && this.setState({saved: false});
   }
   handleItemCancel = () => {
     let selectedItemId = 0;
@@ -296,7 +298,7 @@ class PedidoDetalle extends Component {
                       height: '4em',
                     }}
                   >
-                    {this.state.saved ? 'Aceptar y enviar' : 'Cancelar'}
+                    {this.state.saved && !_.isEmpty(this.state.pedidoItems)? 'Aceptar y enviar' : 'Cancelar'}
                   </Button>
                 </center>
                 <ListGroup fill>

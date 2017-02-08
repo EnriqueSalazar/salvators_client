@@ -61,10 +61,11 @@ let RestauranteModal = props => {
           <FormControl
             componentClass="select"
             placeholder="Seleccione"
-            value={restaurante.id}
+            value={restaurante ? restaurante.id : 'select'}
             onChange={selectRestauranteForm}
           >
-            <option value="select">select</option>
+            <option value="select">Select</option>
+            <option value={0}>Pick up</option>
             {restaurantes.map((restaurante, i)=>{
               return <option key={i} value={restaurante.id}>{restaurante.nombre}</option>
             })}
