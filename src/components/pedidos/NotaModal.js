@@ -43,7 +43,7 @@ let notaModal = props => {
                 <Row className="show-grid">
                   <Col md={12}>
                     <ControlLabel>
-                      Textarea
+                      Nota
                     </ControlLabel>
                     <br />
                     <Field
