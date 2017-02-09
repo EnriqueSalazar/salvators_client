@@ -71,7 +71,10 @@ import {
   Button,
   Glyphicon,
   Well,
-  Label
+  Label,
+  FormGroup,
+  FormControl,
+  ControlLabel
 } from 'react-bootstrap';
 import _ from 'lodash';
 import moment from 'moment';
@@ -95,6 +98,8 @@ class PedidoDetalle extends Component {
       cliente: null,
       direccion: null,
       restaurante: null,
+      restauranteSelect: false,
+      editNota: false
     };
   }
 
@@ -143,7 +148,12 @@ class PedidoDetalle extends Component {
             this.setState({pedidoItems});
           } else if (!_.isEqual(this.state.pedidoItems, pedidoItems) || isStatePedidoItemsEmpty) {
             saved = false;
-          }
+          } else if (this.state.pedido && pedido.id_restaurante != this.state.pedido.id_restaurante){
+            saved = false;
+
+        } else if (this.state.pedido && pedido.nota_pedido != this.state.pedido.nota_pedido){
+          saved = false;
+        }
           this.setState({saved});
         }
       }
@@ -232,15 +242,84 @@ class PedidoDetalle extends Component {
   }
   printRestaurante = () => {
     const restaurante = this.state.restaurante;
+    const restaurantes = this.props.restaurantes;
     return (
       <div>
-        {'Nombre: ' + restaurante.nombre}<br />
-        {'Direccion: ' + restaurante.direccion}<br />
-        {'Valor domicilio: ' + restaurante.valor}<br />
+        <div onClick={this.toggleSelectRestaurante} hidden={this.state.restauranteSelect}>
+          <strong>{'Restaurante'}</strong><br />
+          {restaurante.id == 0 ? 'PickUp' : 'Nombre: ' + restaurante.nombre}<br />
+          {restaurante.id != 0 && 'Valor domicilio: ' + restaurante.valor}<br />
+        </div>
+        <FormGroup controlId="formControlsSelect" hidden={!this.state.restauranteSelect}>
+          <ControlLabel>Restaurante</ControlLabel>
+          <FormControl
+            componentClass="select"
+            placeholder="Seleccione"
+            value={restaurante ? restaurante.id : 'select'}
+            onChange={this.selectRestauranteForm}
+            onBlur={this.toggleSelectRestaurante}
+          >
+            <option value="select">Select</option>
+            <option value={0}>Pick up</option>
+            {restaurantes.map((restaurante, i) => {
+              return <option key={i} value={restaurante.id}>{restaurante.nombre}</option>
+            })}
+          </FormControl>
+        </FormGroup>
       </div>
     )
   }
+  printNota = () => {
+    console.info('Printing nota...')
+    const pedido = this.state.pedido;
+    return (
 
+      <div>
+        <div
+          onClick={() => {
+            this.setState({editNota: true})
+          }}
+          hidden={this.state.editNota}
+        >
+          <strong>{'Nota'}</strong><br />
+          {pedido.nota_pedido}
+        </div>
+        <FormGroup controlId="formControlsTextarea"          hidden={!this.state.editNota}
+        >
+          <ControlLabel>Nota</ControlLabel>
+          <FormControl
+            value={this.state.pedido.nota_pedido}
+            onChange={(e) => {
+              this.setState({pedido: Object.assign({}, this.state.pedido, {nota_pedido: e.target.value}), saved: false})
+            }}
+            onBlur={() => {
+              this.setState({editNota: false})
+            }}
+            componentClass="textarea"
+            placeholder="Escriba una nota..."
+          />
+        </FormGroup>
+
+      </div>
+    )
+  }
+  toggleSelectRestaurante = () => {
+    const restauranteSelect = !this.state.restauranteSelect;
+    this.setState({restauranteSelect});
+  }
+  selectRestauranteForm = (e) => {
+    const restauranteId = e.target.value;
+    let restaurante = {}
+    if (restauranteId == 0) {
+      restaurante.id = restauranteId;
+      restaurante.nombre = 'PickUp';
+    } else {
+      restaurante = this.props.restaurantes.find((r) => r.id == restauranteId);
+    }
+    const pedido = Object.assign(this.state.pedido, {id_restaurante: restauranteId})
+    const saved = false;
+    this.setState({restaurante, pedido, saved});
+  };
   pedidoGrupos = () => {
     return (
       <div>
@@ -298,7 +377,7 @@ class PedidoDetalle extends Component {
                       height: '4em',
                     }}
                   >
-                    {this.state.saved && !_.isEmpty(this.state.pedidoItems)? 'Aceptar y enviar' : 'Cancelar'}
+                    {this.state.saved && !_.isEmpty(this.state.pedidoItems) ? 'Aceptar y enviar' : 'Cancelar'}
                   </Button>
                 </center>
                 <ListGroup fill>
@@ -310,9 +389,13 @@ class PedidoDetalle extends Component {
 
                   </ListGroupItem>
                   <ListGroupItem>
-                    <strong>{'Restaurante'}</strong>
 
                     {this.state.restaurante && this.printRestaurante()}
+
+                  </ListGroupItem>
+                  <ListGroupItem>
+
+                    {this.state.pedido && this.printNota()}
 
                   </ListGroupItem>
                 </ListGroup>
