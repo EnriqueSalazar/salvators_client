@@ -507,7 +507,8 @@ class PedidosStatus extends Component {
         id_cliente: cliente.id,
         id_direccion: direccion.id,
         id_restaurante: restaurante.id,
-        id_estado: 0
+        id_estado: 0,
+        valor_domicilio: restaurante.valor,
       };
       this.props.createPedido(pedido);
     };
@@ -693,7 +694,7 @@ class PedidosStatus extends Component {
             <Col md={4}>
               <FormControl
                 type="text"
-                placeholder="Buscar cliente..."
+                placeholder="Escriba nombre o telefono del cliente..."
                 onChange={this.handleSearchChange}
                 value={this.state.search}
               />

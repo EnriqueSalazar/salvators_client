@@ -65,7 +65,6 @@ let RestauranteModal = props => {
             onChange={selectRestauranteForm}
           >
             <option value="select">Select</option>
-            <option value={0}>Pick up</option>
             {restaurantes.map((restaurante, i)=>{
               return <option key={i} value={restaurante.id}>{restaurante.nombre}</option>
             })}
@@ -98,7 +97,6 @@ let RestauranteModal = props => {
         <Modal.Body style={{textAlign: "center"}}>
           {renderDireccionesList()}
           {renderRestaurantesList()}
-          {lat+' - '+lng}
           {renderSiguienteButton()}
         </Modal.Body>
         <Modal.Footer>

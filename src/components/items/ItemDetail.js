@@ -120,6 +120,22 @@ let ItemDetail = props => {
                 component={InputField}
               />
             </Col>
+          <Col md={3}>
+              <Field
+                name="max_mod"
+                label="Max Mod"
+                type="text"
+                component={InputField}
+              />
+            </Col>
+          <Col md={3}>
+              <Field
+                name="min_mod"
+                label="Min Mod"
+                type="text"
+                component={InputField}
+              />
+            </Col>
           </Row>
           <br/>
           <Row className="show-grid">

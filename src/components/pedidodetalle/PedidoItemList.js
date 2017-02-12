@@ -36,11 +36,11 @@ let PedidoItemList = props => {
 
             }
           })}
+          <div style={{textColor:'gray'}}>
+            {item.nota}
+          </div>
         </div>
       })}
-      <div style={{
-        textAlign: 'right',
-      }}>{'Suma: $' + sum}</div>
     </div>
   )
 }

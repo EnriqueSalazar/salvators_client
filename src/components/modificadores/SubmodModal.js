@@ -18,9 +18,9 @@ import check from '../check';
 
 const validate = values => {
   const errors = {};
-  errors.minimo = check.isNumber(values.minimo);
-  errors.maximo = check.isNumber(values.maximo);
-  errors.codigo = check.isNumber(values.codigo);
+  // errors.codigo = check.isNumber(parseInt(values.codigo));
+  // errors.precio = check.isNumber(parseFloat(values.precio));
+  // debugger
   return errors
 };
 
@@ -70,19 +70,8 @@ let SubmodModal = props => {
                 <Row className="show-grid">
                   <Col md={9}>
                     <Field
-                      name="maximo"
-                      label="Maximo"
-                      type="text"
-                      component={InputField}
-                    />
-                  </Col>
-                </Row>
-                <br/>
-                <Row className="show-grid">
-                  <Col md={9}>
-                    <Field
-                      name="minimo"
-                      label="Minimo"
+                      name="precio"
+                      label="Precio"
                       type="text"
                       component={InputField}
                     />

@@ -50,6 +50,14 @@ let Modificador = props => {
                 component={InputField}
               />
             </Col>
+          <Col md={3}>
+            <Field
+              name="precio"
+              label="Precio"
+              type="text"
+              component={InputField}
+            />
+            </Col>
           </Row>
           <br/>
           <Row className="show-grid">

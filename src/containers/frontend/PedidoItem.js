@@ -79,7 +79,11 @@ import {
   Button,
   Glyphicon,
   Well,
-  Label
+  Label,
+  FormGroup,
+  ControlLabel,
+  FormControl,
+  Badge,
 } from 'react-bootstrap';
 import _ from 'lodash';
 import moment from 'moment';
@@ -98,9 +102,10 @@ class PedidoItem extends Component {
       selectedModSubmod: [],
       selectedModIds: [],
       selectedSubmodIds: [],
-      nombreItem: '',
       submodDisabled: false,
       isSaveDisabled: true,
+      editNota: false,
+      item: {},
     };
   }
 
@@ -122,9 +127,8 @@ class PedidoItem extends Component {
       return hasItemMod;
     })
     let item = nextProps.items.find(item => item.id == +nextProps.idItem);
-    let nombreItem = item && item.id ? item.nombre : '';
-    this.setState({filteredMods, nombreItem});
-
+    item && item.nombre && this.setState({item});
+    this.setState({filteredMods});
   }
 
   filterActiveSelected = () => {
@@ -136,16 +140,28 @@ class PedidoItem extends Component {
       }
       return result;
     }, [])
-    let isSaveDisabled=false
+    let isSaveDisabled = false
     this.state.filteredMods.map((mod, i) => {
-      let submodsSelected = this.state.selectedModSubmod.filter((m)=> m.id_modificador == mod.id)
-      const length= submodsSelected.length;
-        if (length>0 && (length<mod.minimo || length>mod.maximo)){
-          isSaveDisabled=true;
-        }
+      let submodsSelected = this.state.selectedModSubmod.filter((m) => m.id_modificador == mod.id)
+      const length = submodsSelected.length;
+      if (length > 0 && (length < mod.minimo || length > mod.maximo)) {
+        isSaveDisabled = true;
+      }
     })
     this.setState({selectedModIds, selectedSubmodIds, isSaveDisabled});
 
+  }
+  resetSelected = () =>{
+    this.setState({
+      filteredSubmods: [],
+      selectedModId: 0,
+      selectedModSubmod: [],
+      selectedModIds: [],
+      selectedSubmodIds: [],
+      submodDisabled: false,
+      isSaveDisabled: true,
+      editNota: false,
+    }, () => this.filterActiveSelected());
   }
   handleModClick = (selectedModId) => {
     let filteredSubmods = this.props.submodificadores.filter((submod) => {
@@ -158,30 +174,87 @@ class PedidoItem extends Component {
     });
     this.setState({selectedModId, filteredSubmods}, () => this.filterActiveSelected());
   }
+
   handleSubmodClick = (selectedSubmodId) => {
     let hasModSubmod = this.state.selectedModSubmod.find((modSubmod) => {
       let isIdMod = modSubmod.id_modificador == this.state.selectedModId;
       let isIdSubmod = modSubmod.id_submodificador == selectedSubmodId;
       return isIdMod && isIdSubmod
     })
-    let selectedModSubmod = [];
+    const isLastSubmod = this.state.selectedSubmodIds.length == 1;
+    const isModsInMinLimit = this.state.selectedModIds.length == this.state.item.min_mod;
+    const isFirstSubmod = this.state.selectedSubmodIds.length == 0;
+    const isModsInMaxLimit = this.state.selectedModIds.length == this.state.item.max_mod;
+    const shouldRemove = !(isLastSubmod && isModsInMinLimit);
+    const shouldAdd = !(isFirstSubmod && isModsInMaxLimit);
     if (hasModSubmod) {
-      selectedModSubmod = this.state.selectedModSubmod.filter((m) => m != hasModSubmod)
-    } else {
+      if (shouldRemove){
+      const selectedModSubmod = this.state.selectedModSubmod.filter((m) => m != hasModSubmod)
+      this.setState({selectedModSubmod}, () => this.filterActiveSelected());
+      }
+    } else if (shouldAdd) {
       let id_modificador = this.state.selectedModId;
       let id_submodificador = selectedSubmodId;
-      selectedModSubmod = [...this.state.selectedModSubmod, {id_modificador, id_submodificador}]
+      const selectedModSubmod = [...this.state.selectedModSubmod, {id_modificador, id_submodificador}]
+      this.setState({selectedModSubmod}, () => this.filterActiveSelected());
     }
-    this.setState({selectedModSubmod}, () => this.filterActiveSelected());
   }
 
+  printNota = () => {
+    const nota = this.props.selectedItemNote;
+    return (
+
+      <div>
+        <div
+          onClick={(e) => {
+            this.setState({editNota: true})
+          }}
+          hidden={this.state.editNota}
+        >
+          <strong>{'Nota'}</strong><br />
+          {nota.substr(0, 25)}
+        </div>
+        <FormGroup controlId="formControlsTextarea" hidden={!this.state.editNota}
+        >
+          <ControlLabel>Nota</ControlLabel>
+          <FormControl
+            ref="notaTextarea"
+            value={nota}
+            onChange={(e) => {
+              this.props.handleUpdateItemNote(e);
+              this.setState({isSaveDisabled: false});
+            }}
+            onBlur={() => {
+              this.setState({editNota: false})
+            }}
+            componentClass="textarea"
+            placeholder="Escriba una nota..."
+          />
+        </FormGroup>
+
+      </div>
+    )
+  }
   render = () => {
+    const item = this.state.item;
+    const counter = this.state.selectedModIds.length;
+    const counterColor = counter < item.min_mod ? 'red' : 'black';
+    const panelTile = (
+      <span>
+        {item.nombre + ' '}
+        <Badge>{counter}</Badge>
+        <span style={{whiteSpace: 'nowrap', color: counterColor}}>
+          <Glyphicon glyph="arrow-down"/>{item.min_mod}{' '}
+          <Glyphicon glyph="arrow-up"/>{item.max_mod}
+        </span>
+      </span>
+    );
     return (
       <div>
 
         <Grid>
           <Row>
-            <Panel header={this.state.nombreItem}>
+            <Panel header={panelTile}>
               <Col md={9}>
                 <Panel header="Modificadores">
                   <ButtonsPanel
@@ -206,34 +279,56 @@ class PedidoItem extends Component {
               </Col>
               <Col md={3}>
                 <Panel>
+                  <ListGroup fill>
+                    <ListGroupItem>
                   <PedidoItemModList
                     filteredMods={this.state.filteredMods}
                     selectedModSubmod={this.state.selectedModSubmod}
                     submodificadores={this.props.submodificadores}
                   />
-                <center>
                   <Button
-                    onClick={() => this.props.handleItemAccept(this.state.selectedModSubmod)}
-                    style={{
-                      whiteSpace: 'normal',
-                      width: '7em',
-                      height: '4em',
-                    }}
-                    disabled={this.state.isSaveDisabled}
+                    onClick={this.resetSelected}
+                    bsStyle="danger"
+                    block
                   >
-                    {'Aceptar'}
+                    <Glyphicon glyph="erase"/> {' Limpiar'}
                   </Button>
-                  <Button
-                    onClick={() => this.props.handleItemCancel()}
-                    style={{
-                      whiteSpace: 'normal',
-                      width: '7em',
-                      height: '4em',
-                    }}
-                  >
-                    {'Cancelar'}
-                  </Button>
-                </center>
+
+                    </ListGroupItem>
+                  <center>
+                    <ListGroupItem>
+                    {this.printNota()}
+
+                    </ListGroupItem>
+                    <ListGroupItem>
+                    <Button
+                      onClick={() => this.props.handleItemAccept(this.state.selectedModSubmod)}
+                      style={{
+                        whiteSpace: 'normal',
+                        width: '7em',
+                        height: '4em',
+                      }}
+                      disabled={this.state.isSaveDisabled}
+                      bsStyle="success"
+                    >
+                      {'Aceptar'}
+                    </Button>
+                    <Button
+                      onClick={() => this.props.handleItemCancel()}
+                      style={{
+                        whiteSpace: 'normal',
+                        width: '7em',
+                        height: '4em',
+                      }}
+                      bsStyle="danger"
+                    >
+                      {'Cancelar'}
+                    </Button>
+
+                    </ListGroupItem>
+                  </center>
+
+                  </ListGroup>
                 </Panel>
               </Col>
             </Panel>

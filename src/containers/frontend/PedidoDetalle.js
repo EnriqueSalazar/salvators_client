@@ -1,4 +1,3 @@
-//todo select dropdown for restaurants to change on the fly
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import {
@@ -74,7 +73,9 @@ import {
   Label,
   FormGroup,
   FormControl,
-  ControlLabel
+  ControlLabel,
+  Checkbox,
+  FieldGroup
 } from 'react-bootstrap';
 import _ from 'lodash';
 import moment from 'moment';
@@ -99,7 +100,11 @@ class PedidoDetalle extends Component {
       direccion: null,
       restaurante: null,
       restauranteSelect: false,
-      editNota: false
+      editNota: false,
+      subtotal: 0,
+      isSobrecargoEditable: false,
+      isDescuentoEditable: false,
+      selectedItemNote: '',
     };
   }
 
@@ -145,19 +150,20 @@ class PedidoDetalle extends Component {
           const isPropsPedidoItemsEmpty = pedidoItems.length == 0;
           let saved = true;
           if (isStatePedidoItemsEmpty && !isPropsPedidoItemsEmpty) {
-            this.setState({pedidoItems});
+            this.setState({pedidoItems}, this.setSubtotal(pedidoItems, nextProps.items));
           } else if (!_.isEqual(this.state.pedidoItems, pedidoItems) || isStatePedidoItemsEmpty) {
             saved = false;
-          } else if (this.state.pedido && pedido.id_restaurante != this.state.pedido.id_restaurante){
+          } else if (this.state.pedido && pedido.id_restaurante != this.state.pedido.id_restaurante) {
             saved = false;
 
-        } else if (this.state.pedido && pedido.nota_pedido != this.state.pedido.nota_pedido){
-          saved = false;
-        }
+          } else if (this.state.pedido && pedido.nota_pedido != this.state.pedido.nota_pedido) {
+            saved = false;
+          }
           this.setState({saved});
         }
       }
     }
+    this.updateTotal();
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -181,19 +187,26 @@ class PedidoDetalle extends Component {
   handleItemClick = (selectedItemId) => {
     this.setState({selectedItemId}, this.toggleShowItemDetails);
   }
+  handleUpdateItemNote = (e) => {
+    const selectedItemNote = e.target.value;
+    this.setState({selectedItemNote});
+  }
   handleItemAccept = (selectedModSubmods) => {
-    let pedidoItems = this.state.pedidoItems;
-    let id_item = this.state.selectedItemId;
-    pedidoItems.push({id_item, selectedModSubmods});
-    let selectedItemId = 0;
-    this.setState({selectedItemId, pedidoItems}, this.toggleShowItemDetails);
+    const pedidoItems = this.state.pedidoItems;
+    const id_item = this.state.selectedItemId;
+    const nota = this.state.selectedItemNote;
+    pedidoItems.push({id_item, nota, selectedModSubmods});
+    const selectedItemId = 0;
+    const selectedItemNote = '';
+    this.setState({selectedItemId, pedidoItems, selectedItemNote}, this.toggleShowItemDetails);
     !_.isEmpty(selectedModSubmods) && this.setState({saved: false});
+    const items = this.props.items;
+    this.setSubtotal(pedidoItems, items);
   }
   handleItemCancel = () => {
     let selectedItemId = 0;
     this.setState({selectedItemId}, this.toggleShowItemDetails);
   }
-
   handlePedidoSave = () => {
     // let pedido = this.props.pedidos.find((p) => p.id == this.state.idPedido);
     let pedido = this.state.pedido;
@@ -203,7 +216,11 @@ class PedidoDetalle extends Component {
     }
   }
   handlePedidoCancel = () => {
-    browserHistory.push('/frontend/pedidosstatus/');
+    const toastrConfirmOptions = {
+      onOk: () => browserHistory.push('/frontend/pedidosstatus/'),
+      // onCancel: () => this.props.loadPedidos()
+    };
+    toastr.confirm('Seguro que desea salir sin guardar los cambios?', toastrConfirmOptions);
   }
   handlePedidoAccept = () => {
     let pedido = this.state.pedido;
@@ -221,7 +238,15 @@ class PedidoDetalle extends Component {
     let saved = false;
     this.setState({pedidoItems, saved});
   }
-
+  setSubtotal = (pedidoItems, items) => {
+    let sum = 0;
+    pedidoItems.map((itemId, h) => {
+      let item = items.find((i) => i.id == itemId.id_item);
+      const itemPrecio = item.precio || 0;
+      sum += itemPrecio;
+    })
+    this.setState({subtotal: sum}, this.updateTotal());
+  }
   printCliente = () => {
     const cliente = this.state.cliente;
     return (
@@ -248,7 +273,6 @@ class PedidoDetalle extends Component {
         <div onClick={this.toggleSelectRestaurante} hidden={this.state.restauranteSelect}>
           <strong>{'Restaurante'}</strong><br />
           {restaurante.id == 0 ? 'PickUp' : 'Nombre: ' + restaurante.nombre}<br />
-          {restaurante.id != 0 && 'Valor domicilio: ' + restaurante.valor}<br />
         </div>
         <FormGroup controlId="formControlsSelect" hidden={!this.state.restauranteSelect}>
           <ControlLabel>Restaurante</ControlLabel>
@@ -260,7 +284,6 @@ class PedidoDetalle extends Component {
             onBlur={this.toggleSelectRestaurante}
           >
             <option value="select">Select</option>
-            <option value={0}>Pick up</option>
             {restaurantes.map((restaurante, i) => {
               return <option key={i} value={restaurante.id}>{restaurante.nombre}</option>
             })}
@@ -270,7 +293,6 @@ class PedidoDetalle extends Component {
     )
   }
   printNota = () => {
-    console.info('Printing nota...')
     const pedido = this.state.pedido;
     return (
 
@@ -282,9 +304,9 @@ class PedidoDetalle extends Component {
           hidden={this.state.editNota}
         >
           <strong>{'Nota'}</strong><br />
-          {pedido.nota_pedido}
+          {pedido.nota_pedido && pedido.nota_pedido.substr(0, 25)}
         </div>
-        <FormGroup controlId="formControlsTextarea"          hidden={!this.state.editNota}
+        <FormGroup controlId="formControlsTextarea" hidden={!this.state.editNota}
         >
           <ControlLabel>Nota</ControlLabel>
           <FormControl
@@ -313,13 +335,22 @@ class PedidoDetalle extends Component {
     if (restauranteId == 0) {
       restaurante.id = restauranteId;
       restaurante.nombre = 'PickUp';
+      restaurante.valor = 0;
     } else {
       restaurante = this.props.restaurantes.find((r) => r.id == restauranteId);
     }
-    const pedido = Object.assign(this.state.pedido, {id_restaurante: restauranteId})
+    const pedido = Object.assign(this.state.pedido, {id_restaurante: restauranteId, valor_domicilio: restaurante.valor})
     const saved = false;
-    this.setState({restaurante, pedido, saved});
+    this.setState({restaurante, pedido, saved}, this.updateTotal);
   };
+  updateTotal = () => {
+    let pedido = this.state.pedido;
+    if (pedido) {
+      pedido.valor_impuesto = (this.state.subtotal + pedido.valor_domicilio) * 0.16;
+      pedido.valor_total = pedido.valor_impuesto + this.state.subtotal + pedido.valor_domicilio - pedido.valor_descuento;
+      this.setState({pedido});
+    }
+  }
   pedidoGrupos = () => {
     return (
       <div>
@@ -357,29 +388,7 @@ class PedidoDetalle extends Component {
               <Panel header="Pedido">
 
                 {this.state.pedidoItems && this.pedidoItemList()}
-                <center>
-                  <Button
-                    onClick={() => this.handlePedidoSave()}
-                    style={{
-                      whiteSpace: 'normal',
-                      width: '8em',
-                      height: '4em',
-                    }}
-                    disabled={this.state.saved || _.isEmpty(this.state.pedidoItems)}
-                  >
-                    {'Guardar'}
-                  </Button>
-                  <Button
-                    onClick={this.state.saved ? () => this.handlePedidoAccept() : () => this.handlePedidoCancel()}
-                    style={{
-                      whiteSpace: 'normal',
-                      width: '8em',
-                      height: '4em',
-                    }}
-                  >
-                    {this.state.saved && !_.isEmpty(this.state.pedidoItems) ? 'Aceptar y enviar' : 'Cancelar'}
-                  </Button>
-                </center>
+
                 <ListGroup fill>
                   <ListGroupItem>
                     <strong>{'Cliente'}</strong>
@@ -392,16 +401,115 @@ class PedidoDetalle extends Component {
 
                     {this.state.restaurante && this.printRestaurante()}
 
+                    <Checkbox
+                      value={this.state.pedido ? this.state.pedido.is_pickup : false}
+                      onChange={() => {
+                        let pedido = this.state.pedido;
+                        pedido.is_pickup = !pedido.is_pickup;
+                        if (pedido.is_pickup) {
+                          pedido.valor_domicilio = 0;
+                        } else {
+                          pedido.valor_domicilio = this.state.restaurante.valor;
+                        }
+                        this.setState({pedido}, this.updateTotal())
+                      }}
+                    >
+                      Para llevar
+                    </Checkbox>
                   </ListGroupItem>
                   <ListGroupItem>
 
                     {this.state.pedido && this.printNota()}
 
                   </ListGroupItem>
+                  <ListGroupItem>
+                    <FormGroup>
+                      <Row>
+                        <Col md={5}>
+                          <ControlLabel>Impuestos</ControlLabel>
+                          <div style={{textAlign: 'right'}}>
+                            {'$ ' + (this.state.pedido && (this.state.pedido.valor_impuesto ? this.state.pedido.valor_impuesto : 0))}
+                          </div>
+                        </Col>
+                        <Col md={5}>
+                          <ControlLabel>Subtotal</ControlLabel>
+                          <div style={{textAlign: 'right'}}>
+                            {'$ ' + this.state.subtotal}
+                          </div>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col md={5}>
+                          <ControlLabel>Sobrecargo</ControlLabel>
+                          <FormControl
+                            type="text"
+                            value={this.state.pedido ? this.state.pedido.valor_domicilio : 0}
+                            onChange={(e) => {
+                              let pedido = this.state.pedido;
+                              pedido.valor_domicilio = e.target.value;
+                              this.setState({pedido});
+                            }}
+                          />
+                        </Col>
+                        <Col md={5}>
+                          <ControlLabel>Descuento</ControlLabel>
+                          <FormControl
+                            type="text"
+                            value={this.state.pedido ? this.state.pedido.valor_descuento : 0}
+                            onChange={(e) => {
+                              let pedido = this.state.pedido;
+                              pedido.valor_descuento = e.target.value;
+                              this.setState({pedido}, this.updateTotal());
+                            }}
+                          />
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col md={10}>
+                          <ControlLabel>{'Total '}</ControlLabel>
+                          <h2>$ {this.state.pedido ? this.state.pedido.valor_total + 0 : 0}</h2>
+                        </Col>
+                      </Row>
+                    </FormGroup>
+                  </ListGroupItem>
                 </ListGroup>
 
 
               </Panel>
+              <Row>
+                <Col md={5}>
+                  <Button
+                    onClick={() => this.handlePedidoSave()}
+                    style={{
+                      whiteSpace: 'normal',
+                      width: '8em',
+                      height: '4em',
+                    }}
+                    block
+                    disabled={false && this.state.saved || _.isEmpty(this.state.pedidoItems)}
+                    bsStyle="success"
+                  >
+                    {'Guardar'}
+                  </Button>
+
+                </Col>
+                <Col md={5}>
+                  <Button
+                    onClick={this.state.saved ? () => this.handlePedidoAccept() : () => this.handlePedidoCancel()}
+                    style={{
+                      whiteSpace: 'normal',
+                      width: '8em',
+                      height: '4em',
+                    }}
+                    block
+                    bsStyle={this.state.saved && !_.isEmpty(this.state.pedidoItems) ? 'primary' : 'danger'}
+
+                  >
+                    {this.state.saved && !_.isEmpty(this.state.pedidoItems) ? 'Aceptar y enviar' : 'Cancelar'}
+                  </Button>
+
+                </Col>
+              </Row>
             </Col>
           </Row>
         </Grid>
@@ -423,6 +531,8 @@ class PedidoDetalle extends Component {
       idItem={this.state.selectedItemId}
       handleItemAccept={this.handleItemAccept}
       handleItemCancel={this.handleItemCancel}
+      selectedItemNote={this.state.selectedItemNote}
+      handleUpdateItemNote={this.handleUpdateItemNote}
     />)
   }
   render = () => {

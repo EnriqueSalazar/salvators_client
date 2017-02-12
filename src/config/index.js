@@ -47,7 +47,7 @@ export const model = {
 
 export const polys = [
   {
-    nombre: 'principal',
+    nombre: 'Calle 84',
     poly: [
       [10.999563, -74.814313],
       [11.007851, -74.809603],
