@@ -9,7 +9,6 @@ let PedidoItemList = props => {
       {props.pedidoItems.map((item, h) => {
         let itemComplete = props.items.find((i) => i.id == item.id_item);
         const itemPrecio = itemComplete.precio || 0;
-        sum += itemPrecio;
         return <div key={h}>
           <strong>{itemComplete && itemComplete.nombre + ' [$' + itemPrecio + ']'}</strong>
           <a><Glyphicon glyph="remove-circle" onClick={() => props.handleRemoveItem(h)}/></a>
@@ -18,14 +17,14 @@ let PedidoItemList = props => {
             if (submodsSelected.length > 0) {
               return (
                 <div key={i}>
-                  {mod.nombre}
+                  {mod.nombre+ ' [$' + (mod.precio? mod.precio:'0') + ']'}
                   <ul>
                     {submodsSelected.map((s, k) => {
                       let completeSubmod = props.submodificadores.find((sub) => sub.id == s.id_submodificador);
                       if (completeSubmod && completeSubmod.nombre) {
                         return (
                           <li key={k}>
-                            {completeSubmod.nombre}
+                            {completeSubmod.nombre+ ' [$' + (completeSubmod.precio? completeSubmod.precio:'0')+ ']'}
                           </li>
                         )
                       }
@@ -36,6 +35,7 @@ let PedidoItemList = props => {
 
             }
           })}
+          {'Item : $'+item.precio}
           <div style={{textColor:'gray'}}>
             {item.nota}
           </div>

@@ -101,10 +101,11 @@ class PedidoDetalle extends Component {
       restaurante: null,
       restauranteSelect: false,
       editNota: false,
-      subtotal: 0,
       isSobrecargoEditable: false,
       isDescuentoEditable: false,
       selectedItemNote: '',
+      selectedItemPrice:0,
+
     };
   }
 
@@ -191,11 +192,15 @@ class PedidoDetalle extends Component {
     const selectedItemNote = e.target.value;
     this.setState({selectedItemNote});
   }
+  handleUpdateItemPrice = (selectedItemPrice)=>{
+    this.setState({selectedItemPrice});
+  }
   handleItemAccept = (selectedModSubmods) => {
     const pedidoItems = this.state.pedidoItems;
     const id_item = this.state.selectedItemId;
     const nota = this.state.selectedItemNote;
-    pedidoItems.push({id_item, nota, selectedModSubmods});
+    const precio = this.state.selectedItemPrice;
+    pedidoItems.push({id_item, nota, selectedModSubmods, precio});
     const selectedItemId = 0;
     const selectedItemNote = '';
     this.setState({selectedItemId, pedidoItems, selectedItemNote}, this.toggleShowItemDetails);
@@ -346,8 +351,13 @@ class PedidoDetalle extends Component {
   updateTotal = () => {
     let pedido = this.state.pedido;
     if (pedido) {
-      pedido.valor_impuesto = (this.state.subtotal + pedido.valor_domicilio) * 0.16;
-      pedido.valor_total = pedido.valor_impuesto + this.state.subtotal + pedido.valor_domicilio - pedido.valor_descuento;
+      let subtotal = 0;
+      this.state.pedidoItems.map((item)=>{
+        subtotal+=item.precio;
+      })
+      pedido.valor_impuesto = (subtotal + pedido.valor_domicilio) * 0.16;
+      pedido.subtotal = subtotal;
+      pedido.valor_total = pedido.valor_impuesto + pedido.subtotal + pedido.valor_domicilio - pedido.valor_descuento;
       this.setState({pedido});
     }
   }
@@ -434,7 +444,7 @@ class PedidoDetalle extends Component {
                         <Col md={5}>
                           <ControlLabel>Subtotal</ControlLabel>
                           <div style={{textAlign: 'right'}}>
-                            {'$ ' + this.state.subtotal}
+                            {'$ ' + (this.state.pedido && (this.state.pedido.subtotal ? this.state.pedido.subtotal : 0))}
                           </div>
                         </Col>
                       </Row>
@@ -533,6 +543,8 @@ class PedidoDetalle extends Component {
       handleItemCancel={this.handleItemCancel}
       selectedItemNote={this.state.selectedItemNote}
       handleUpdateItemNote={this.handleUpdateItemNote}
+      selectedItemPrice={this.state.selectedItemPrice}
+      handleUpdateItemPrice={this.handleUpdateItemPrice}
     />)
   }
   render = () => {

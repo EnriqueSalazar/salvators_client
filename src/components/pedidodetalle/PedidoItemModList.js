@@ -25,13 +25,14 @@ let PedidoItemModList = props => {
               >
                 {threshold}
                 </span>
+              {' [$'+(mod.precio? mod.precio: '0')+']'}
               <ul>
                 {submodsSelected.map((s, k) => {
                   let completeSubmod = props.submodificadores.find((sub) => sub.id == s.id_submodificador);
                   if (completeSubmod && completeSubmod.nombre) {
                     return (
                       <li key={k}>
-                        {completeSubmod.nombre}
+                        {completeSubmod.nombre+' [$'+(completeSubmod.precio? completeSubmod.precio: '0')+']'}
                       </li>
                     )
                   }

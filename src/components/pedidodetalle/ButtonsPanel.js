@@ -11,10 +11,16 @@ let ButtonsPanel = props => {
         } else {
           isActive = button.id == props.selectedId;
         }
+        const buttonText = (
+          <span>
+            {button.nombre}<br />
+            {'$'+(button.precio?button.precio:'0')}
+      </span>
+        );
         return (
           <ButtonItem
             key={i}
-            nombre={button.nombre}
+            nombre={buttonText}
             id={button.id}
             onClick={props.onClick}
             active={isActive}
