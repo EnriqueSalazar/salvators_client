@@ -6,6 +6,12 @@ import {
   ListGroupItem
 } from 'react-bootstrap';
 import {
+  loadDescuentos,
+} from '../../actions/descuentoActions';
+import {
+  loadFormasPago,
+} from '../../actions/formaPagoActions';
+import {
   loadRestaurantes,
 } from '../../actions/restauranteActions';
 import {
@@ -119,6 +125,8 @@ class PedidoDetalle extends Component {
     this.props.loadClientes();
     this.props.loadRestaurantes();
     this.props.loadDirecciones();
+    this.props.loadFormasPago();
+    this.props.loadDescuentos();
     this.setState({idPedido: this.props.params.id_pedido});
   }
 
@@ -130,6 +138,13 @@ class PedidoDetalle extends Component {
     if (nextProps.shouldUpdatePedidos) {
       this.props.loadPedidos();
     }
+    if (_.isEmpty(nextProps.descuentos)) {
+      this.props.loadDescuentos();
+    }
+    if (_.isEmpty(nextProps.formasPago)) {
+      this.props.loadFormasPago();
+    }
+
     if (nextProps.pedidos) {
       let pedido = nextProps.pedidos.find(p => p.id == this.state.idPedido);
       if (pedido) {
@@ -370,7 +385,7 @@ class PedidoDetalle extends Component {
     if (pedido) {
       let subtotal = 0;
       this.state.pedidoItems.map((item) => {
-        subtotal += item.precio*(parseInt(item.cantidad)?parseInt(item.cantidad):1);
+        subtotal += item.precio * (parseInt(item.cantidad) ? parseInt(item.cantidad) : 1);
       })
       pedido.valor_impuesto = (subtotal + pedido.valor_domicilio) * 0.16;
       pedido.subtotal = subtotal;
@@ -383,7 +398,7 @@ class PedidoDetalle extends Component {
       <div>
         <Grid>
           <Row>
-            <Col md={2}>
+            <Col md={3}>
               <Panel header="Grupos">
                 <center>
                   <ButtonsPanel
@@ -411,7 +426,7 @@ class PedidoDetalle extends Component {
               </Panel>
 
             </Col>
-            <Col md={5}>
+            <Col md={4}>
               <Panel header="Pedido">
 
                 {this.state.pedidoItems && this.pedidoItemList()}
@@ -452,13 +467,13 @@ class PedidoDetalle extends Component {
                   <ListGroupItem>
                     <FormGroup>
                       <Row>
-                        <Col md={5}>
+                        <Col md={6}>
                           <ControlLabel>Impuestos</ControlLabel>
                           <div style={{textAlign: 'right'}}>
                             {'$ ' + (this.state.pedido && (this.state.pedido.valor_impuesto ? this.state.pedido.valor_impuesto : 0))}
                           </div>
                         </Col>
-                        <Col md={5}>
+                        <Col md={6}>
                           <ControlLabel>Subtotal</ControlLabel>
                           <div style={{textAlign: 'right'}}>
                             {'$ ' + (this.state.pedido && (this.state.pedido.subtotal ? this.state.pedido.subtotal : 0))}
@@ -466,7 +481,7 @@ class PedidoDetalle extends Component {
                         </Col>
                       </Row>
                       <Row>
-                        <Col md={5}>
+                        <Col md={6}>
                           <ControlLabel>Sobrecargo</ControlLabel>
                           <FormControl
                             type="text"
@@ -478,23 +493,29 @@ class PedidoDetalle extends Component {
                             }}
                           />
                         </Col>
-                        <Col md={5}>
+                        <Col md={6}>
                           <ControlLabel>Descuento</ControlLabel>
                           <FormControl
-                            type="text"
+                            componentClass="select"
                             value={this.state.pedido ? this.state.pedido.valor_descuento : 0}
                             onChange={(e) => {
                               let pedido = this.state.pedido;
                               pedido.valor_descuento = e.target.value;
                               this.setState({pedido}, this.updateTotal());
                             }}
-                          />
+                          >
+                            <option value='0'>Sin descuento</option>
+                            {this.props.descuentos.map((descuento, i) => {
+                              return <option key={i}
+                                             value={descuento.valor_maximo}>{descuento.nombre + ' $' + descuento.valor_maximo}</option>
+                            })}
+                          </FormControl>
                         </Col>
                       </Row>
                       <Row>
-                        <Col md={10}>
-                          <ControlLabel>{'Total '}</ControlLabel>
-                          <h2>$ {this.state.pedido ? this.state.pedido.valor_total + 0 : 0}</h2>
+                        <Col md={12}>
+
+                          <h2><strong>{'Total '}</strong>$ {this.state.pedido ? this.state.pedido.valor_total + 0 : 0}</h2>
                         </Col>
                       </Row>
                     </FormGroup>
@@ -599,9 +620,13 @@ function mapStateToProps(state) {
     cancelacionReducer,
     modificadorReducer,
     submodificadorReducer,
-    quejaReducer
+    quejaReducer,
+    descuentoReducer,
+    formaPagoReducer,
   } = state;
   const {pedidos, shouldUpdatePedidos} = pedidoReducer;
+  const {formasPago} = formaPagoReducer;
+  const {descuentos} = descuentoReducer;
   const {direcciones, shouldUpdateDirecciones} = direccionReducer;
   const {domiciliarios, shouldUpdateDomiciliarios} = domiciliarioReducer;
   const {restaurantes, shouldUpdateRestaurantes} = restauranteReducer;
@@ -613,6 +638,8 @@ function mapStateToProps(state) {
   const {submodificadores, shouldUpdateSubmodificadores, submodificador} = submodificadorReducer;
   return {
     pedidos,
+    formasPago,
+    descuentos,
     shouldUpdatePedidos,
     direcciones,
     shouldUpdateDirecciones,
@@ -669,4 +696,6 @@ export default connect(mapStateToProps, {
   destroySubmodificador,
   createSubmodificador,
   updateSubmodificador,
+  loadDescuentos,
+  loadFormasPago,
 })(PedidoDetalle);

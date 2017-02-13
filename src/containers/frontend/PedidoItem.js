@@ -9,6 +9,12 @@ import {
   loadRestaurantes,
 } from '../../actions/restauranteActions';
 import {
+  loadDescuentos,
+} from '../../actions/descuentoActions';
+import {
+  loadFormasPago,
+} from '../../actions/formaPagoActions';
+import {
   loadPedidos,
   destroyPedido,
   createPedido,
@@ -133,6 +139,13 @@ class PedidoItem extends Component {
     if (item && item.precio != nextProps.selectedItemPrice){
       this.calcTotal();
     }
+
+
+  }
+  componentDidUpdate(prevProps){
+    if (this.props.selectedItemDescuento != prevProps.selectedItemDescuento){
+      this.calcTotal();
+    }
   }
 
   filterActiveSelected = () => {
@@ -220,6 +233,7 @@ class PedidoItem extends Component {
       const completeSubmod = this.props.submodificadores.find((s) => s.id == sub);
       total += completeSubmod.precio;
     })
+    total -= this.props.selectedItemDescuento;
     this.props.handleUpdateItemPrice(total);
   }
   printNota = () => {
@@ -310,6 +324,21 @@ class PedidoItem extends Component {
                         selectedModSubmod={this.state.selectedModSubmod}
                         submodificadores={this.props.submodificadores}
                       />
+                  <ControlLabel>Descuento</ControlLabel>
+                  <FormControl
+                    componentClass="select"
+                    value={this.props.selectedItemDescuento}
+                    onChange={(e) => {
+                      this.props.handleUpdateItemDescuento(e.target.value);
+                    }}
+                  >
+                    <option value='0'>Sin descuento</option>
+                    {this.props.descuentos.map((descuento, i) => {
+                      return <option key={i} value={descuento.valor_maximo}>
+                        {descuento.nombre + ' $' + descuento.valor_maximo}
+                        </option>
+                    })}
+                  </FormControl>
                       <h3>
                       {'Total : $'+this.props.selectedItemPrice}
                       </h3>
@@ -404,9 +433,13 @@ function mapStateToProps(state) {
     modificadorReducer,
     submodificadorReducer,
     modSubmodReducer,
-    itemModReducer
+    itemModReducer,
+    descuentoReducer,
+    formaPagoReducer,
   } = state;
   const {pedidos, shouldUpdatePedidos} = pedidoReducer;
+  const {formasPago} = formaPagoReducer;
+  const {descuentos} = descuentoReducer;
   const {direcciones, shouldUpdateDirecciones} = direccionReducer;
   const {domiciliarios, shouldUpdateDomiciliarios} = domiciliarioReducer;
   const {restaurantes, shouldUpdateRestaurantes} = restauranteReducer;
@@ -420,6 +453,8 @@ function mapStateToProps(state) {
   const {itemMods, shouldUpdateItemMods} = itemModReducer;
   return {
     pedidos,
+    formasPago,
+    descuentos,
     shouldUpdatePedidos,
     direcciones,
     shouldUpdateDirecciones,
@@ -488,4 +523,6 @@ export default connect(mapStateToProps, {
   destroyItemMod,
   createItemMod,
   updateItemMod,
+  loadDescuentos,
+  loadFormasPago,
 })(PedidoItem);
