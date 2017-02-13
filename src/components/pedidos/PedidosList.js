@@ -42,6 +42,15 @@ const PedidosList = props => {
   let timeFormatter = (cell) =>
     (cell ? momentFormatter(cell, 'HH:mm') : null);
 
+ let tiempoTranscurridoFormatter = (cell, row) =>{
+   let min = 0
+   if (row.h_fin){
+     const marker = row.h_domiciliario || moment();
+     min = moment(marker).diff(moment(row.h_fin), 'minutes');
+   }
+   return (<h2>{min}</h2>);
+ }
+
   let nowFormatter = (field, row, nextEstado) => {
     return (<Glyphicon glyph="time"/>);
   };
@@ -142,9 +151,9 @@ const PedidosList = props => {
     if (row.id_estado < 2) return 'onOperator';
     if (row.id_estado == 6) return 'anulado';
     let isAnuladoOrEntregado = (row.id_estado >= 5);
-    let sinceCocinaMinutos = moment().diff(row.h_cocina, 'minutes');
-    if (!isAnuladoOrEntregado && sinceCocinaMinutos > 30) return 'min30';
-    if (!isAnuladoOrEntregado && sinceCocinaMinutos >25) return 'min25';
+    let sinceCallcenterMinutos = moment().diff(row.h_fin, 'minutes');
+    if (!isAnuladoOrEntregado && sinceCallcenterMinutos > 30) return 'min30';
+    if (!isAnuladoOrEntregado && sinceCallcenterMinutos >25) return 'min25';
   }
 
   const width = '150';
@@ -167,14 +176,6 @@ const PedidosList = props => {
         }}
       >
         <TableHeaderColumn
-          dataField="id"
-          isKey
-          dataAlign="center"
-          hidden
-        >
-          ID
-        </TableHeaderColumn>
-        <TableHeaderColumn
           dataField="id_estado"
           dataAlign="center"
           width={180}
@@ -186,9 +187,9 @@ const PedidosList = props => {
           dataField="h_inicio"
           dataAlign="center"
           width={widthHora}
-          dataFormat={timeFormatter}
+          dataFormat={tiempoTranscurridoFormatter}
         >
-          Inicio Pedido
+Tiempo Transcurrido
         </TableHeaderColumn>
         <TableHeaderColumn
           dataField="h_fin"
@@ -196,7 +197,7 @@ const PedidosList = props => {
           width={widthHora}
           dataFormat={timeFormatter}
         >
-          Fin Pedido
+          Call Center
         </TableHeaderColumn>
         <TableHeaderColumn
           dataField="h_cocina"
@@ -239,6 +240,21 @@ const PedidosList = props => {
           Fecha
         </TableHeaderColumn>
         <TableHeaderColumn
+          dataField="id"
+          isKey
+          dataAlign="center"
+          width={widthHora}
+        >
+          Codigo
+        </TableHeaderColumn>
+        <TableHeaderColumn
+          dataField="factura"
+          dataAlign="center"
+          width={width}
+        >
+          Factura
+        </TableHeaderColumn>
+        <TableHeaderColumn
           dataField="id_cliente"
           dataAlign="center"
           width={width}
@@ -261,13 +277,6 @@ const PedidosList = props => {
           dataFormat={direccionFormatter}
         >
           Direccion
-        </TableHeaderColumn>
-        <TableHeaderColumn
-          dataField="factura"
-          dataAlign="center"
-          width={width}
-        >
-          Factura
         </TableHeaderColumn>
 
         <TableHeaderColumn

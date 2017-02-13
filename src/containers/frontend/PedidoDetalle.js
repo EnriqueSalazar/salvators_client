@@ -518,6 +518,26 @@ class PedidoDetalle extends Component {
                           <h2><strong>{'Total '}</strong>$ {this.state.pedido ? this.state.pedido.valor_total + 0 : 0}</h2>
                         </Col>
                       </Row>
+                    <Row>
+                        <Col md={12}>
+                          <ControlLabel>Forma de Pago</ControlLabel>
+                          <FormControl
+                            componentClass="select"
+                            value={this.state.pedido ? this.state.id_forma_pago : 0}
+                            onChange={(e) => {
+                              let pedido = this.state.pedido;
+                              pedido.id_forma_pago = e.target.value;
+                              this.setState({pedido});
+                            }}
+                          >
+                            <option value='0'>Seleccione</option>
+                            {this.props.formasPago.map((f, i) => {
+                              return <option key={i}
+                                             value={f.id}>{f.nombre }</option>
+                            })}
+                          </FormControl>
+                        </Col>
+                      </Row>
                     </FormGroup>
                   </ListGroupItem>
                 </ListGroup>

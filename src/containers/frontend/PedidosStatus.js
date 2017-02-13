@@ -227,7 +227,7 @@ class PedidosStatus extends Component {
                 });
             isCiudad = restaurante.id_ciudad == ciudad.id;
           }
-          const isActive = pedido.id_estado < 5;
+          const isActive = pedido.id_estado <= 3 && pedido.id_estado >=1;
           return isCiudad && isActive;
         }
       );
