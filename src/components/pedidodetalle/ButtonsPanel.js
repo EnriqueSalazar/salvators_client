@@ -14,7 +14,7 @@ let ButtonsPanel = props => {
         const buttonText = (
           <span>
             {button.nombre}<br />
-            {'$'+(button.precio?button.precio:'0')}
+            {(button.precio?('$'+button.precio):'')}
       </span>
         );
         return (

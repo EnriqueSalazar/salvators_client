@@ -84,6 +84,7 @@ import {
   ControlLabel,
   FormControl,
   Badge,
+  Form,
 } from 'react-bootstrap';
 import _ from 'lodash';
 import moment from 'moment';
@@ -303,6 +304,7 @@ class PedidoItem extends Component {
                 <Panel>
                   <ListGroup fill>
                     <ListGroupItem>
+                <Row>
                       <PedidoItemModList
                         filteredMods={this.state.filteredMods}
                         selectedModSubmod={this.state.selectedModSubmod}
@@ -311,13 +313,32 @@ class PedidoItem extends Component {
                       <h3>
                       {'Total : $'+this.props.selectedItemPrice}
                       </h3>
-                      <Button
+                </Row>
+                <Row>
+
+                      <Col componentClass={ControlLabel} md={4}>
+                        Cantidad
+                      </Col>
+                      <Col md={8}>
+                      <FormControl
+                        type="text"
+                        value={this.props.selectedItemCantidad}
+                        onChange={(e) => {
+                          this.props.handleUpdateItemCantidad(e.target.value);
+                        }}
+                      />
+
+                      </Col>
+              </Row>
+                <Row>
+                <Button
                         onClick={this.resetSelected}
                         bsStyle="danger"
                         block
                       >
                         <Glyphicon glyph="erase"/> {' Limpiar'}
                       </Button>
+                </Row>
 
                     </ListGroupItem>
                     <center>

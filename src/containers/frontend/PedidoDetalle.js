@@ -104,8 +104,9 @@ class PedidoDetalle extends Component {
       isSobrecargoEditable: false,
       isDescuentoEditable: false,
       selectedItemNote: '',
-      selectedItemPrice:0,
-
+      selectedItemPrice: 0,
+      selectedItemCantidad: 0,
+      selectedItemDescuento: 0,
     };
   }
 
@@ -192,18 +193,34 @@ class PedidoDetalle extends Component {
     const selectedItemNote = e.target.value;
     this.setState({selectedItemNote});
   }
-  handleUpdateItemPrice = (selectedItemPrice)=>{
+  handleUpdateItemPrice = (selectedItemPrice) => {
     this.setState({selectedItemPrice});
+  }
+  handleUpdateItemCantidad = (selectedItemCantidad) => {
+    this.setState({selectedItemCantidad});
+  }
+  handleUpdateItemDescuento = (selectedItemDescuento) => {
+    this.setState({selectedItemDescuento});
   }
   handleItemAccept = (selectedModSubmods) => {
     const pedidoItems = this.state.pedidoItems;
     const id_item = this.state.selectedItemId;
     const nota = this.state.selectedItemNote;
     const precio = this.state.selectedItemPrice;
-    pedidoItems.push({id_item, nota, selectedModSubmods, precio});
+    const cantidad = this.state.selectedItemCantidad;
+    const descuento = this.state.selectedItemDescuento;
+    pedidoItems.push({id_item, nota, selectedModSubmods, precio, cantidad, descuento});
     const selectedItemId = 0;
+    const selectedItemCantidad = 0;
+    const selectedItemDescuento = 0;
     const selectedItemNote = '';
-    this.setState({selectedItemId, pedidoItems, selectedItemNote}, this.toggleShowItemDetails);
+    this.setState({
+      selectedItemId,
+      pedidoItems,
+      selectedItemNote,
+      selectedItemDescuento,
+      selectedItemCantidad
+    }, this.toggleShowItemDetails);
     !_.isEmpty(selectedModSubmods) && this.setState({saved: false});
     const items = this.props.items;
     this.setSubtotal(pedidoItems, items);
@@ -352,8 +369,8 @@ class PedidoDetalle extends Component {
     let pedido = this.state.pedido;
     if (pedido) {
       let subtotal = 0;
-      this.state.pedidoItems.map((item)=>{
-        subtotal+=item.precio;
+      this.state.pedidoItems.map((item) => {
+        subtotal += item.precio*(parseInt(item.cantidad)?parseInt(item.cantidad):1);
       })
       pedido.valor_impuesto = (subtotal + pedido.valor_domicilio) * 0.16;
       pedido.subtotal = subtotal;
@@ -366,7 +383,7 @@ class PedidoDetalle extends Component {
       <div>
         <Grid>
           <Row>
-            <Col md={3}>
+            <Col md={2}>
               <Panel header="Grupos">
                 <center>
                   <ButtonsPanel
@@ -381,7 +398,7 @@ class PedidoDetalle extends Component {
               </Panel>
 
             </Col>
-            <Col md={6}>
+            <Col md={5}>
               <Panel header="Items">
                 <ButtonsPanel
                   list={this.state.filteredItems}
@@ -394,7 +411,7 @@ class PedidoDetalle extends Component {
               </Panel>
 
             </Col>
-            <Col md={3}>
+            <Col md={5}>
               <Panel header="Pedido">
 
                 {this.state.pedidoItems && this.pedidoItemList()}
@@ -545,6 +562,10 @@ class PedidoDetalle extends Component {
       handleUpdateItemNote={this.handleUpdateItemNote}
       selectedItemPrice={this.state.selectedItemPrice}
       handleUpdateItemPrice={this.handleUpdateItemPrice}
+      selectedItemCantidad={this.state.selectedItemCantidad}
+      handleUpdateItemCantidad={this.handleUpdateItemCantidad}
+      selectedItemDescuento={this.state.selectedItemDescuento}
+      handleUpdateItemDescuento={this.handleUpdateItemDescuento}
     />)
   }
   render = () => {
