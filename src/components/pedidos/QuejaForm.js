@@ -72,7 +72,7 @@ let QuejaForm = props => {
                         type="submit"
                         bsStyle="primary">
                         <Glyphicon glyph="floppy-save"/>
-                        { " Cancelar"}
+                        { " Guardar"}
                       </Button>
 
                     </ButtonGroup>

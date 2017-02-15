@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, {Component, PropTypes} from 'react';
 import moment from 'moment';
 import {
   Button,
@@ -42,21 +42,21 @@ const PedidosList = props => {
   let timeFormatter = (cell) =>
     (cell ? momentFormatter(cell, 'HH:mm') : null);
 
- let tiempoTranscurridoFormatter = (cell, row) =>{
-   let min = 0
-   if (row.h_fin){
-     const marker = row.h_domiciliario || moment();
-     min = moment(marker).diff(moment(row.h_fin), 'minutes');
-   }
-   return (<h2>{min}</h2>);
- }
+  let tiempoTranscurridoFormatter = (cell, row) => {
+    let min = 0
+    if (row.h_fin) {
+      const marker = row.h_domiciliario || moment();
+      min = moment(marker).diff(moment(row.h_fin), 'minutes');
+    }
+    return (<h2>{min}</h2>);
+  }
 
   let nowFormatter = (field, row, nextEstado) => {
     return (<Glyphicon glyph="time"/>);
   };
 
   let estadoFormatter = (cell, row) => {
-
+// debugger
     let estadoKey = _.findKey(props.estados, ['id', cell]);
     let estado = props.estados[estadoKey];
     let nextEstado = _.findKey(props.estados, ['id', cell + 1]);
@@ -69,7 +69,7 @@ const PedidosList = props => {
         bsStyle={ isAnulado ? "danger" : "primary"}
         bsSize="large"
         disabled={row.id_estado == props.estados.entregado.id}
-      >{estadoKey}
+      >{estado.nombre}
       </Button>
     );
 
@@ -153,7 +153,7 @@ const PedidosList = props => {
     let isAnuladoOrEntregado = (row.id_estado >= 5);
     let sinceCallcenterMinutos = moment().diff(row.h_fin, 'minutes');
     if (!isAnuladoOrEntregado && sinceCallcenterMinutos > 30) return 'min30';
-    if (!isAnuladoOrEntregado && sinceCallcenterMinutos >25) return 'min25';
+    if (!isAnuladoOrEntregado && sinceCallcenterMinutos > 25) return 'min25';
   }
 
   const width = '150';
@@ -189,7 +189,7 @@ const PedidosList = props => {
           width={widthHora}
           dataFormat={tiempoTranscurridoFormatter}
         >
-Tiempo Transcurrido
+          Tiempo Transcurrido
         </TableHeaderColumn>
         <TableHeaderColumn
           dataField="h_fin"

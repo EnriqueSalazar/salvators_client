@@ -70,7 +70,7 @@ export const estados = {
     alarma: 5,
     estilo: 'info',
     field: 'h_fin',
-    nombre: 'Fin Pedido'
+    nombre: 'Call Center'
   },
   cocina: {
     id: 2,

@@ -56,6 +56,7 @@ export function updateDireccion(id, payload) {
   };
 }
 export function createDireccion(payload) {
+  debugger
   return dispatch => {
     return Api.create(model.direccion, payload).then((direccion) => {
       dispatch(createDireccionSuccess(direccion.data));

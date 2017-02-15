@@ -1,7 +1,7 @@
 import {toastr} from 'react-redux-toastr';
 import Api from '../api/Api';
 import {model, tokenUrl} from '../config/'
-import { browserHistory } from 'react-router';
+import {browserHistory} from 'react-router';
 
 export const LOAD_PEDIDOS_SUCCESS = 'LOAD_PEDIDOS_SUCCESS';
 export const LOAD_ONE_PEDIDO_SUCCESS = 'LOAD_ONE_PEDIDO_SUCCESS';
@@ -25,8 +25,8 @@ export function createPedidoSuccess(pedido) {
   return {type: CREATE_PEDIDO_SUCCESS, pedido};
 }
 export function destroyPedidoSuccess(pedido) {
-  toastr.success(pedido.nombre+' Eliminación exitosa.');
-  return {type: DESTROY_PEDIDO_SUCCESS, pedido:{}};
+  toastr.success(pedido.nombre + ' Eliminación exitosa.');
+  return {type: DESTROY_PEDIDO_SUCCESS, pedido: {}};
 }
 export function getTokenSuccess(token) {
   console.info('access_token', token);
@@ -76,7 +76,7 @@ export function createPedido(payload) {
 
 export function destroyPedido(id) {
   return dispatch => {
-    return Api.destroy(model.pedidos,id).then((pedido) => {
+    return Api.destroy(model.pedidos, id).then((pedido) => {
       dispatch(destroyPedidoSuccess(pedido.data));
     }).catch(error => {
       throw(error);

@@ -2,6 +2,8 @@ import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import geocoding from 'geocoding';
 import inside from 'point-in-polygon';
+import GoogleMap from 'google-map-react';
+import Marker from '../../components/pedidos/Marker'
 
 
 import {
@@ -93,7 +95,11 @@ class PedidosStatus extends Component {
       cliente: {},
       clientes: [],
       direccion: {},
+      direccionTextAsArray: [],
       direcciones: [],
+      direccionCoords: {lat: 0, lng: 0},
+      direccionCoordsMsg: '',
+      interiorTextAsArray:[],
       ciudad: {},
       restaurantes: [],
       restaurante: {},
@@ -105,6 +111,10 @@ class PedidosStatus extends Component {
       filter: 666,
       lat: null,
       lng: null,
+      dirTest: '',
+      latTest: 0,
+      lngTest: 0,
+      msgTest: '',
     };
   }
 
@@ -169,6 +179,12 @@ class PedidosStatus extends Component {
     }
   }
 
+  componentDidUpdate(prevProps) {
+    setTimeout(() => {
+      this.props.loadPedidos();
+    }, 1500000);
+  }
+
   // shouldComponentUpdate(nextProps, nextState) {
   //   const isPedidos = nextState.pedidos.length > 0;
   //   const pedidosChanged = !_.isEqual(this.props.pedidos, nextProps.pedidos);
@@ -227,7 +243,7 @@ class PedidosStatus extends Component {
                 });
             isCiudad = restaurante.id_ciudad == ciudad.id;
           }
-          const isActive = pedido.id_estado <= 3 && pedido.id_estado >=1;
+          const isActive = pedido.id_estado <= 3 && pedido.id_estado >= 1;
           return isCiudad && isActive;
         }
       );
@@ -265,14 +281,14 @@ class PedidosStatus extends Component {
     this.checkToken();
     if (pedido.id) {
       let cliente = this.props.clientes.find((cliente) => {
-        return cliente.id == pedido.id_cliente;
-      });
+          return cliente.id == pedido.id_cliente;
+        }) || {};
       let ciudad = this.props.ciudades.find((ciudad) => {
-        return ciudad.id == cliente.id_ciudad;
-      });
+          return ciudad.id == cliente.id_ciudad;
+        }) || {};
       let direccion = this.props.direcciones.find((direccion) => {
-        return direccion.id == pedido.id_direccion;
-      });
+          return direccion.id == pedido.id_direccion;
+        }) || {};
       this.setState({
           cliente,
           direccion,
@@ -437,14 +453,18 @@ class PedidosStatus extends Component {
   };
   handleUpdateQuejaForm = (queja) => {
     let pedido = this.state.pedido;
-    pedido.id_estado = 6;
+    // pedido.id_estado = 6;
+    debugger
     Promise.all([
       this.props.createQueja(queja),
     ]).then(() => {
       this.setState({
           pedido: {}
         },
-        () => this.quejaFormOff()
+        () => {
+          debugger
+          this.quejaFormOff()
+        }
       )
     });
   };
@@ -662,10 +682,83 @@ class PedidosStatus extends Component {
 
     });
   };
+  updateDireccionMapCoords = () => {
+    const direccionTextAsArray = this.state.direccionTextAsArray;
+    const address = direccionTextAsArray.join(' ').replace('  ', ' ') + ', ' + this.state.ciudad.nombre;
+    const self = this;
+    geocoding({address}).then(function (results) {
+      const location = results[0].geometry.location;
+      const lat = location.lat;
+      const lng = location.lng;
+      const direccionCoords = {lat, lng};
+      self.setState({direccionCoords, direccionCoordsMsg: ''});
+    }).catch(function (reason) {
+      self.setState({direccionCoordsMsg: reason.message});
+    });
+  };
+  updateDireccionText = (e) => {
+    // debugger
+    const direccionTextAsArray = this.state.direccionTextAsArray;
+    direccionTextAsArray[3] = '#';
+    direccionTextAsArray[7] = '-';
+    direccionTextAsArray[e.target.id] = e.target.value;
+    this.setState({direccionTextAsArray});
+  };
+  updateInteriorText = (e) =>{
+    console.log('updateInteriorText',e.target.id,e.target.value);
+    const interiorTextAsArray = this.state.interiorTextAsArray;
+    interiorTextAsArray[e.target.id] = e.target.value;
+    this.setState({interiorTextAsArray});
+  }
+
+  //*****************************************************
+  // Ucomment to test map in main status page
+  //*****************************************************
+
+  // setDirTest = (e) => {
+  //   this.setState({dirTest: e.target.value});
+  // };
+  // geocodingTest = () => {
+  //   const self = this;
+  //   this.setState({msgTest: 'Querying API'});
+  //   geocoding({address: this.state.dirTest}).then(function (results) {
+  //     const location = results[0].geometry.location;
+  //     const lat = location.lat;
+  //     const lng = location.lng;
+  //     self.setState({latTest: lat, lngTest: lng, msgTest: ''});
+  //   }).catch(function (reason) {
+  //     self.setState({msgTest: reason.message});
+  //   });
+  // };
+  renderMap = () => {
+    // return (<div>
+    //   <FormControl
+    //     type="text"
+    //     placeholder="Escriba nombre o telefono del cliente..."
+    //     onChange={this.setDirTest}
+    //     value={this.state.dirTest}
+    //   />
+    //   <Button onClick={() => this.geocodingTest()}>
+    //     <Glyphicon glyph="globe"/>
+    //   </Button>{this.state.msgTest}
+    //   <div style={{height: 300}}>
+    //     <GoogleMap
+    //       bootstrapURLKeys={{key: 'AIzaSyDB_jeDJCNUIDNwSkD8MaLWeUuHlB2wNE8'}}
+    //       center={[this.state.latTest, this.state.lngTest]}
+    //       defaultZoom={17}>
+    //       <Marker lat={this.state.latTest} lng={this.state.lngTest}/>
+    //
+    //     </GoogleMap>
+    //
+    //   </div>
+    // </div>);
+  };
+  //*****************************************************
 
   render = () => {
     return (
       <div>
+        {this.renderMap()}
         <PedidosNavBar
           list={this.props.ciudades}
           callback={this.handleSelectedCiudadTab}
@@ -707,7 +800,6 @@ class PedidosStatus extends Component {
                 value={this.state.filter}
               >
                 <option value={666}>Activos</option>
-                <option value={estados.inicio_pedido.id}>{estados.inicio_pedido.nombre}</option>
                 <option value={estados.fin_pedido.id}>{estados.fin_pedido.nombre}</option>
                 <option value={estados.cocina.id}>{estados.cocina.nombre}</option>
                 <option value={estados.barra.id}>{estados.barra.nombre}</option>
@@ -774,6 +866,13 @@ class PedidosStatus extends Component {
           selectDireccion={this.selectDireccion}
           lat={this.state.lat}
           lng={this.state.lng}
+          updateInteriorText={this.updateInteriorText}
+          interiorTextAsArray={this.state.interiorTextAsArray}
+          updateDireccionText={this.updateDireccionText}
+          direccionTextAsArray={this.state.direccionTextAsArray}
+          updateDireccionMapCoords={this.updateDireccionMapCoords}
+          direccionCoords={this.state.direccionCoords}
+          direccionCoordsMsg={this.state.direccionCoordsMsg}
         />
         <NotaModal
           initialValues={this.state.pedido}

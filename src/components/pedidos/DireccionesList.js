@@ -17,7 +17,6 @@ const DireccionesList = props => {
   }
   return (
     <div >
-      <h3>Direcciones</h3>
 
       <BootstrapTable
         data={direcciones}
@@ -35,9 +34,6 @@ const DireccionesList = props => {
           deleteText: 'Eliminar',
           afterDeleteRow: props.handleDestroyDireccion
         }}
-        insertRow={true}
-        deleteRow={true}
-        selectRow={selectRowProp}
       >
         <TableHeaderColumn
           dataField="id"
@@ -55,6 +51,12 @@ const DireccionesList = props => {
           dataAlign="center"
         >
           Direccion
+        </TableHeaderColumn>
+      <TableHeaderColumn
+          dataField="interno"
+          dataAlign="center"
+        >
+
         </TableHeaderColumn>
       </BootstrapTable>
     </div>

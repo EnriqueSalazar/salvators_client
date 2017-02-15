@@ -254,7 +254,13 @@ class PedidoDetalle extends Component {
   }
   handlePedidoCancel = () => {
     const toastrConfirmOptions = {
-      onOk: () => browserHistory.push('/frontend/pedidosstatus/'),
+      onOk: () => {
+        Promise.all([
+          this.props.destroyPedido(this.state.pedido.id),
+        ]).then(() => {
+          browserHistory.push('/frontend/pedidosstatus/')
+        });
+      },
       // onCancel: () => this.props.loadPedidos()
     };
     toastr.confirm('Seguro que desea salir sin guardar los cambios?', toastrConfirmOptions);
@@ -349,7 +355,10 @@ class PedidoDetalle extends Component {
           <FormControl
             value={this.state.pedido.nota_pedido}
             onChange={(e) => {
-              this.setState({pedido: Object.assign({}, this.state.pedido, {nota_pedido: e.target.value}), saved: false})
+              this.setState({
+                pedido: Object.assign({}, this.state.pedido, {nota_pedido: e.target.value}),
+                saved: false
+              })
             }}
             onBlur={() => {
               this.setState({editNota: false})
@@ -376,7 +385,10 @@ class PedidoDetalle extends Component {
     } else {
       restaurante = this.props.restaurantes.find((r) => r.id == restauranteId);
     }
-    const pedido = Object.assign(this.state.pedido, {id_restaurante: restauranteId, valor_domicilio: restaurante.valor})
+    const pedido = Object.assign(this.state.pedido, {
+      id_restaurante: restauranteId,
+      valor_domicilio: restaurante.valor
+    })
     const saved = false;
     this.setState({restaurante, pedido, saved}, this.updateTotal);
   };
@@ -497,7 +509,8 @@ class PedidoDetalle extends Component {
                           <ControlLabel>Descuento</ControlLabel>
                           <FormControl
                             componentClass="select"
-                            value={this.state.pedido ? this.state.pedido.valor_descuento : 0}
+                            value={this.state.pedido ?
+                              this.state.pedido.valor_descuento : 0}
                             onChange={(e) => {
                               let pedido = this.state.pedido;
                               pedido.valor_descuento = e.target.value;
@@ -506,8 +519,11 @@ class PedidoDetalle extends Component {
                           >
                             <option value='0'>Sin descuento</option>
                             {this.props.descuentos.map((descuento, i) => {
-                              return <option key={i}
-                                             value={descuento.valor_maximo}>{descuento.nombre + ' $' + descuento.valor_maximo}</option>
+                              return <option
+                                key={i}
+                                value={descuento.valor_maximo}>
+                                {descuento.nombre + ' $' + descuento.valor_maximo}
+                              </option>
                             })}
                           </FormControl>
                         </Col>
@@ -515,10 +531,13 @@ class PedidoDetalle extends Component {
                       <Row>
                         <Col md={12}>
 
-                          <h2><strong>{'Total '}</strong>$ {this.state.pedido ? this.state.pedido.valor_total + 0 : 0}</h2>
+                          <h2>
+                            <strong>{'Total '}</strong>$ {this.state.pedido ?
+                            this.state.pedido.valor_total + 0 : 0}
+                          </h2>
                         </Col>
                       </Row>
-                    <Row>
+                      <Row>
                         <Col md={12}>
                           <ControlLabel>Forma de Pago</ControlLabel>
                           <FormControl
@@ -563,15 +582,18 @@ class PedidoDetalle extends Component {
                 </Col>
                 <Col md={5}>
                   <Button
-                    onClick={this.state.saved ? () => this.handlePedidoAccept() : () => this.handlePedidoCancel()}
+                    onClick={this.state.saved ?
+                      () => this.handlePedidoAccept() :
+                      () => this.handlePedidoCancel()}
                     style={{
                       whiteSpace: 'normal',
                       width: '8em',
                       height: '4em',
                     }}
                     block
-                    bsStyle={this.state.saved && !_.isEmpty(this.state.pedidoItems) ? 'primary' : 'danger'}
-
+                    bsStyle={this.state.saved && !_.isEmpty(this.state.pedidoItems) ?
+                      'primary' :
+                      'danger'}
                   >
                     {this.state.saved && !_.isEmpty(this.state.pedidoItems) ? 'Aceptar y enviar' : 'Cancelar'}
                   </Button>

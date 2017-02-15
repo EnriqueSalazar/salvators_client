@@ -72,7 +72,7 @@ let CancelacionForm = props => {
                         type="submit"
                         bsStyle="primary">
                         <Glyphicon glyph="floppy-save"/>
-                        { " Cancelar"}
+                        { " Anular"}
                       </Button>
 
                     </ButtonGroup>
