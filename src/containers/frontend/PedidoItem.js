@@ -91,6 +91,8 @@ import {
   FormControl,
   Badge,
   Form,
+  Nav,
+  NavItem
 } from 'react-bootstrap';
 import _ from 'lodash';
 import moment from 'moment';
@@ -136,14 +138,15 @@ class PedidoItem extends Component {
     let item = nextProps.items.find(item => item.id == +nextProps.idItem);
     item && item.nombre && this.setState({item});
     this.setState({filteredMods});
-    if (item && item.precio != nextProps.selectedItemPrice){
+    if (item && item.precio != nextProps.selectedItemPrice) {
       this.calcTotal();
     }
 
 
   }
-  componentDidUpdate(prevProps){
-    if (this.props.selectedItemDescuento != prevProps.selectedItemDescuento){
+
+  componentDidUpdate(prevProps) {
+    if (this.props.selectedItemDescuento != prevProps.selectedItemDescuento) {
       this.calcTotal();
     }
   }
@@ -178,7 +181,7 @@ class PedidoItem extends Component {
       submodDisabled: false,
       isSaveDisabled: true,
       editNota: false,
-      total:0,
+      total: 0,
     }, () => this.filterActiveSelected());
   }
   handleModClick = (selectedModId) => {
@@ -223,7 +226,7 @@ class PedidoItem extends Component {
   }
 
   calcTotal = () => {
-    let total = this.state.item? this.state.item.precio:0;
+    let total = this.state.item ? this.state.item.precio : 0;
     this.state.selectedModIds.map((mod) => {
       const completeMod = this.state.filteredMods.find((m) => mod == m.id);
       total += completeMod.precio;
@@ -286,6 +289,15 @@ class PedidoItem extends Component {
         {' [$' + (item.precio ? item.precio : '0') + ']'}
       </span>
     );
+    const dangerousHTML1 = {
+      __html: '<div><div><strong><!-- react-text: 1414 --> <!-- /react-text --><!-- react-text: 1415 -->Borde<!-- /react-text --><!-- react-text: 1416 --> <!-- /react-text --></strong><span class="badge">1</span><span style="white-space: nowrap; color: black;"><span><span class="glyphicon glyphicon-arrow-down"></span><!-- react-text: 1421 -->1<!-- /react-text --><!-- react-text: 1422 --> <!-- /react-text --><span class="glyphicon glyphicon-arrow-up"></span><!-- react-text: 1424 -->1<!-- /react-text --></span></span><!-- react-text: 1425 --> [$0]<!-- /react-text --><ul><li>Queso [$1500]</li></ul></div><div><strong><!-- react-text: 1448 --> <!-- /react-text --><!-- react-text: 1449 -->Queso<!-- /react-text --><!-- react-text: 1450 --> <!-- /react-text --></strong><span class="badge">1</span><span style="white-space: nowrap; color: black;"><span><span class="glyphicon glyphicon-arrow-down"></span><!-- react-text: 1455 -->1<!-- /react-text --><!-- react-text: 1456 --> <!-- /react-text --><span class="glyphicon glyphicon-arrow-up"></span><!-- react-text: 1458 -->3<!-- /react-text --></span></span><!-- react-text: 1459 --> [$0]<!-- /react-text --><ul><li>Campesino [$3500]</li></ul></div><div><strong><!-- react-text: 1369 --> <!-- /react-text --><!-- react-text: 1370 -->Carnes<!-- /react-text --><!-- react-text: 1371 --> <!-- /react-text --></strong><span class="badge">1</span><span style="white-space: nowrap; color: black;"><span><span class="glyphicon glyphicon-arrow-down"></span><!-- react-text: 1376 -->1<!-- /react-text --><!-- react-text: 1377 --> <!-- /react-text --><span class="glyphicon glyphicon-arrow-up"></span><!-- react-text: 1379 -->4<!-- /react-text --></span></span><!-- react-text: 1380 --> [$2000]<!-- /react-text --><ul><li>Pollo [$5500]</li></ul></div><div><strong><!-- react-text: 1476 --> <!-- /react-text --><!-- react-text: 1477 -->Verduras<!-- /react-text --><!-- react-text: 1478 --> <!-- /react-text --></strong><span class="badge">2</span><span style="white-space: nowrap; color: black;"><span><span class="glyphicon glyphicon-arrow-down"></span><!-- react-text: 1483 -->0<!-- /react-text --><!-- react-text: 1484 --> <!-- /react-text --><span class="glyphicon glyphicon-arrow-up"></span><!-- react-text: 1486 -->4<!-- /react-text --></span></span><!-- react-text: 1487 --> [$0]<!-- /react-text --><ul><li>Cebolla [$0]</li><li>Tomate [$0]</li></ul></div></div>'
+    }
+    const dangerousHTML2 = {
+      __html: '<div><div><strong><!-- react-text: 1414 --> <!-- /react-text --><!-- react-text: 1415 -->Borde<!-- /react-text --><!-- react-text: 1416 --> <!-- /react-text --></strong><span class="badge">1</span><span style="white-space: nowrap; color: black;"><span><span class="glyphicon glyphicon-arrow-down"></span><!-- react-text: 1421 -->1<!-- /react-text --><!-- react-text: 1422 --> <!-- /react-text --><span class="glyphicon glyphicon-arrow-up"></span><!-- react-text: 1424 -->1<!-- /react-text --></span></span><!-- react-text: 1425 --> [$0]<!-- /react-text --><ul><li>Queso [$1500]</li></ul></div><div><strong><!-- react-text: 1369 --> <!-- /react-text --><!-- react-text: 1370 -->Carnes<!-- /react-text --><!-- react-text: 1371 --> <!-- /react-text --></strong><span class="badge">1</span><span style="white-space: nowrap; color: black;"><span><span class="glyphicon glyphicon-arrow-down"></span><!-- react-text: 1376 -->1<!-- /react-text --><!-- react-text: 1377 --> <!-- /react-text --><span class="glyphicon glyphicon-arrow-up"></span><!-- react-text: 1379 -->4<!-- /react-text --></span></span><!-- react-text: 1380 --> [$2000]<!-- /react-text --><ul><li>Pollo [$5500]</li></ul></div></div>'
+    }
+    const dangerousHTML3 = {
+      __html: '<div><div><strong><!-- react-text: 1307 --> <!-- /react-text --><!-- react-text: 1308 -->Masa<!-- /react-text --><!-- react-text: 1309 --> <!-- /react-text --></strong><span class="badge">1</span><span style="white-space: nowrap; color: black;"><span><span class="glyphicon glyphicon-arrow-down"></span><!-- react-text: 1314 -->1<!-- /react-text --><!-- react-text: 1315 --> <!-- /react-text --><span class="glyphicon glyphicon-arrow-up"></span><!-- react-text: 1317 -->1<!-- /react-text --></span></span><!-- react-text: 1318 --> [$9000]<!-- /react-text --><ul><li>Gruesa [$2000]</li></ul></div><div><strong><!-- react-text: 1391 --> <!-- /react-text --><!-- react-text: 1392 -->Queso<!-- /react-text --><!-- react-text: 1393 --> <!-- /react-text --></strong><span class="badge">1</span><span style="white-space: nowrap; color: black;"><span><span class="glyphicon glyphicon-arrow-down"></span><!-- react-text: 1398 -->1<!-- /react-text --><!-- react-text: 1399 --> <!-- /react-text --><span class="glyphicon glyphicon-arrow-up"></span><!-- react-text: 1401 -->3<!-- /react-text --></span></span><!-- react-text: 1402 --> [$0]<!-- /react-text --><ul><li>Parmesano [$100]</li></ul></div><div><strong><!-- react-text: 1369 --> <!-- /react-text --><!-- react-text: 1370 -->Carnes<!-- /react-text --><!-- react-text: 1371 --> <!-- /react-text --></strong><span class="badge">1</span><span style="white-space: nowrap; color: black;"><span><span class="glyphicon glyphicon-arrow-down"></span><!-- react-text: 1376 -->1<!-- /react-text --><!-- react-text: 1377 --> <!-- /react-text --><span class="glyphicon glyphicon-arrow-up"></span><!-- react-text: 1379 -->4<!-- /react-text --></span></span><!-- react-text: 1380 --> [$2000]<!-- /react-text --><ul><li>Pollo [$5500]</li></ul></div><div><strong><!-- react-text: 1347 --> <!-- /react-text --><!-- react-text: 1348 -->Verduras<!-- /react-text --><!-- react-text: 1349 --> <!-- /react-text --></strong><span class="badge">1</span><span style="white-space: nowrap; color: black;"><span><span class="glyphicon glyphicon-arrow-down"></span><!-- react-text: 1354 -->0<!-- /react-text --><!-- react-text: 1355 --> <!-- /react-text --><span class="glyphicon glyphicon-arrow-up"></span><!-- react-text: 1357 -->4<!-- /react-text --></span></span><!-- react-text: 1358 --> [$0]<!-- /react-text --><ul><li>Cebolla [$0]</li></ul></div></div>'
+    }
     return (
       <div>
 
@@ -318,56 +330,77 @@ class PedidoItem extends Component {
                 <Panel>
                   <ListGroup fill>
                     <ListGroupItem>
-                <Row>
-                      <PedidoItemModList
-                        filteredMods={this.state.filteredMods}
-                        selectedModSubmod={this.state.selectedModSubmod}
-                        submodificadores={this.props.submodificadores}
-                      />
-                  <ControlLabel>Descuento</ControlLabel>
-                  <FormControl
-                    componentClass="select"
-                    value={this.props.selectedItemDescuento}
-                    onChange={(e) => {
-                      this.props.handleUpdateItemDescuento(e.target.value);
-                    }}
-                  >
-                    <option value='0'>Sin descuento</option>
-                    {this.props.descuentos.map((descuento, i) => {
-                      return <option key={i} value={descuento.valor_maximo}>
-                        {descuento.nombre + ' $' + descuento.valor_maximo}
-                        </option>
-                    })}
-                  </FormControl>
-                      <h3>
-                      {'Total : $'+this.props.selectedItemPrice}
-                      </h3>
-                </Row>
-                <Row>
+                      <Nav bsStyle="tabs" activeKey="4">
+                        <NavItem eventKey="1">1</NavItem>
+                        <NavItem eventKey="2">2</NavItem>
+                        <NavItem eventKey="3">3</NavItem>
+                        <NavItem eventKey="4">4</NavItem>
+                      </Nav>
+                      <Panel header="Primera">
+                  <div dangerouslySetInnerHTML={dangerousHTML2}/>
+                      </Panel>
+                <Panel header="Segunda">
+                  <div dangerouslySetInnerHTML={dangerousHTML1}/>
+                </Panel>
+                <Panel header="Tercera"  bsStyle="primary">
+                        <PedidoItemModList
+                          filteredMods={this.state.filteredMods}
+                          selectedModSubmod={this.state.selectedModSubmod}
+                          submodificadores={this.props.submodificadores}
+                        />
+                </Panel>
+                <Panel header="Cuarta">
+                  <div dangerouslySetInnerHTML={dangerousHTML3}/>
+                </Panel>
 
-                      <Col componentClass={ControlLabel} md={4}>
-                        Cantidad
-                      </Col>
-                      <Col md={8}>
-                      <FormControl
-                        type="text"
-                        value={this.props.selectedItemCantidad}
-                        onChange={(e) => {
-                          this.props.handleUpdateItemCantidad(e.target.value);
-                        }}
-                      />
 
-                      </Col>
-              </Row>
-                <Row>
-                <Button
-                        onClick={this.resetSelected}
-                        bsStyle="danger"
-                        block
-                      >
-                        <Glyphicon glyph="erase"/> {' Limpiar'}
-                      </Button>
-                </Row>
+                    </ListGroupItem>
+                    <ListGroupItem>
+          <Row>
+                        <ControlLabel>Descuento</ControlLabel>
+                        <FormControl
+                          componentClass="select"
+                          value={this.props.selectedItemDescuento}
+                          onChange={(e) => {
+                            this.props.handleUpdateItemDescuento(e.target.value);
+                          }}
+                        >
+                          <option value='0'>Sin descuento</option>
+                          {this.props.descuentos.map((descuento, i) => {
+                            return <option key={i} value={descuento.valor_maximo}>
+                              {descuento.nombre + ' $' + descuento.valor_maximo}
+                            </option>
+                          })}
+                        </FormControl>
+                        <h3>
+                          {'Total : $' + this.props.selectedItemPrice}
+                        </h3>
+                      </Row>
+                      <Row>
+
+                        <Col componentClass={ControlLabel} md={4}>
+                          Cantidad
+                        </Col>
+                        <Col md={8}>
+                          <FormControl
+                            type="text"
+                            value={this.props.selectedItemCantidad}
+                            onChange={(e) => {
+                              this.props.handleUpdateItemCantidad(e.target.value);
+                            }}
+                          />
+
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Button
+                          onClick={this.resetSelected}
+                          bsStyle="danger"
+                          block
+                        >
+                          <Glyphicon glyph="erase"/> {' Limpiar'}
+                        </Button>
+                      </Row>
 
                     </ListGroupItem>
                     <center>

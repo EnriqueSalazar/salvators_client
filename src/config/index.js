@@ -11,7 +11,7 @@ if (isProduction) {
   server = '52.39.41.242';
   port = '80';
 } else {
-  server = '192.168.178.248';
+  server = 'localhost';
   port = '1337';
 }
 ;
